@@ -226,3 +226,39 @@ Farmer inputs do not satisfy soil-scoring research gates or water-demand gates.
 With erosion as the only eligible metric, a positive erosion slider gives a total
 identical to that index, regardless of other sliders. Zero erosion importance means
 no total. Compare totals only when their eligible metrics and assumption bases match.
+
+## M4: rainfall visualization and printable plan
+
+The visual calendar uses the same M3 management state and scoring result, not a
+second exposure calculation. For every year, month m displays the cached NASA
+`rainfall_normal_mm` for that calendar month. Repetition is historical context,
+not a three-year weather forecast. Farmer statuses and exposed-soil percentages
+remain separate: planted crops and cover crops do not imply zero exposure.
+Unknown/invalid exposure is labeled Unknown, never converted to zero or bare soil.
+Draft entries can be visualized but no overall exposure percentage is displayed
+until the existing M3 provenance, confirmation, rainfall and sequence gates pass.
+
+`src/lib/plan.js` defines `HIGH_RAIN_RANK = 3`: months at least as wet as the
+third-highest positive monthly normal are labeled high rainfall (ties included).
+A month is outlined only when high rainfall coincides with an explicitly entered
+exposed-soil percentage greater than zero. Missing rainfall disables this ranking.
+This is a display convention, not a validated agronomic threshold, erosion warning
+model or change to scoring. Unknown exposure receives no highlight; absence of a
+highlight is not evidence of protection. Text accompanies color for printing and
+accessibility.
+
+The prominent exposure percentage comes directly from M3's
+`rainExposureFraction * 100`. Wording refers to historical rainfall overlapping
+estimated exposed-soil conditions, including partial exposure. The complementary
+index is not an erosion reduction percentage. Proposed versus observed management
+and author confirmation remain visible. Observed management is still farmer-reported
+and paired with historical normals, not observed rainfall from its actual years.
+
+Each card can open a printable plan for that exact rotation, independent of the
+comparison baseline. The plan uses live current state, so edits invalidate its
+exposure estimate too. Browser `window.print()` and print CSS hide other cards and
+controls; no PDF library, new dependency or print backend is used. Printing can
+also preserve incomplete plans with explicit gaps. Planting/harvest months are
+shown only when present in the catalog; all current entries are unknown and no
+dates are inferred from monthly management. Evidence URLs, NASA cache path,
+climate indicators, priorities, formula, provenance, gaps and disclaimer are printed.

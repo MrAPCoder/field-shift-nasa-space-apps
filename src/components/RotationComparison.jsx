@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import cropData from '../../data/crops.json';
 import rotationData from '../../data/rotations.json';
 import config from '../config/config.js';
+import RainfallCalendar from './RainfallCalendar.jsx';
+import RotationPlan from './RotationPlan.jsx';
 import ManagementCalendar from './ManagementCalendar.jsx';
 import { emptyManagement } from '../lib/management.js';
 import { scoreRotation, demonstrationApproved } from '../lib/score.js';
 import { formatValue, MONTHS } from '../lib/climate.js';
 const labels = { water: 'Water savings', soil: 'Soil health', erosion: 'Rainfall-exposure index', income: 'Extra income' };
 const sourceByUrl = Object.fromEntries(Object.values(cropData.sources).map(source => [source.url, source]));
-function Card({ rotation, role, climate, result, management, onManagementChange }) {
+function Card({ rotation, role, climate, result, management, onManagementChange, onPrint }) {
   const summer = config.scoring.summerMonths.map(month => climate.monthly.find(row => row.month === month)?.rainfall_normal_mm);
   const summerRain = summer.every(Number.isFinite) ? summer.reduce((a,b) => a+b,0) : null;
   const reasons = [...new Set(Object.values(result.scores).filter((_,i) => i < 3).flatMap(score => score.reasons))];
@@ -21,6 +23,8 @@ function Card({ rotation, role, climate, result, management, onManagementChange 
     <ol className="crop-sequence">{rotation.years.map(year => <li key={year.year}><strong>Year {year.year}: </strong>{year.crop_ids.length ? year.crop_ids.map(id => cropData.crops.find(crop => crop.id === id)?.name ?? 'TODO crop').join(' + ') : 'TODO — crop sequence not established'}</li>)}</ol>
     {rotation.sequence_status === 'annual_pattern' && <p className="sequence-note">Annual pattern repeated as a proposed three-year planning window. “+” includes multiple crops, not necessarily simultaneous planting.</p>}
     <ManagementCalendar rotation={rotation} value={management} onChange={onManagementChange}/>
+    <RainfallCalendar climate={climate} management={management} score={result.scores.erosion}/>
+    <button className="plan-open" onClick={onPrint}>View printable plan</button>
     <section><h4>Why</h4><p>{rotation.why}</p></section>
     <section><h4>Evidence</h4><p>Cached NASA data: {formatValue(summerRain)} mm of {config.scoring.summerMonths.map(month => MONTHS[month - 1]).join(' / ')} rain; {formatValue(climate.summary.mean_frost_free_days)} mean frost-free days ({climate.summary.frost_free_days_valid_years} valid years). These are climate context, not proof of crop suitability.</p><ul>{rotation.source_urls.map(url => <li key={url}><a href={url} target="_blank" rel="noreferrer">{sourceByUrl[url]?.title ?? 'Agricultural source'} ↗</a></li>)}</ul></section>
     <section><h4>Benefits</h4><p>{rotation.benefits}</p></section>
@@ -36,6 +40,8 @@ function Card({ rotation, role, climate, result, management, onManagementChange 
 export default function RotationComparison({ climate, priorities, management, onManagementChange }) {
   const rotations = rotationData.rotations.filter(rotation => rotation.farm_id === climate.farm.id);
   const [current, setCurrent] = useState(rotations.find(rotation => rotation.slot === 'current')?.id);
+  const [printId, setPrintId] = useState(null);
+  const printRotation = rotations.find(rotation => rotation.id === printId);
   const baseline = rotations.find(rotation => rotation.id === current) ?? rotations[0];
   const ordered = [baseline, ...rotations.filter(rotation => rotation.id !== baseline.id)];
   const calendars = Object.fromEntries(ordered.map(rotation => [rotation.id, management[rotation.id] ?? emptyManagement(rotation.id)]));
@@ -49,7 +55,8 @@ export default function RotationComparison({ climate, priorities, management, on
     <p className="weight-summary" role="status">Selected importance: Water {priorities.water}/10 · Soil {priorities.soil}/10 · Income {priorities.income}/10 · Erosion {priorities.erosion}/10.</p>
     <div className="soft-note">Published sequences need team approval. Farmer calendars need complete inputs and explicit confirmation; they remain separate from research evidence. Missing inputs are not zeros. {scoredCount === 0 ? 'All current candidates remain unscored.' : `${scoredCount} candidates have an eligible overall score; check which priorities are included before comparing.`} {priorities.income > 0 && 'Income is excluded: crop prices and production costs are not included.'} {Object.values(priorities).every(value => value === 0) && 'All priority weights are zero; no overall score is available.'}</div>
     <p className="soft-note">When only rainfall exposure is eligible, the total reflects only that index. Water, soil and income sliders cannot change it yet. Setting erosion importance to zero removes the overall score. Compare scenarios only when their input basis and eligible metrics match.</p>
-    <div className="rotation-grid">{ordered.map((rotation,i) => <Card key={rotation.id} rotation={rotation} role={['Current / baseline','Alternative A','Alternative B'][i]} climate={climate} result={results[rotation.id]} management={calendars[rotation.id]} onManagementChange={value => onManagementChange(rotation.id, value)}/>)}</div>
+    <div className="rotation-grid">{ordered.map((rotation,i) => <Card key={rotation.id} rotation={rotation} role={['Current / baseline','Alternative A','Alternative B'][i]} climate={climate} result={results[rotation.id]} management={calendars[rotation.id]} onManagementChange={value => onManagementChange(rotation.id, value)} onPrint={() => setPrintId(rotation.id)}/>)}</div>
+    {printRotation && <RotationPlan rotation={printRotation} climate={climate} priorities={priorities} management={calendars[printId]} result={results[printId]} onClose={() => setPrintId(null)}/>}
     <details className="method-summary"><summary>How the comparative scores work</summary><p>Overall = sum of each available score × its importance, divided by the sum of importance for those available scores. Income and unavailable scores are excluded from both sums. No positive eligible weight means no overall score.</p><p>Water: crop water-demand categories compared with summer’s share of annual rain. Soil: documented nitrogen fixation, cover-crop months, root-depth diversity and non-bare months. Rainfall-exposure index: 100 × (1 − sum of monthly NASA rainfall × entered exposed-soil fraction / three years’ total rainfall). Every month must be known and confirmed. A higher index means less assumed exposure, not a measured reduction in erosion.</p><p>These are provisional comparison rules, not irrigation prescriptions, measured soil health, erosion forecasts, probabilities or profitability estimates. A crop’s presence does not prove protective cover. Different score availability can make totals unsuitable for direct ranking.</p></details>
   </section>;
 }
