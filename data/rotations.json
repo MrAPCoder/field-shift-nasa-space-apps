@@ -1,0 +1,2799 @@
+{
+  "schema_version": 1,
+  "rotations": [
+    {
+      "id": "skagit-current",
+      "farm_id": "skagit",
+      "slot": "current",
+      "name": "Potato-based baseline \u2014 sequence TODO",
+      "verified": false,
+      "review_status": "pending",
+      "sequence_status": "TODO",
+      "cycle_years": null,
+      "years": [
+        {
+          "year": 1,
+          "crop_ids": [],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": []
+        },
+        {
+          "year": 2,
+          "crop_ids": [],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": []
+        },
+        {
+          "year": 3,
+          "crop_ids": [],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": []
+        }
+      ],
+      "schedule": [
+        {
+          "year": 1,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        }
+      ],
+      "source_urls": [
+        "https://washingtonsoilhealthinitiative.com/northwestern-washington-annual-cropping-systems-rm/",
+        "https://washingtonsoilhealthinitiative.com/2024/09/six-sites-six-unique-soils-and-sixteen-crops/"
+      ],
+      "why": "Review a baseline relevant to regional potato systems.",
+      "benefits": "Regional context is documented; benefits of a specific sequence are not established.",
+      "risks": "Confirm disease history, drainage, soil compaction and access to rotational land.",
+      "data_gaps": [
+        "Team approval and local suitability are pending.",
+        "Local planting and harvest months and all 36 cover statuses are TODO.",
+        "Water-need categories and rooting-depth categories are TODO.",
+        "Actual current rotation and exact year-by-year crop order are unknown."
+      ]
+    },
+    {
+      "id": "skagit-alternative-a",
+      "farm_id": "skagit",
+      "slot": "alternative-a",
+      "name": "Small-grain option \u2014 sequence TODO",
+      "verified": false,
+      "review_status": "pending",
+      "sequence_status": "TODO",
+      "cycle_years": null,
+      "years": [
+        {
+          "year": 1,
+          "crop_ids": [],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": []
+        },
+        {
+          "year": 2,
+          "crop_ids": [],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": []
+        },
+        {
+          "year": 3,
+          "crop_ids": [],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": []
+        }
+      ],
+      "schedule": [
+        {
+          "year": 1,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        }
+      ],
+      "source_urls": [
+        "https://washingtonsoilhealthinitiative.com/northwestern-washington-annual-cropping-systems-rm/",
+        "https://washingtonsoilhealthinitiative.com/2024/09/six-sites-six-unique-soils-and-sixteen-crops/"
+      ],
+      "why": "Investigate a small-grain option with local extension.",
+      "benefits": "Small grains occur regionally; a benefit for this unselected sequence is not established.",
+      "risks": "Check crop markets, field history and suitable rotation length.",
+      "data_gaps": [
+        "Team approval and local suitability are pending.",
+        "Local planting and harvest months and all 36 cover statuses are TODO.",
+        "Water-need categories and rooting-depth categories are TODO.",
+        "Which grain, order and interval between potato crops remain TODO."
+      ]
+    },
+    {
+      "id": "skagit-alternative-b",
+      "farm_id": "skagit",
+      "slot": "alternative-b",
+      "name": "Forage or cover option \u2014 sequence TODO",
+      "verified": false,
+      "review_status": "pending",
+      "sequence_status": "TODO",
+      "cycle_years": null,
+      "years": [
+        {
+          "year": 1,
+          "crop_ids": [],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": []
+        },
+        {
+          "year": 2,
+          "crop_ids": [],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": []
+        },
+        {
+          "year": 3,
+          "crop_ids": [],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": []
+        }
+      ],
+      "schedule": [
+        {
+          "year": 1,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        }
+      ],
+      "source_urls": [
+        "https://washingtonsoilhealthinitiative.com/northwestern-washington-annual-cropping-systems-rm/"
+      ],
+      "why": "Investigate the regional interest in forage and cover phases.",
+      "benefits": "A potential change in soil disturbance merits review; no outcome is predicted.",
+      "risks": "Check land availability, termination, drainage and local agronomic advice.",
+      "data_gaps": [
+        "Team approval and local suitability are pending.",
+        "Local planting and harvest months and all 36 cover statuses are TODO.",
+        "Water-need categories and rooting-depth categories are TODO.",
+        "Species, duration and complete crop sequence remain TODO."
+      ]
+    },
+    {
+      "id": "yakima-current",
+      "farm_id": "yakima",
+      "slot": "current",
+      "name": "Corn\u2013triticale system \u2014 annual pattern",
+      "verified": false,
+      "review_status": "pending",
+      "sequence_status": "annual_pattern",
+      "cycle_years": 1,
+      "years": [
+        {
+          "year": 1,
+          "crop_ids": [
+            "silage_corn",
+            "triticale"
+          ],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": [
+            "https://s3.wp.wsu.edu/uploads/sites/2676/2022/03/Increasing_the_value_of_corn_silage_FS358E.pdf"
+          ]
+        },
+        {
+          "year": 2,
+          "crop_ids": [
+            "silage_corn",
+            "triticale"
+          ],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": [
+            "https://s3.wp.wsu.edu/uploads/sites/2676/2022/03/Increasing_the_value_of_corn_silage_FS358E.pdf"
+          ]
+        },
+        {
+          "year": 3,
+          "crop_ids": [
+            "silage_corn",
+            "triticale"
+          ],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": [
+            "https://s3.wp.wsu.edu/uploads/sites/2676/2022/03/Increasing_the_value_of_corn_silage_FS358E.pdf"
+          ]
+        }
+      ],
+      "schedule": [
+        {
+          "year": 1,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        }
+      ],
+      "source_urls": [
+        "https://s3.wp.wsu.edu/uploads/sites/2676/2022/03/Increasing_the_value_of_corn_silage_FS358E.pdf"
+      ],
+      "why": "Review a regional dairy-forage baseline, not an asserted farm history.",
+      "benefits": "WSU describes forage production and winter soil protection in this system.",
+      "risks": "Verify irrigation, nutrient management and the timing between crops.",
+      "data_gaps": [
+        "Team approval and local suitability are pending.",
+        "Local planting and harvest months and all 36 cover statuses are TODO.",
+        "Water-need categories and rooting-depth categories are TODO.",
+        "Repeating the sourced annual pattern over three years is a proposed planning representation, not a documented three-year trial.",
+        "Multiple crops per year need an approved water-demand weighting."
+      ]
+    },
+    {
+      "id": "yakima-alternative-a",
+      "farm_id": "yakima",
+      "slot": "alternative-a",
+      "name": "Corn + soybean, then triticale",
+      "verified": false,
+      "review_status": "pending",
+      "sequence_status": "annual_pattern",
+      "cycle_years": 1,
+      "years": [
+        {
+          "year": 1,
+          "crop_ids": [
+            "silage_corn",
+            "forage_soybean",
+            "triticale"
+          ],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": [
+            "https://s3.wp.wsu.edu/uploads/sites/2676/2022/03/Increasing_the_value_of_corn_silage_FS358E.pdf"
+          ]
+        },
+        {
+          "year": 2,
+          "crop_ids": [
+            "silage_corn",
+            "forage_soybean",
+            "triticale"
+          ],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": [
+            "https://s3.wp.wsu.edu/uploads/sites/2676/2022/03/Increasing_the_value_of_corn_silage_FS358E.pdf"
+          ]
+        },
+        {
+          "year": 3,
+          "crop_ids": [
+            "silage_corn",
+            "forage_soybean",
+            "triticale"
+          ],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": [
+            "https://s3.wp.wsu.edu/uploads/sites/2676/2022/03/Increasing_the_value_of_corn_silage_FS358E.pdf"
+          ]
+        }
+      ],
+      "schedule": [
+        {
+          "year": 1,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        }
+      ],
+      "source_urls": [
+        "https://s3.wp.wsu.edu/uploads/sites/2676/2022/03/Increasing_the_value_of_corn_silage_FS358E.pdf"
+      ],
+      "why": "Review the forage intercrop studied near Prosser.",
+      "benefits": "WSU reports potential forage-quality benefits; this app does not estimate income.",
+      "risks": "Check soybean variety, inoculation, herbicide compatibility and irrigation.",
+      "data_gaps": [
+        "Team approval and local suitability are pending.",
+        "Local planting and harvest months and all 36 cover statuses are TODO.",
+        "Water-need categories and rooting-depth categories are TODO.",
+        "The corn\u2013soybean crops overlap; no equal-share water calculation is assumed.",
+        "Three-year repetition and field suitability require review."
+      ]
+    },
+    {
+      "id": "yakima-alternative-b",
+      "farm_id": "yakima",
+      "slot": "alternative-b",
+      "name": "Corn\u2013triticale\u2013wheat \u2014 timing TODO",
+      "verified": false,
+      "review_status": "pending",
+      "sequence_status": "TODO",
+      "cycle_years": null,
+      "years": [
+        {
+          "year": 1,
+          "crop_ids": [],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": []
+        },
+        {
+          "year": 2,
+          "crop_ids": [],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": []
+        },
+        {
+          "year": 3,
+          "crop_ids": [],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": []
+        }
+      ],
+      "schedule": [
+        {
+          "year": 1,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        }
+      ],
+      "source_urls": [
+        "https://apps.ecology.wa.gov/publications/parts/2010008part2.pdf"
+      ],
+      "why": "Review a state guidance example with local advisers.",
+      "benefits": "The source encourages crop diversity subject to site-specific conditions.",
+      "risks": "Confirm wheat growth habit, irrigated-field suitability and crop timing.",
+      "data_gaps": [
+        "Team approval and local suitability are pending.",
+        "Local planting and harvest months and all 36 cover statuses are TODO.",
+        "Water-need categories and rooting-depth categories are TODO.",
+        "The source gives crop order, not calendar-year allocation; all three year assignments remain TODO."
+      ]
+    },
+    {
+      "id": "palouse-current",
+      "farm_id": "palouse",
+      "slot": "current",
+      "name": "Spring pea \u2192 winter wheat \u2192 spring wheat",
+      "verified": false,
+      "review_status": "sequence_only_approved",
+      "sequence_status": "sourced",
+      "cycle_years": 3,
+      "years": [
+        {
+          "year": 1,
+          "crop_ids": [
+            "spring_pea"
+          ],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": [
+            "https://www.ars.usda.gov/research/publications/publication/?seqNo115=427958",
+            "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/new-minimum-tillage-systems-for-legume-winter-wheat-cropping-sequence/"
+          ]
+        },
+        {
+          "year": 2,
+          "crop_ids": [
+            "winter_wheat"
+          ],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": [
+            "https://www.ars.usda.gov/research/publications/publication/?seqNo115=427958",
+            "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/new-minimum-tillage-systems-for-legume-winter-wheat-cropping-sequence/"
+          ]
+        },
+        {
+          "year": 3,
+          "crop_ids": [
+            "spring_wheat"
+          ],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": [
+            "https://www.ars.usda.gov/research/publications/publication/?seqNo115=427958",
+            "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/new-minimum-tillage-systems-for-legume-winter-wheat-cropping-sequence/"
+          ]
+        }
+      ],
+      "schedule": [
+        {
+          "year": 1,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        }
+      ],
+      "source_urls": [
+        "https://www.ars.usda.gov/research/publications/publication/?seqNo115=427958",
+        "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/new-minimum-tillage-systems-for-legume-winter-wheat-cropping-sequence/"
+      ],
+      "why": "Use a published Palouse sequence as the demonstration baseline.",
+      "benefits": "The sourced sequence includes a legume phase; this is not a soil-health measurement.",
+      "risks": "Check residue retention, compaction, soil pH and disease history.",
+      "data_gaps": [
+        "Local suitability and management remain unverified; only the published demonstration sequence is approved.",
+        "Published planting/harvest months and ground-cover schedules remain TODO. Farmer inputs are separate assumptions.",
+        "Water-need categories and rooting-depth categories are TODO.",
+        "Not confirmed as the current rotation of this demonstration location."
+      ],
+      "sequence_approval": {
+        "status": "approved",
+        "scope": "research_demonstration_only",
+        "approved_by": "Project team via explicit user approval",
+        "limitations": "Published sequence only. Local suitability, farm history, traits, dates and management are not approved."
+      }
+    },
+    {
+      "id": "palouse-alternative-a",
+      "farm_id": "palouse",
+      "slot": "alternative-a",
+      "name": "Austrian winter pea for seed \u2192 winter wheat \u2192 spring barley",
+      "verified": false,
+      "review_status": "sequence_only_approved",
+      "sequence_status": "sourced",
+      "cycle_years": 3,
+      "years": [
+        {
+          "year": 1,
+          "crop_ids": [
+            "winter_pea_seed"
+          ],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": [
+            "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/austrian-winter-pea-a-good-alternative-to-fallow/",
+            "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/new-minimum-tillage-systems-for-legume-winter-wheat-cropping-sequence/"
+          ]
+        },
+        {
+          "year": 2,
+          "crop_ids": [
+            "winter_wheat"
+          ],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": [
+            "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/austrian-winter-pea-a-good-alternative-to-fallow/",
+            "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/new-minimum-tillage-systems-for-legume-winter-wheat-cropping-sequence/"
+          ]
+        },
+        {
+          "year": 3,
+          "crop_ids": [
+            "spring_barley"
+          ],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": [
+            "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/austrian-winter-pea-a-good-alternative-to-fallow/",
+            "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/new-minimum-tillage-systems-for-legume-winter-wheat-cropping-sequence/"
+          ]
+        }
+      ],
+      "schedule": [
+        {
+          "year": 1,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        }
+      ],
+      "source_urls": [
+        "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/austrian-winter-pea-a-good-alternative-to-fallow/",
+        "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/new-minimum-tillage-systems-for-legume-winter-wheat-cropping-sequence/"
+      ],
+      "why": "Review a documented three-year Moscow-area research sequence.",
+      "benefits": "The winter pea phase offers nitrogen-fixation potential; no fertilizer credit is calculated.",
+      "risks": "Check overwinter survival, markets, disease management and current local advice.",
+      "data_gaps": [
+        "Local suitability and management remain unverified; only the published demonstration sequence is approved.",
+        "Published planting/harvest months and ground-cover schedules remain TODO. Farmer inputs are separate assumptions.",
+        "Water-need categories and rooting-depth categories are TODO.",
+        "Historical 1981\u20131985 trial; modern applicability needs review."
+      ],
+      "sequence_approval": {
+        "status": "approved",
+        "scope": "research_demonstration_only",
+        "approved_by": "Project team via explicit user approval",
+        "limitations": "Published sequence only. Local suitability, farm history, traits, dates and management are not approved."
+      }
+    },
+    {
+      "id": "palouse-alternative-b",
+      "farm_id": "palouse",
+      "slot": "alternative-b",
+      "name": "Austrian winter pea green manure \u2192 winter wheat \u2192 spring barley",
+      "verified": false,
+      "review_status": "sequence_only_approved",
+      "sequence_status": "sourced",
+      "cycle_years": 3,
+      "years": [
+        {
+          "year": 1,
+          "crop_ids": [
+            "winter_pea_green"
+          ],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": [
+            "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/austrian-winter-pea-a-good-alternative-to-fallow/",
+            "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/new-minimum-tillage-systems-for-legume-winter-wheat-cropping-sequence/"
+          ]
+        },
+        {
+          "year": 2,
+          "crop_ids": [
+            "winter_wheat"
+          ],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": [
+            "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/austrian-winter-pea-a-good-alternative-to-fallow/",
+            "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/new-minimum-tillage-systems-for-legume-winter-wheat-cropping-sequence/"
+          ]
+        },
+        {
+          "year": 3,
+          "crop_ids": [
+            "spring_barley"
+          ],
+          "planting_months": null,
+          "harvest_months": null,
+          "source_urls": [
+            "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/austrian-winter-pea-a-good-alternative-to-fallow/",
+            "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/new-minimum-tillage-systems-for-legume-winter-wheat-cropping-sequence/"
+          ]
+        }
+      ],
+      "schedule": [
+        {
+          "year": 1,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 1,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 2,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 1,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 2,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 3,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 4,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 5,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 6,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 7,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 8,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 9,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 10,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 11,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        },
+        {
+          "year": 3,
+          "month": 12,
+          "status": "unknown",
+          "verified": false,
+          "source_url": null
+        }
+      ],
+      "source_urls": [
+        "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/austrian-winter-pea-a-good-alternative-to-fallow/",
+        "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/new-minimum-tillage-systems-for-legume-winter-wheat-cropping-sequence/"
+      ],
+      "why": "Compare the green-manure treatment with the seed treatment in the same study.",
+      "benefits": "A green-manure phase may contribute organic inputs; no measured soil-health gain is claimed.",
+      "risks": "Check termination timing, soil water use and the opportunity cost of a non-harvested phase.",
+      "data_gaps": [
+        "Local suitability and management remain unverified; only the published demonstration sequence is approved.",
+        "Published planting/harvest months and ground-cover schedules remain TODO. Farmer inputs are separate assumptions.",
+        "Water-need categories and rooting-depth categories are TODO.",
+        "Historical trial management is not a local planting calendar."
+      ],
+      "sequence_approval": {
+        "status": "approved",
+        "scope": "research_demonstration_only",
+        "approved_by": "Project team via explicit user approval",
+        "limitations": "Published sequence only. Local suitability, farm history, traits, dates and management are not approved."
+      }
+    }
+  ]
+}

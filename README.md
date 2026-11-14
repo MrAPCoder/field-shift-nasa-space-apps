@@ -1,8 +1,11 @@
 # Field Shift — NASA Space Apps 2026
 
-Washington farm-planning prototype. **M2:** responsive climate dashboard using the
-verified M1 NASA POWER caches. Choose a farm, inspect rainfall and modeled wetness,
-and set four planning priorities. Crop scoring remains out of scope until M3.
+Washington farm-planning prototype. **Approved M3 Palouse-first demonstration implemented.**
+The dashboard uses unchanged M1 NASA POWER caches and retains all nine rotation
+slots across three regions. Three published Palouse sequences are approved only
+as research scenarios. Complete, explicitly confirmed farmer calendars enable a
+rainfall-exposure estimate; water, soil and income remain unavailable. No farm
+history, local suitability or unsupported scientific trait is asserted.
 
 ## Setup and run
 Requires Node.js 20.19+ or 22.12+ and Python 3.12+.
@@ -43,11 +46,41 @@ Normal app use must read cached aggregates, never query NASA POWER.
 - `docs/M1_VERIFICATION.md`: pipeline verification results and comparison.
 - `docs/M2_VERIFICATION.md`: dashboard tests, browser checks and changed files.
 - `docs/AI_DISCLOSURE.md`: AI assistance and team review responsibilities.
+- `docs/AGRICULTURAL_REVIEW.md`: source URLs, proposed claims and exact data gaps.
+- `docs/M3_VERIFICATION.md`: M3 tests, scope and completion limits.
 
 ## Preview deployment
 Vercel static hosting: build command `npm run build`, output `dist`, Vite preset.
 The connected Vercel team currently requires access authorization; no preview URL
-has been created. See the M2 verification report. Do not begin M3 without approval.
+has been created. See the M2 verification report. M3 was not deployed. Do not begin M4 without approval.
 
 Optional browser checks use an existing Playwright installation (no new project
 dependency): start `npm run preview`, then `node tests/browser-smoke.cjs`.
+
+## M3 comparison checks
+
+`npm test` includes the pure scoring tests. With the existing optional Playwright
+installation and a running production preview, use `node tests/m3-browser.cjs`.
+
+`data/crops.json` and `data/rotations.json` contain proposed agricultural records.
+Do not change `verified` flags merely to make scores appear. Follow the review
+procedure in `docs/AGRICULTURAL_REVIEW.md`. `src/config/config.json` holds all
+provisional category mappings, summer months and soil component weights.
+
+
+### Enter a live M3 demonstration
+
+Select Palouse and open each card's “Enter three-year management calendar.” Leave
+mode as Proposed scenario for hypothetical inputs. Describe the scenario and
+meaning of years 1–3, enter the confirmer name, then set all 36 monthly statuses.
+For planted/cover months, explicitly enter average exposed-soil percentages;
+Unknown is never bare and a planted crop is never assumed fully protective.
+Retained residue can still protect soil after harvest. Bare soil explicitly means
+100% exposed. Confirm each complete calendar to calculate using cached NASA rain.
+
+The display identifies farmer assumptions and shows rainfall-weighted exposure
+and its inverse 0–100 index. Higher index means less assumed exposure, not measured
+erosion reduction. Edit any entry to withdraw confirmation; confirm again after
+review. Entries survive farm changes in the current tab, but refresh clears them.
+Keep erosion importance above zero for an overall total; the other sliders cannot
+change an erosion-only total. Never present hypothetical inputs as farm observations.

@@ -77,3 +77,152 @@ can differ from local rainfall, terrain and field temperatures. Frost boundaries
 are threshold-based indicators, not crop-specific injury forecasts. No irrigation,
 crop recommendations, soil-loss estimates, profitability or scoring are implemented
 in M1. Agricultural sources and dashboard interactions belong to later milestones.
+
+## M3: review gates and comparative scoring
+
+`src/lib/score.js` is pure JavaScript, independent of React and networking. It
+returns `SCORED` with a finite 0–100 value and calculation evidence, or
+`NOT_SCORED` with `value: null` and specific reasons. The original scientific
+integrity rule is preserved: `verified: false` means team review is pending,
+even where a source was opened and read. Merely finding a source is not approval.
+
+The rotation needs explicit crop IDs for years 1–3, source URLs and approval.
+Each essential crop trait also needs its own supporting URLs and an approved
+crop entry. Erosion uses the independently sourced/approved monthly cover
+schedule; unrelated crop water traits do not affect its eligibility. Water and
+erosion reject a climate dataset belonging to a different farm. Every monthly
+rainfall normal used must be finite, nonnegative and based on at least one valid
+year. Missing or zero annual rainfall denominators prevent a score.
+
+### Water savings — provisional demand comparison
+
+Configuration: `scoring.summerMonths = [6, 7, 8]` and demand indices
+`low = 0`, `med = 0.5`, `high = 1`. These are transparent design coefficients,
+not sourced irrigation requirements or validated estimates of water saved.
+
+Let D be the mean category index of one documented crop in each of three years.
+Let S be June–August rainfall / sum of all 12 monthly rainfall normals.
+
+`water_score = 100 * (1 - D * (1 - S))`
+
+At a given location, lower documented demand gives a higher comparative score.
+The summer rainfall share reduces the categorical penalty. It does not model
+crop evapotranspiration, soil water storage, crop timing, or irrigation supply;
+locations with similar seasonal shares can receive identical scores despite
+different rainfall amounts. Do not compare this index across farms as an
+absolute water-sufficiency measure. The UI shows summer millimeters as context.
+Double-cropped/intercropped years are not scored until defensible weighting is
+established; no equal-share water-demand assumption is made. All real crop
+water categories remain TODO in this release.
+
+### Soil health — provisional practice comparison
+
+Four components range from 0 to 1:
+- Nitrogen-fixing crop presence: 1 if any approved crop has documented fixation
+  capability, otherwise 0. All crops must have known boolean traits; unknown is
+  not false. Presence does not quantify nitrogen supplied to the following crop.
+- Cover-crop share: approved months labeled `cover` / 36.
+- Root-depth diversity: 1 when both approved `shallow` and `deep` categories occur,
+  otherwise 0. No category is derived from an unsupported numeric threshold.
+- Non-bare share: 1 − approved months labeled `bare` / 36.
+
+Default relative weights are 0.3, 0.3, 0.2, 0.2 respectively, stored in config.
+Score = 100 × weighted sum of components / sum of component weights. Zero or
+invalid coefficient sums prevent scoring. Cover-crop share and non-bare share
+are intentionally related: the provisional design rewards both cover-crop
+presence and avoiding bare soil. This is not an independently validated index
+of soil health. Every month must have an approved known status and source URL.
+
+### Erosion control — seasonal rainfall exposure only
+
+`exposure = sum(monthly rainfall normal for every bare month in years 1–3)
+            / (3 * sum(all 12 monthly rainfall normals))`
+
+`erosion_score = 100 * (1 - exposure)`
+
+Exactly 36 unique year/month records are required. Allowed known statuses are
+`cash`, `cover`, and `bare`; `unknown`, missing, duplicated, or unapproved months
+prevent scoring. Do not assume planted means covered, or harvested means bare:
+establishment, residue, tillage and termination matter. Status assignment is a
+separate evidence/review task. This simplified binary exposure heuristic omits
+slope, soil type, storm intensity and residue density. It predicts neither soil
+loss nor runoff. The M4 calendar and printable plan are not implemented.
+
+### Income and overall total
+
+Income always returns “Not scored yet — crop prices and production costs are not
+included.” Even an accidentally supplied income number is excluded by the total.
+
+`total = sum(eligible score * positive selected weight)
+         / sum(positive weights of eligible scores)`
+
+Weights are finite numbers 0–10. Zero-weight, unavailable and income priorities
+are excluded from both numerator and denominator. No positive eligible weight
+means `NOT_SCORED`, never zero. A valid score of zero remains eligible. Results
+are clamped to 0–100, and non-finite/out-of-range supplied scores cannot enter the
+total. The engine reports included/excluded priorities. Totals with different
+eligible priorities are not necessarily comparable; the app does not rank them.
+
+### Current release eligibility
+
+The three Palouse published sequences are approved only as research demonstration
+scenarios through `sequence_approval`. The broad `verified` flags remain false:
+local suitability, crop traits, dates and original published schedules are not
+approved. Six regional candidates remain pending. All calendars initially remain
+unscored; a complete confirmed farmer calendar can enable Palouse exposure only.
+Water and soil remain unavailable because their independent evidence gates fail.
+Income is always unavailable.
+
+
+### Approved M3 farmer-calendar provenance extension
+
+The user explicitly approved a simple management-input calendar for M3. It is not
+M4's visual risk calendar, peak-rainfall highlighting or printable plan.
+
+`src/lib/management.js` creates 36 Unknown months with null exposure, never sample
+farm data. The farmer chooses Planted crop (`cash`), Cover crop (`cover`), Bare
+soil (`bare`) or Unknown. Crop/cover statuses may include retained residue after
+harvest; selecting Bare soil explicitly means fully exposed, not merely harvested.
+Planted/cover status alone never implies soil protection.
+
+Each crop/cover month additionally needs an explicit exposed-soil percentage
+0–100: an approximate average across the soil surface and the month, accounting
+for canopy, residue and transitions. Bare soil explicitly sets 100%; Unknown has
+no value. Changing status to crop/cover clears exposure rather than carrying over
+an assumption. Partial months need a farmer estimate or must remain unknown.
+There are no default crop-specific percentages or cover-date inferences.
+
+A separate in-memory management object records `source_kind: farmer_input`,
+`method: monthly-exposed-soil-v1`, rotation ID, observed/proposed mode, a field/year
+or scenario description, confirmer name, confirmation timestamp and all 36 rows.
+These are self-attestations, not authenticated identities or independent verification.
+They do not change the crop library or any published schedule's `verified` flag.
+No fabricated citation URL is attached. Every edit clears confirmation. Farm and
+baseline changes retain separate entries within the tab; refresh resets them.
+Nothing is uploaded or persisted. This limitation is stated beside the controls.
+
+For month m of year y, let R_m be the cached NASA rainfall normal and E_ym the
+farmer-entered exposed percentage / 100. Then:
+
+`rainfall_weighted_exposure = sum(R_m * E_ym) / (3 * sum(R_m))`
+
+`exposure_index = 100 * (1 - rainfall_weighted_exposure)`
+
+The UI reports both exposure percent (lower is less assumed exposure) and the
+0–100 index (higher is less assumed exposure). The extension generalizes the
+existing binary bare-month formula; it equals that formula for 0/100% inputs.
+Legacy independently approved published schedules retain the existing validation
+path; the UI always supplies the separate farmer-input path, which fails closed
+on missing provenance, confirmation, months, statuses or percentages.
+
+This is a transparent scenario proxy, not a calibrated erosion model. Multiplying
+monthly mean rainfall by average exposure assumes the average represents exposure
+during rainfall. It cannot resolve storm timing, canopy interception, infiltration,
+slope, residue effectiveness or soil erodibility. A 100 index means zero exposure
+under entered assumptions, not zero erosion. Observed-mode entries remain farmer
+reports: the rainfall is still 1981–2025 normals, not weather observed in those years.
+
+Farmer inputs do not satisfy soil-scoring research gates or water-demand gates.
+With erosion as the only eligible metric, a positive erosion slider gives a total
+identical to that index, regardless of other sliders. Zero erosion importance means
+no total. Compare totals only when their eligible metrics and assumption bases match.

@@ -746,3 +746,42 @@ footer p {
     transition:none!important
   }
 }
+
+/* M3 comparisons use the existing visual system. No M4 calendar or print view. */
+.rotation-section { margin: 32px 0; border-top: 1px solid #dce3d5; padding-top: 28px; }
+.rotation-section > h2 { margin-top: 7px; font-size: 28px; letter-spacing: -.6px; }
+.rotation-controls { margin: 22px 0 16px; max-width: 640px; display: grid; gap: 7px; }
+.rotation-controls label { font-size: 13px; font-weight: 650; }
+.rotation-controls select { width: 100%; color: #203c30; background: white; border: 1px solid #cad7c6; border-radius: 8px; padding: 12px; }
+.rotation-controls p, .weight-summary { font-size: 12px; color: #596b5b; }
+.rotation-section > .soft-note { margin-top: 12px; font-size: 13px; }
+.rotation-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; margin-top: 22px; align-items: start; }
+.rotation-card { min-width: 0; background: white; border: 1px solid #dae3d4; border-radius: 12px; padding: 22px; }
+.rotation-card h3 { margin: 8px 0 12px; font-size: 19px; line-height: 1.4; }
+.review-badge { display: inline-block; background: #fbf2df; color: #77551b; padding: 5px 9px; border-radius: 5px; font-size: 11px; }
+.rotation-total { margin: 18px 0 12px; padding: 14px; background: #f3f6ef; border-radius: 8px; display: grid; gap: 4px; }
+.rotation-total span { font-size: 12px; } .rotation-total strong { font-size: 23px; }
+.subscores { font-size: 12px; margin: 0; } .subscores > div { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid #e8ede3; }
+.subscores dd { margin: 0; white-space: nowrap; font-weight: 600; }
+.crop-sequence { list-style: none; padding: 0; font-size: 12px; line-height: 1.7; margin: 16px 0; }
+.rotation-card section { margin-top: 18px; } .rotation-card h4 { margin: 0 0 5px; font-size: 13px; }
+.rotation-card p, .rotation-card li { font-size: 12px; line-height: 1.7; color: #596a58; }
+.rotation-card ul { margin: 5px 0 0; padding-left: 17px; } .rotation-card a { overflow-wrap: anywhere; }
+.rotation-card .sequence-note { font-size: 11px; background: #f7f6ef; padding: 10px; }
+.score-details { margin-top: 18px; font-size: 12px; } .score-details pre { max-height: 300px; overflow: auto; font-size: 10px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.method-summary { margin: 20px 0; font-size: 13px; line-height: 1.8; } .method-summary p { margin-top: 10px; max-width: 900px; }
+@media(max-width:1000px) { .rotation-grid { grid-template-columns: 1fr; } .rotation-card { padding: 22px; } }
+@media(max-width:540px) { .rotation-section > h2 { font-size: 25px; } .rotation-card p, .rotation-card li { font-size: 13px; } }
+
+/* M3 farmer calendars: explicit assumptions, responsive month controls. */
+.management-calendar { margin: 1.2rem 0; padding: 1rem; background: #f4f7f2; border: 1px solid #d6dfd4; border-radius: 12px; }
+.management-calendar summary { font-weight: 700; cursor: pointer; }
+.management-calendar label { display: block; font-size: .8rem; margin: .6rem 0; }
+.management-calendar input, .management-calendar select { display: block; width: 100%; min-width: 0; padding: .55rem; border: 1px solid #aab8aa; border-radius: 6px; color: #213e30; background: white; font: inherit; }
+.management-calendar fieldset { min-width: 0; border: 1px solid #c7d3c6; border-radius: 8px; margin: 1rem 0; padding: .65rem; }
+.calendar-months { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; }
+.calendar-month { border-bottom: 1px solid #d6dfd4; padding-bottom: .4rem; }
+.management-calendar button { padding: .7rem; border: 0; border-radius: 6px; background: #244e3b; color: white; cursor: pointer; }
+.management-calendar button:disabled { opacity: .5; cursor: not-allowed; }
+.exposure-result { background: #edf5f1; border-left: 3px solid #39765a; padding: .8rem; margin-top: 1rem; }
+@media (max-width: 380px) { .calendar-months { grid-template-columns: 1fr; } }
