@@ -26,5 +26,23 @@
       "latitude": 46.760917,
       "longitude": -117.185694
     }
-  ]
+  ],
+  "scoring": {
+    "summerMonths": [
+      6,
+      7,
+      8
+    ],
+    "waterDemandIndex": {
+      "low": 0,
+      "med": 0.5,
+      "high": 1
+    },
+    "soilWeights": {
+      "legume": 0.3,
+      "cover": 0.3,
+      "rootDiversity": 0.2,
+      "nonBare": 0.2
+    }
+  }
 }

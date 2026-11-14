@@ -1,0 +1,358 @@
+{
+  "schema_version": 1,
+  "sources": {
+    "palouse_ars": {
+      "title": "USDA ARS: Soil health and ecological resilience of no-till, organic, and mixed-crop livestock systems in eastern Washington State",
+      "url": "https://www.ars.usda.gov/research/publications/publication/?seqNo115=427958",
+      "locator": "Technical abstract, four systems (i) and (ii)",
+      "supports": "Three-year spring pea \u2192 winter wheat \u2192 spring wheat sequence in the Palouse.",
+      "limitations": "Does not establish local planting/harvest dates or complete monthly cover.",
+      "accessed": "2026-11-14",
+      "opened_and_read": true,
+      "verified": false
+    },
+    "winter_pea": {
+      "title": "WSU STEEP: Austrian Winter Pea a Good Alternative to Fallow",
+      "url": "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/austrian-winter-pea-a-good-alternative-to-fallow/",
+      "locator": "Research Focus; Trial I; Summer 1988",
+      "supports": "Moscow trials included seed or green-manure Austrian winter pea \u2192 winter wheat \u2192 spring barley.",
+      "limitations": "1981\u20131985 trials; contemporary local suitability and management need review.",
+      "accessed": "2026-11-14",
+      "opened_and_read": true,
+      "verified": false
+    },
+    "pea_traits": {
+      "title": "USDA NRCS Pullman Plant Guide: Pea",
+      "url": "https://plants.usda.gov/DocumentLibrary/plantguide/pdf/pg_pisa6.pdf",
+      "locator": "Page 1: Uses and Description",
+      "supports": "Peas are legumes; symbiotic root nodules fix atmospheric nitrogen. Austrian winter peas are adapted to cold temperatures.",
+      "limitations": "Does not establish numeric frost tolerance, local water-need categories, or minimum season days.",
+      "accessed": "2026-11-14",
+      "opened_and_read": true,
+      "verified": false
+    },
+    "silage": {
+      "title": "WSU Extension FS358E: Increasing Value of Corn Silage in Corn-Triticale System by Intercropping with Forage Soybean",
+      "url": "https://s3.wp.wsu.edu/uploads/sites/2676/2022/03/Increasing_the_value_of_corn_silage_FS358E.pdf",
+      "locator": "Pages 1\u20132: Background and Prosser trial; page 4: planting guidance",
+      "supports": "Annual corn\u2013triticale double cropping and forage-soybean intercropping; research near Prosser.",
+      "limitations": "Regional evidence, not a confirmed rotation on the demonstration field; no complete monthly cover calendar.",
+      "accessed": "2026-11-14",
+      "opened_and_read": true,
+      "verified": false
+    },
+    "ecology": {
+      "title": "Washington Department of Ecology: Voluntary Clean Water Guidance, Crop Systems",
+      "url": "https://apps.ecology.wa.gov/publications/parts/2010008part2.pdf",
+      "locator": "Printed page 9: Recommendations and Considerations",
+      "supports": "Lists corn\u2013triticale\u2013wheat as a rotation example subject to regional and site-specific factors.",
+      "limitations": "Does not assign one crop per calendar year, identify wheat growth habit, or give a Yakima field schedule.",
+      "accessed": "2026-11-14",
+      "opened_and_read": true,
+      "verified": false
+    },
+    "skagit": {
+      "title": "Washington Soil Health Initiative: Northwestern Washington Annual Cropping Systems",
+      "url": "https://washingtonsoilhealthinitiative.com/northwestern-washington-annual-cropping-systems-rm/",
+      "locator": "Current Situation and soil physical properties",
+      "supports": "Skagit-area potato-driven systems include small grains, silage corn and forages; growers consider cover crops and longer intervals.",
+      "limitations": "No exact three-year sequences; do not infer crop order from the crop list.",
+      "accessed": "2026-11-14",
+      "opened_and_read": true,
+      "verified": false
+    },
+    "nwrec": {
+      "title": "Washington Soil Health Initiative: Six sites, six unique soils, and sixteen crops",
+      "url": "https://washingtonsoilhealthinitiative.com/2024/09/six-sites-six-unique-soils-and-sixteen-crops/",
+      "locator": "Northwest Washington Potato-Based Annual Cropping Systems LTARE site",
+      "supports": "Lists potato, spring barley, silage corn and winter wheat at Mount Vernon.",
+      "limitations": "A crop list is not a rotation sequence.",
+      "accessed": "2026-11-14",
+      "opened_and_read": true,
+      "verified": false
+    },
+    "residue": {
+      "title": "WSU STEEP: New Minimum Tillage Systems for Legume-Winter Wheat Cropping Sequence",
+      "url": "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/new-minimum-tillage-systems-for-legume-winter-wheat-cropping-sequence/",
+      "locator": "The Problem; Need for a 3-Year Rotation",
+      "supports": "Highlights limited legume residue and erosion risks; crop presence alone does not establish protective ground cover.",
+      "limitations": "Historical guidance; no field-specific cover fractions or erosion prediction.",
+      "accessed": "2026-11-14",
+      "opened_and_read": true,
+      "verified": false
+    }
+  },
+  "crops": [
+    {
+      "id": "potato",
+      "name": "Potato",
+      "type": "cash",
+      "water_need": "TODO",
+      "frost_tolerance": "TODO",
+      "min_season_days": null,
+      "nitrogen_fixing": null,
+      "root_depth": "TODO",
+      "ground_cover_months": null,
+      "notes": "Proposed entry; local management and team review required.",
+      "source_url": "https://washingtonsoilhealthinitiative.com/2024/09/six-sites-six-unique-soils-and-sixteen-crops/",
+      "verified": false,
+      "trait_sources": {
+        "name": [
+          "https://washingtonsoilhealthinitiative.com/2024/09/six-sites-six-unique-soils-and-sixteen-crops/"
+        ],
+        "type": [
+          "https://washingtonsoilhealthinitiative.com/2024/09/six-sites-six-unique-soils-and-sixteen-crops/"
+        ]
+      },
+      "review_status": "pending"
+    },
+    {
+      "id": "winter_wheat",
+      "name": "Winter wheat",
+      "type": "cash",
+      "water_need": "TODO",
+      "frost_tolerance": "TODO",
+      "min_season_days": null,
+      "nitrogen_fixing": null,
+      "root_depth": "TODO",
+      "ground_cover_months": null,
+      "notes": "Proposed entry; local management and team review required.",
+      "source_url": "https://www.ars.usda.gov/research/publications/publication/?seqNo115=427958",
+      "verified": false,
+      "trait_sources": {
+        "name": [
+          "https://www.ars.usda.gov/research/publications/publication/?seqNo115=427958"
+        ],
+        "type": [
+          "https://www.ars.usda.gov/research/publications/publication/?seqNo115=427958"
+        ]
+      },
+      "review_status": "pending"
+    },
+    {
+      "id": "spring_wheat",
+      "name": "Spring wheat",
+      "type": "cash",
+      "water_need": "TODO",
+      "frost_tolerance": "TODO",
+      "min_season_days": null,
+      "nitrogen_fixing": null,
+      "root_depth": "TODO",
+      "ground_cover_months": null,
+      "notes": "Proposed entry; local management and team review required.",
+      "source_url": "https://www.ars.usda.gov/research/publications/publication/?seqNo115=427958",
+      "verified": false,
+      "trait_sources": {
+        "name": [
+          "https://www.ars.usda.gov/research/publications/publication/?seqNo115=427958"
+        ],
+        "type": [
+          "https://www.ars.usda.gov/research/publications/publication/?seqNo115=427958"
+        ]
+      },
+      "review_status": "pending"
+    },
+    {
+      "id": "spring_barley",
+      "name": "Spring barley",
+      "type": "cash",
+      "water_need": "TODO",
+      "frost_tolerance": "TODO",
+      "min_season_days": null,
+      "nitrogen_fixing": null,
+      "root_depth": "TODO",
+      "ground_cover_months": null,
+      "notes": "Proposed entry; local management and team review required.",
+      "source_url": "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/austrian-winter-pea-a-good-alternative-to-fallow/",
+      "verified": false,
+      "trait_sources": {
+        "name": [
+          "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/austrian-winter-pea-a-good-alternative-to-fallow/"
+        ],
+        "type": [
+          "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/austrian-winter-pea-a-good-alternative-to-fallow/"
+        ]
+      },
+      "review_status": "pending"
+    },
+    {
+      "id": "spring_pea",
+      "name": "Spring pea",
+      "type": "legume",
+      "water_need": "TODO",
+      "frost_tolerance": "TODO",
+      "min_season_days": null,
+      "nitrogen_fixing": true,
+      "root_depth": "TODO",
+      "ground_cover_months": null,
+      "notes": "Nitrogen fixation depends on compatible rhizobia and growing conditions; no nitrogen credit is assumed.",
+      "source_url": "https://plants.usda.gov/DocumentLibrary/plantguide/pdf/pg_pisa6.pdf",
+      "verified": false,
+      "trait_sources": {
+        "name": [
+          "https://plants.usda.gov/DocumentLibrary/plantguide/pdf/pg_pisa6.pdf"
+        ],
+        "type": [
+          "https://plants.usda.gov/DocumentLibrary/plantguide/pdf/pg_pisa6.pdf"
+        ],
+        "nitrogen_fixing": [
+          "https://plants.usda.gov/DocumentLibrary/plantguide/pdf/pg_pisa6.pdf"
+        ]
+      },
+      "review_status": "pending"
+    },
+    {
+      "id": "winter_pea_seed",
+      "name": "Austrian winter pea (seed)",
+      "type": "legume",
+      "water_need": "TODO",
+      "frost_tolerance": "Adapted to cold temperatures; numeric injury threshold TODO",
+      "min_season_days": null,
+      "nitrogen_fixing": true,
+      "root_depth": "TODO",
+      "ground_cover_months": null,
+      "notes": "Nitrogen fixation depends on compatible rhizobia and growing conditions; no nitrogen credit is assumed.",
+      "source_url": "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/austrian-winter-pea-a-good-alternative-to-fallow/",
+      "verified": false,
+      "trait_sources": {
+        "name": [
+          "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/austrian-winter-pea-a-good-alternative-to-fallow/"
+        ],
+        "type": [
+          "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/austrian-winter-pea-a-good-alternative-to-fallow/"
+        ],
+        "nitrogen_fixing": [
+          "https://plants.usda.gov/DocumentLibrary/plantguide/pdf/pg_pisa6.pdf"
+        ],
+        "frost_tolerance": [
+          "https://plants.usda.gov/DocumentLibrary/plantguide/pdf/pg_pisa6.pdf"
+        ]
+      },
+      "review_status": "pending"
+    },
+    {
+      "id": "winter_pea_green",
+      "name": "Austrian winter pea (green manure)",
+      "type": "cover",
+      "water_need": "TODO",
+      "frost_tolerance": "Adapted to cold temperatures; numeric injury threshold TODO",
+      "min_season_days": null,
+      "nitrogen_fixing": true,
+      "root_depth": "TODO",
+      "ground_cover_months": null,
+      "notes": "Nitrogen fixation depends on compatible rhizobia and growing conditions; no nitrogen credit is assumed.",
+      "source_url": "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/austrian-winter-pea-a-good-alternative-to-fallow/",
+      "verified": false,
+      "trait_sources": {
+        "name": [
+          "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/austrian-winter-pea-a-good-alternative-to-fallow/"
+        ],
+        "type": [
+          "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/austrian-winter-pea-a-good-alternative-to-fallow/"
+        ],
+        "nitrogen_fixing": [
+          "https://plants.usda.gov/DocumentLibrary/plantguide/pdf/pg_pisa6.pdf"
+        ],
+        "frost_tolerance": [
+          "https://plants.usda.gov/DocumentLibrary/plantguide/pdf/pg_pisa6.pdf"
+        ]
+      },
+      "review_status": "pending"
+    },
+    {
+      "id": "silage_corn",
+      "name": "Silage corn",
+      "type": "cash",
+      "water_need": "TODO",
+      "frost_tolerance": "TODO",
+      "min_season_days": null,
+      "nitrogen_fixing": null,
+      "root_depth": "TODO",
+      "ground_cover_months": null,
+      "notes": "Proposed entry; local management and team review required.",
+      "source_url": "https://s3.wp.wsu.edu/uploads/sites/2676/2022/03/Increasing_the_value_of_corn_silage_FS358E.pdf",
+      "verified": false,
+      "trait_sources": {
+        "name": [
+          "https://s3.wp.wsu.edu/uploads/sites/2676/2022/03/Increasing_the_value_of_corn_silage_FS358E.pdf"
+        ],
+        "type": [
+          "https://s3.wp.wsu.edu/uploads/sites/2676/2022/03/Increasing_the_value_of_corn_silage_FS358E.pdf"
+        ]
+      },
+      "review_status": "pending"
+    },
+    {
+      "id": "triticale",
+      "name": "Triticale (forage)",
+      "type": "cash",
+      "water_need": "TODO",
+      "frost_tolerance": "TODO",
+      "min_season_days": null,
+      "nitrogen_fixing": null,
+      "root_depth": "TODO",
+      "ground_cover_months": null,
+      "notes": "Proposed entry; local management and team review required.",
+      "source_url": "https://s3.wp.wsu.edu/uploads/sites/2676/2022/03/Increasing_the_value_of_corn_silage_FS358E.pdf",
+      "verified": false,
+      "trait_sources": {
+        "name": [
+          "https://s3.wp.wsu.edu/uploads/sites/2676/2022/03/Increasing_the_value_of_corn_silage_FS358E.pdf"
+        ],
+        "type": [
+          "https://s3.wp.wsu.edu/uploads/sites/2676/2022/03/Increasing_the_value_of_corn_silage_FS358E.pdf"
+        ]
+      },
+      "review_status": "pending"
+    },
+    {
+      "id": "forage_soybean",
+      "name": "Forage soybean",
+      "type": "legume",
+      "water_need": "TODO",
+      "frost_tolerance": "TODO",
+      "min_season_days": null,
+      "nitrogen_fixing": true,
+      "root_depth": "TODO",
+      "ground_cover_months": null,
+      "notes": "WSU discusses soybean inoculation; variety, herbicide compatibility and local establishment need review.",
+      "source_url": "https://s3.wp.wsu.edu/uploads/sites/2676/2022/03/Increasing_the_value_of_corn_silage_FS358E.pdf",
+      "verified": false,
+      "trait_sources": {
+        "name": [
+          "https://s3.wp.wsu.edu/uploads/sites/2676/2022/03/Increasing_the_value_of_corn_silage_FS358E.pdf"
+        ],
+        "type": [
+          "https://s3.wp.wsu.edu/uploads/sites/2676/2022/03/Increasing_the_value_of_corn_silage_FS358E.pdf"
+        ],
+        "nitrogen_fixing": [
+          "https://s3.wp.wsu.edu/uploads/sites/2676/2022/03/Increasing_the_value_of_corn_silage_FS358E.pdf"
+        ]
+      },
+      "review_status": "pending"
+    },
+    {
+      "id": "wheat_unspecified",
+      "name": "Wheat (growth habit TODO)",
+      "type": "cash",
+      "water_need": "TODO",
+      "frost_tolerance": "TODO",
+      "min_season_days": null,
+      "nitrogen_fixing": null,
+      "root_depth": "TODO",
+      "ground_cover_months": null,
+      "notes": "Proposed entry; local management and team review required.",
+      "source_url": "https://apps.ecology.wa.gov/publications/parts/2010008part2.pdf",
+      "verified": false,
+      "trait_sources": {
+        "name": [
+          "https://apps.ecology.wa.gov/publications/parts/2010008part2.pdf"
+        ],
+        "type": [
+          "https://apps.ecology.wa.gov/publications/parts/2010008part2.pdf"
+        ]
+      },
+      "review_status": "pending"
+    }
+  ]
+}

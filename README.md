@@ -1,8 +1,9 @@
 # Field Shift — NASA Space Apps 2026
 
-Washington farm-planning prototype. **M2:** responsive climate dashboard using the
-verified M1 NASA POWER caches. Choose a farm, inspect rainfall and modeled wetness,
-and set four planning priorities. Crop scoring remains out of scope until M3.
+Washington farm-planning prototype. **M3 software implemented; agricultural data review incomplete.** The climate
+dashboard uses unchanged M1 NASA POWER caches. Three rotation comparison slots
+per farm connect to the four priority sliders. All real candidates remain unscored
+until essential agricultural inputs are sourced and approved.
 
 ## Setup and run
 Requires Node.js 20.19+ or 22.12+ and Python 3.12+.
@@ -43,11 +44,23 @@ Normal app use must read cached aggregates, never query NASA POWER.
 - `docs/M1_VERIFICATION.md`: pipeline verification results and comparison.
 - `docs/M2_VERIFICATION.md`: dashboard tests, browser checks and changed files.
 - `docs/AI_DISCLOSURE.md`: AI assistance and team review responsibilities.
+- `docs/AGRICULTURAL_REVIEW.md`: source URLs, proposed claims and exact data gaps.
+- `docs/M3_VERIFICATION.md`: M3 tests, scope and completion limits.
 
 ## Preview deployment
 Vercel static hosting: build command `npm run build`, output `dist`, Vite preset.
 The connected Vercel team currently requires access authorization; no preview URL
-has been created. See the M2 verification report. Do not begin M3 without approval.
+has been created. See the M2 verification report. M3 was not deployed. Do not begin M4 without approval.
 
 Optional browser checks use an existing Playwright installation (no new project
 dependency): start `npm run preview`, then `node tests/browser-smoke.cjs`.
+
+## M3 comparison checks
+
+`npm test` includes the pure scoring tests. With the existing optional Playwright
+installation and a running production preview, use `node tests/m3-browser.cjs`.
+
+`data/crops.json` and `data/rotations.json` contain proposed agricultural records.
+Do not change `verified` flags merely to make scores appear. Follow the review
+procedure in `docs/AGRICULTURAL_REVIEW.md`. `src/config/config.json` holds all
+provisional category mappings, summer months and soil component weights.
