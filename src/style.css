@@ -785,3 +785,57 @@ footer p {
 .management-calendar button:disabled { opacity: .5; cursor: not-allowed; }
 .exposure-result { background: #edf5f1; border-left: 3px solid #39765a; padding: .8rem; margin-top: 1rem; }
 @media (max-width: 380px) { .calendar-months { grid-template-columns: 1fr; } }
+
+/* M4: status and exposure are separate; text preserves meaning without color. */
+.rainfall-calendar { margin: 1.2rem 0; }
+.rainfall-overlap { padding: 1rem; border: 1px solid #bbcdbb; border-radius: 8px; background: #f1f6ee; }
+.rainfall-overlap > strong { font-size: 1.6rem; color: #244e3b; }
+.calendar-legend { display: flex; flex-wrap: wrap; gap: .4rem; }
+.status-key { padding: .3rem; border: 1px solid #bcc9b9; border-radius: 3px; }
+.rainfall-year h5 { font-size: 1rem; margin: 1rem 0 .5rem; }
+.rainfall-months { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .4rem; }
+.rainfall-month { min-width: 0; padding: .5rem; border: 1px solid #c4cec0; border-radius: 5px; font-size: .72rem; display: flex; flex-direction: column; gap: .3rem; overflow-wrap: anywhere; }
+.status-cash { background: #e7f1e5; }
+.status-cover { background: #e4eff4; }
+.status-bare { background: #f7e8d7; }
+.status-unknown { background: #f1f1f1; }
+.exposure-highlight { outline: 2px solid #9f4a16; outline-offset: -2px; }
+.exposure-marker { color: #873f17; }
+.rain-marker { font-weight: 700; }
+.plan-open, .plan-actions button { padding: .75rem 1rem; background: #244e3b; color: white; border: 0; border-radius: 7px; cursor: pointer; }
+.print-plan { margin: 2rem 0; padding: 2rem; border: 2px solid #9bad96; border-radius: 10px; background: white; overflow-wrap: anywhere; }
+.print-plan h2 { font-size: 1.8rem; }
+.print-plan h3 { margin: 1.4rem 0 .7rem; }
+.print-plan p, .print-plan li { font-size: .9rem; line-height: 1.6; }
+.print-plan .rainfall-months { grid-template-columns: repeat(6,minmax(0,1fr)); }
+.plan-actions { display: flex; flex-wrap: wrap; gap: .8rem; align-items: center; }
+.plan-actions p { flex-basis: 100%; }
+.plan-metrics { display: grid; gap: .5rem; }
+.plan-metrics dd { margin: 0; font-weight: 600; }
+.plan-sources a { overflow-wrap: anywhere; }
+.print-plan .plan-disclaimer { display: block; margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid #bbb; }
+@media(max-width:540px) {
+  .rainfall-months { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .print-plan { padding: 1rem; }
+  .print-plan .rainfall-months { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media print {
+  @page { size: auto; margin: 14mm; }
+  html, body, #root, main { width: auto !important; max-width: none !important; margin: 0 !important; padding: 0 !important; background: white !important; color: black; }
+  .topbar, .skip-link, main > :not(.rotation-section), .rotation-section > :not(.print-plan), .plan-actions { display: none !important; }
+  .rotation-section { border: 0; margin: 0; padding: 0; }
+  .print-plan { margin: 0; padding: 0; border: 0; border-radius: 0; }
+  .print-plan p, .print-plan li, .print-plan dd, .print-plan dt { font-size: 10pt; line-height: 1.4; }
+  .print-plan h2 { font-size: 18pt; }
+  .print-plan h3 { font-size: 13pt; break-after: avoid; }
+  .print-plan .rainfall-months { grid-template-columns: repeat(4,minmax(0,1fr)); }
+  .rainfall-year { break-inside: avoid; }
+  .rainfall-month { font-size: 9pt; border-color: #777; }
+  .rainfall-overlap, .plan-disclaimer, .plan-metrics > div, .plan-sources li { break-inside: avoid; }
+  a { color: black; text-decoration: underline; }
+  .rainfall-month, .status-key { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}
+@media print {
+  .print-plan h4, .print-plan h5 { break-after: avoid; }
+  .print-plan p { orphans: 3; widows: 3; }
+}

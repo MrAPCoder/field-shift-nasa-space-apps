@@ -1,6 +1,6 @@
 # Field Shift — NASA Space Apps 2026
 
-Washington farm-planning prototype. **Approved M3 Palouse-first demonstration implemented.**
+Washington farm-planning prototype. **M4 rainfall visualization and printable plans implemented.**
 The dashboard uses unchanged M1 NASA POWER caches and retains all nine rotation
 slots across three regions. Three published Palouse sequences are approved only
 as research scenarios. Complete, explicitly confirmed farmer calendars enable a
@@ -48,11 +48,13 @@ Normal app use must read cached aggregates, never query NASA POWER.
 - `docs/AI_DISCLOSURE.md`: AI assistance and team review responsibilities.
 - `docs/AGRICULTURAL_REVIEW.md`: source URLs, proposed claims and exact data gaps.
 - `docs/M3_VERIFICATION.md`: M3 tests, scope and completion limits.
+- `docs/M4_VERIFICATION.md`: visual calendars, print checks and M4 scope.
 
 ## Preview deployment
 Vercel static hosting: build command `npm run build`, output `dist`, Vite preset.
-The connected Vercel team currently requires access authorization; no preview URL
-has been created. See the M2 verification report. M3 was not deployed. Do not begin M4 without approval.
+M4 targets a preview in the existing Field Shift project, never production.
+The task completion report records the actual deployment URL/status and any access
+limitations. Deployment protection must not be changed without approval.
 
 Optional browser checks use an existing Playwright installation (no new project
 dependency): start `npm run preview`, then `node tests/browser-smoke.cjs`.
@@ -84,3 +86,37 @@ erosion reduction. Edit any entry to withdraw confirmation; confirm again after
 review. Entries survive farm changes in the current tab, but refresh clears them.
 Keep erosion importance above zero for an overall total; the other sliders cannot
 change an erosion-only total. Never present hypothetical inputs as farm observations.
+
+
+## M4 end-to-end demonstration and print
+
+1. Select any Washington farm and inspect its cached climate charts.
+2. Select a comparison baseline and adjust the four importance sliders.
+3. For a scored demonstration, select Palouse and enter/confirm each scenario's
+   M3 calendar as described above. Do not represent hypothetical inputs as observations.
+4. Read each card's visual calendar: management status, NASA monthly rain, entered
+   exposure, high-rain labels and outlines. Unknown is never treated as bare soil.
+5. Select **View printable plan** on the desired rotation, review its information,
+   then **Print this plan**. Browser printing can save a PDF. Missing planting dates
+   and other evidence remain explicitly unknown, including on paper.
+
+No NASA API requests occur during normal use. No PDF library or new dependency was
+added. Calendar inputs remain tab-local and are lost on refresh. The visible
+exposure percentage describes rainfall-weighted assumptions, not measured erosion.
+
+M4 tests (existing Playwright/Chromium required for browser tests):
+
+```sh
+npm test
+.venv/bin/python -m unittest discover -s tests -p 'test_*.py' -v
+npm run build
+npm run preview -- --host 127.0.0.1
+# In a second terminal:
+node tests/browser-smoke.cjs
+node tests/m3-browser.cjs
+node tests/m4-browser.cjs
+```
+
+Optional browser overrides: `PREVIEW_URL` and `CHROMIUM_PATH`. Test screenshots and
+browser-generated sample PDF go to ignored `work/`; all sample calendar inputs
+are synthetic. This completes M4 only; Sunday AI features and trends are out of scope.

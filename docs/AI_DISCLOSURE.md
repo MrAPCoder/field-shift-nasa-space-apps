@@ -45,3 +45,14 @@ All numeric calendar fixtures in automated tests are labeled synthetic. NASA dat
 dependencies and M1/M2 climate behavior remain unchanged. The simple input calendar
 was explicitly authorized for M3; no M4 risk visualization or print plan was added.
 The precise files modified in this completion are listed in M3_VERIFICATION.md.
+
+## M4 assistance
+Codex continued from merged main `6c40195` and implemented the month-by-month
+rainfall/exposure visualization, print view, display helpers, responsive/print CSS,
+unit tests and browser interaction tests. It reused M3's farmer inputs and scoring
+without changing agricultural evidence, NASA caches or scoring coefficients.
+The wettest-month highlighting rule is explicitly a display convention; numerical
+exposure results remain M3 calculations. Browser fixtures are labeled synthetic.
+Codex ran tests and inspected browser-generated print output; no PDF dependency
+was introduced. Modified files and results are listed in M4_VERIFICATION.md.
+No Sunday AI features or trend analysis were implemented.
