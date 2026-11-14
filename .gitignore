@@ -147,3 +147,10 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Local M1 work and generated build artifacts
+.venv/
+node_modules/
+dist/
+work/
+__pycache__/

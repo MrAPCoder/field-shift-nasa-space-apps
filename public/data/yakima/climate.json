@@ -1,0 +1,884 @@
+{
+  "schema_version": 1,
+  "farm": {
+    "id": "yakima",
+    "name": "Yakima Valley",
+    "latitude": 46.25474339,
+    "longitude": -119.7284636
+  },
+  "period": {
+    "start": "1981-01-01",
+    "end": "2025-12-31"
+  },
+  "units": {
+    "T2M_MAX": "C",
+    "T2M_MIN": "C",
+    "PRECTOTCORR": "mm/day",
+    "RH2M": "%",
+    "ALLSKY_SFC_SW_DWN": "MJ/m^2/day",
+    "GWETROOT": "1"
+  },
+  "thresholds": {
+    "hot_day_c": 32,
+    "frost_day_c": 0
+  },
+  "provenance": [
+    {
+      "file": "raw/1981-1985.json.gz",
+      "sha256": "1af141ed6548f43533f8be09dfc730f2cfe7b03c50b063ed4a625ba5075aa34b",
+      "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CRH2M%2CALLSKY_SFC_SW_DWN%2CGWETROOT&community=AG&latitude=46.25474339&longitude=-119.7284636&start=19810101&end=19851231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T18:40:15.719343+00:00",
+      "messages": [],
+      "header": {
+        "title": "NASA/POWER Source Native Resolution Daily Data",
+        "api": {
+          "version": "v2.10.3",
+          "name": "POWER Daily API"
+        },
+        "sources": [
+          "MERRA2",
+          "SRB",
+          "POWER"
+        ],
+        "fill_value": -999.0,
+        "time_standard": "LST",
+        "start": "19810101",
+        "end": "19851231"
+      }
+    },
+    {
+      "file": "raw/1986-1990.json.gz",
+      "sha256": "741c53244cb4f784f4357e2b5e156c51ef50404c61aa4d8e1d6a4fd0f1223cf7",
+      "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CRH2M%2CALLSKY_SFC_SW_DWN%2CGWETROOT&community=AG&latitude=46.25474339&longitude=-119.7284636&start=19860101&end=19901231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T18:40:18.264544+00:00",
+      "messages": [],
+      "header": {
+        "title": "NASA/POWER Source Native Resolution Daily Data",
+        "api": {
+          "version": "v2.10.3",
+          "name": "POWER Daily API"
+        },
+        "sources": [
+          "MERRA2",
+          "SRB",
+          "POWER"
+        ],
+        "fill_value": -999.0,
+        "time_standard": "LST",
+        "start": "19860101",
+        "end": "19901231"
+      }
+    },
+    {
+      "file": "raw/1991-1995.json.gz",
+      "sha256": "e3920df46e76f1832b28bbbf07f9965ceff47a93c2e31d1866da33719ae00e45",
+      "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CRH2M%2CALLSKY_SFC_SW_DWN%2CGWETROOT&community=AG&latitude=46.25474339&longitude=-119.7284636&start=19910101&end=19951231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T18:40:20.224476+00:00",
+      "messages": [],
+      "header": {
+        "title": "NASA/POWER Source Native Resolution Daily Data",
+        "api": {
+          "version": "v2.10.3",
+          "name": "POWER Daily API"
+        },
+        "sources": [
+          "MERRA2",
+          "SRB",
+          "POWER"
+        ],
+        "fill_value": -999.0,
+        "time_standard": "LST",
+        "start": "19910101",
+        "end": "19951231"
+      }
+    },
+    {
+      "file": "raw/1996-2000.json.gz",
+      "sha256": "0eb3711ba7bbfcc433bd5d40a7f8d2d9ffdd94b58b9894d76e5026b33f7c8d4e",
+      "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CRH2M%2CALLSKY_SFC_SW_DWN%2CGWETROOT&community=AG&latitude=46.25474339&longitude=-119.7284636&start=19960101&end=20001231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T18:40:21.868207+00:00",
+      "messages": [],
+      "header": {
+        "title": "NASA/POWER Source Native Resolution Daily Data",
+        "api": {
+          "version": "v2.10.3",
+          "name": "POWER Daily API"
+        },
+        "sources": [
+          "MERRA2",
+          "SRB",
+          "POWER"
+        ],
+        "fill_value": -999.0,
+        "time_standard": "LST",
+        "start": "19960101",
+        "end": "20001231"
+      }
+    },
+    {
+      "file": "raw/2001-2005.json.gz",
+      "sha256": "8d32396136014134bd8bd90bb19d822a9dc4545a44c136735922aab6912a6b4a",
+      "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CRH2M%2CALLSKY_SFC_SW_DWN%2CGWETROOT&community=AG&latitude=46.25474339&longitude=-119.7284636&start=20010101&end=20051231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T18:40:24.489978+00:00",
+      "messages": [],
+      "header": {
+        "title": "NASA/POWER Source Native Resolution Daily Data",
+        "api": {
+          "version": "v2.10.3",
+          "name": "POWER Daily API"
+        },
+        "sources": [
+          "MERRA2",
+          "SYN1DEG",
+          "POWER"
+        ],
+        "fill_value": -999.0,
+        "time_standard": "LST",
+        "start": "20010101",
+        "end": "20051231"
+      }
+    },
+    {
+      "file": "raw/2006-2010.json.gz",
+      "sha256": "f54fe772767390397995a86b0538916461be17429c5d397b500a2093908b5a6e",
+      "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CRH2M%2CALLSKY_SFC_SW_DWN%2CGWETROOT&community=AG&latitude=46.25474339&longitude=-119.7284636&start=20060101&end=20101231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T18:40:26.930964+00:00",
+      "messages": [],
+      "header": {
+        "title": "NASA/POWER Source Native Resolution Daily Data",
+        "api": {
+          "version": "v2.10.3",
+          "name": "POWER Daily API"
+        },
+        "sources": [
+          "MERRA2",
+          "SYN1DEG",
+          "POWER"
+        ],
+        "fill_value": -999.0,
+        "time_standard": "LST",
+        "start": "20060101",
+        "end": "20101231"
+      }
+    },
+    {
+      "file": "raw/2011-2015.json.gz",
+      "sha256": "9a48bcf99d7fdbbb1c37263f3657bc186f2dbe97ab1c9367148802e5b4b957f6",
+      "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CRH2M%2CALLSKY_SFC_SW_DWN%2CGWETROOT&community=AG&latitude=46.25474339&longitude=-119.7284636&start=20110101&end=20151231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T18:40:29.030971+00:00",
+      "messages": [],
+      "header": {
+        "title": "NASA/POWER Source Native Resolution Daily Data",
+        "api": {
+          "version": "v2.10.3",
+          "name": "POWER Daily API"
+        },
+        "sources": [
+          "MERRA2",
+          "SYN1DEG",
+          "POWER"
+        ],
+        "fill_value": -999.0,
+        "time_standard": "LST",
+        "start": "20110101",
+        "end": "20151231"
+      }
+    },
+    {
+      "file": "raw/2016-2020.json.gz",
+      "sha256": "e26da426b68abd082ce793e32d014c2bc93d7299539ee8b21dae7905ae9895ea",
+      "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CRH2M%2CALLSKY_SFC_SW_DWN%2CGWETROOT&community=AG&latitude=46.25474339&longitude=-119.7284636&start=20160101&end=20201231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T18:40:30.200218+00:00",
+      "messages": [],
+      "header": {
+        "title": "NASA/POWER Source Native Resolution Daily Data",
+        "api": {
+          "version": "v2.10.3",
+          "name": "POWER Daily API"
+        },
+        "sources": [
+          "MERRA2",
+          "SYN1DEG",
+          "POWER"
+        ],
+        "fill_value": -999.0,
+        "time_standard": "LST",
+        "start": "20160101",
+        "end": "20201231"
+      }
+    },
+    {
+      "file": "raw/2021-2025.json.gz",
+      "sha256": "e02c4ea14ffe04f1309246281af6eec8ca5c87dd2a738cc59c673a7d1f43ffef",
+      "url": "https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M_MAX%2CT2M_MIN%2CPRECTOTCORR%2CRH2M%2CALLSKY_SFC_SW_DWN%2CGWETROOT&community=AG&latitude=46.25474339&longitude=-119.7284636&start=20210101&end=20251231&format=JSON&time-standard=LST",
+      "retrieved_at": "2026-11-14T18:40:32.105332+00:00",
+      "messages": [],
+      "header": {
+        "title": "NASA/POWER Source Native Resolution Daily Data",
+        "api": {
+          "version": "v2.10.3",
+          "name": "POWER Daily API"
+        },
+        "sources": [
+          "MERRA2",
+          "SYN1DEG",
+          "POWER"
+        ],
+        "fill_value": -999.0,
+        "time_standard": "LST",
+        "start": "20210101",
+        "end": "20251231"
+      }
+    }
+  ],
+  "summary": {
+    "mean_rainfall_mm": 321.4933333333333,
+    "rainfall_mm_valid_years": 45,
+    "mean_frost_free_days": 195.82222222222222,
+    "frost_free_days_valid_years": 45,
+    "mean_hot_days": 37.86666666666667,
+    "hot_days_valid_years": 45
+  },
+  "annual": [
+    {
+      "year": 1981,
+      "rainfall_mm": 343.29999999999995,
+      "frost_days": 99,
+      "last_spring_frost": "1981-04-14",
+      "first_fall_frost": "1981-11-04",
+      "frost_free_days": 203,
+      "hot_days": 33
+    },
+    {
+      "year": 1982,
+      "rainfall_mm": 462.87,
+      "frost_days": 139,
+      "last_spring_frost": "1982-05-05",
+      "first_fall_frost": "1982-10-18",
+      "frost_free_days": 165,
+      "hot_days": 32
+    },
+    {
+      "year": 1983,
+      "rainfall_mm": 534.5999999999999,
+      "frost_days": 86,
+      "last_spring_frost": "1983-04-13",
+      "first_fall_frost": "1983-11-08",
+      "frost_free_days": 208,
+      "hot_days": 17
+    },
+    {
+      "year": 1984,
+      "rainfall_mm": 418.77,
+      "frost_days": 119,
+      "last_spring_frost": "1984-04-13",
+      "first_fall_frost": "1984-10-17",
+      "frost_free_days": 186,
+      "hot_days": 20
+    },
+    {
+      "year": 1985,
+      "rainfall_mm": 273.86,
+      "frost_days": 143,
+      "last_spring_frost": "1985-04-21",
+      "first_fall_frost": "1985-10-07",
+      "frost_free_days": 168,
+      "hot_days": 29
+    },
+    {
+      "year": 1986,
+      "rainfall_mm": 373.69,
+      "frost_days": 105,
+      "last_spring_frost": "1986-04-30",
+      "first_fall_frost": "1986-11-07",
+      "frost_free_days": 190,
+      "hot_days": 44
+    },
+    {
+      "year": 1987,
+      "rainfall_mm": 316.25,
+      "frost_days": 101,
+      "last_spring_frost": "1987-04-19",
+      "first_fall_frost": "1987-11-16",
+      "frost_free_days": 210,
+      "hot_days": 31
+    },
+    {
+      "year": 1988,
+      "rainfall_mm": 324.92999999999995,
+      "frost_days": 111,
+      "last_spring_frost": "1988-05-01",
+      "first_fall_frost": "1988-10-27",
+      "frost_free_days": 178,
+      "hot_days": 36
+    },
+    {
+      "year": 1989,
+      "rainfall_mm": 332.5899999999999,
+      "frost_days": 115,
+      "last_spring_frost": "1989-04-03",
+      "first_fall_frost": "1989-10-28",
+      "frost_free_days": 207,
+      "hot_days": 14
+    },
+    {
+      "year": 1990,
+      "rainfall_mm": 368.95,
+      "frost_days": 99,
+      "last_spring_frost": "1990-03-27",
+      "first_fall_frost": "1990-11-01",
+      "frost_free_days": 218,
+      "hot_days": 44
+    },
+    {
+      "year": 1991,
+      "rainfall_mm": 360.85,
+      "frost_days": 115,
+      "last_spring_frost": "1991-04-26",
+      "first_fall_frost": "1991-10-27",
+      "frost_free_days": 183,
+      "hot_days": 27
+    },
+    {
+      "year": 1992,
+      "rainfall_mm": 370.67999999999995,
+      "frost_days": 87,
+      "last_spring_frost": "1992-04-23",
+      "first_fall_frost": "1992-10-15",
+      "frost_free_days": 174,
+      "hot_days": 39
+    },
+    {
+      "year": 1993,
+      "rainfall_mm": 301.64,
+      "frost_days": 127,
+      "last_spring_frost": "1993-04-14",
+      "first_fall_frost": "1993-11-04",
+      "frost_free_days": 203,
+      "hot_days": 16
+    },
+    {
+      "year": 1994,
+      "rainfall_mm": 376.53,
+      "frost_days": 115,
+      "last_spring_frost": "1994-03-25",
+      "first_fall_frost": "1994-10-29",
+      "frost_free_days": 217,
+      "hot_days": 37
+    },
+    {
+      "year": 1995,
+      "rainfall_mm": 525.3,
+      "frost_days": 99,
+      "last_spring_frost": "1995-04-19",
+      "first_fall_frost": "1995-10-28",
+      "frost_free_days": 191,
+      "hot_days": 17
+    },
+    {
+      "year": 1996,
+      "rainfall_mm": 514.11,
+      "frost_days": 115,
+      "last_spring_frost": "1996-05-08",
+      "first_fall_frost": "1996-10-20",
+      "frost_free_days": 164,
+      "hot_days": 29
+    },
+    {
+      "year": 1997,
+      "rainfall_mm": 349.54999999999995,
+      "frost_days": 111,
+      "last_spring_frost": "1997-04-12",
+      "first_fall_frost": "1997-10-24",
+      "frost_free_days": 194,
+      "hot_days": 19
+    },
+    {
+      "year": 1998,
+      "rainfall_mm": 411.2,
+      "frost_days": 91,
+      "last_spring_frost": "1998-04-13",
+      "first_fall_frost": "1998-10-30",
+      "frost_free_days": 199,
+      "hot_days": 42
+    },
+    {
+      "year": 1999,
+      "rainfall_mm": 329.31999999999994,
+      "frost_days": 102,
+      "last_spring_frost": "1999-05-10",
+      "first_fall_frost": "1999-10-16",
+      "frost_free_days": 158,
+      "hot_days": 31
+    },
+    {
+      "year": 2000,
+      "rainfall_mm": 293.32,
+      "frost_days": 126,
+      "last_spring_frost": "2000-04-24",
+      "first_fall_frost": "2000-10-22",
+      "frost_free_days": 180,
+      "hot_days": 29
+    },
+    {
+      "year": 2001,
+      "rainfall_mm": 254.27999999999997,
+      "frost_days": 117,
+      "last_spring_frost": "2001-04-14",
+      "first_fall_frost": "2001-10-28",
+      "frost_free_days": 196,
+      "hot_days": 39
+    },
+    {
+      "year": 2002,
+      "rainfall_mm": 233.8,
+      "frost_days": 116,
+      "last_spring_frost": "2002-04-24",
+      "first_fall_frost": "2002-10-24",
+      "frost_free_days": 182,
+      "hot_days": 46
+    },
+    {
+      "year": 2003,
+      "rainfall_mm": 268.69,
+      "frost_days": 98,
+      "last_spring_frost": "2003-04-05",
+      "first_fall_frost": "2003-10-30",
+      "frost_free_days": 207,
+      "hot_days": 55
+    },
+    {
+      "year": 2004,
+      "rainfall_mm": 258.89,
+      "frost_days": 100,
+      "last_spring_frost": "2004-04-01",
+      "first_fall_frost": "2004-11-04",
+      "frost_free_days": 216,
+      "hot_days": 45
+    },
+    {
+      "year": 2005,
+      "rainfall_mm": 290.55,
+      "frost_days": 98,
+      "last_spring_frost": "2005-04-13",
+      "first_fall_frost": "2005-11-07",
+      "frost_free_days": 207,
+      "hot_days": 44
+    },
+    {
+      "year": 2006,
+      "rainfall_mm": 356.13999999999993,
+      "frost_days": 107,
+      "last_spring_frost": "2006-05-02",
+      "first_fall_frost": "2006-10-30",
+      "frost_free_days": 180,
+      "hot_days": 49
+    },
+    {
+      "year": 2007,
+      "rainfall_mm": 227.71,
+      "frost_days": 109,
+      "last_spring_frost": "2007-04-19",
+      "first_fall_frost": "2007-10-27",
+      "frost_free_days": 190,
+      "hot_days": 36
+    },
+    {
+      "year": 2008,
+      "rainfall_mm": 218.84000000000003,
+      "frost_days": 115,
+      "last_spring_frost": "2008-04-25",
+      "first_fall_frost": "2008-10-22",
+      "frost_free_days": 179,
+      "hot_days": 36
+    },
+    {
+      "year": 2009,
+      "rainfall_mm": 241.48,
+      "frost_days": 125,
+      "last_spring_frost": "2009-04-24",
+      "first_fall_frost": "2009-10-10",
+      "frost_free_days": 168,
+      "hot_days": 46
+    },
+    {
+      "year": 2010,
+      "rainfall_mm": 354.78999999999996,
+      "frost_days": 92,
+      "last_spring_frost": "2010-04-10",
+      "first_fall_frost": "2010-11-10",
+      "frost_free_days": 213,
+      "hot_days": 30
+    },
+    {
+      "year": 2011,
+      "rainfall_mm": 235.04,
+      "frost_days": 123,
+      "last_spring_frost": "2011-04-29",
+      "first_fall_frost": "2011-10-25",
+      "frost_free_days": 178,
+      "hot_days": 31
+    },
+    {
+      "year": 2012,
+      "rainfall_mm": 345.57,
+      "frost_days": 102,
+      "last_spring_frost": "2012-04-07",
+      "first_fall_frost": "2012-11-09",
+      "frost_free_days": 215,
+      "hot_days": 37
+    },
+    {
+      "year": 2013,
+      "rainfall_mm": 221.76999999999998,
+      "frost_days": 111,
+      "last_spring_frost": "2013-04-17",
+      "first_fall_frost": "2013-10-29",
+      "frost_free_days": 194,
+      "hot_days": 54
+    },
+    {
+      "year": 2014,
+      "rainfall_mm": 286.33,
+      "frost_days": 100,
+      "last_spring_frost": "2014-03-23",
+      "first_fall_frost": "2014-11-10",
+      "frost_free_days": 231,
+      "hot_days": 41
+    },
+    {
+      "year": 2015,
+      "rainfall_mm": 274.43000000000006,
+      "frost_days": 77,
+      "last_spring_frost": "2015-04-04",
+      "first_fall_frost": "2015-11-04",
+      "frost_free_days": 213,
+      "hot_days": 49
+    },
+    {
+      "year": 2016,
+      "rainfall_mm": 314.08000000000004,
+      "frost_days": 78,
+      "last_spring_frost": "2016-03-18",
+      "first_fall_frost": "2016-11-17",
+      "frost_free_days": 243,
+      "hot_days": 34
+    },
+    {
+      "year": 2017,
+      "rainfall_mm": 344.90000000000003,
+      "frost_days": 111,
+      "last_spring_frost": "2017-04-15",
+      "first_fall_frost": "2017-10-14",
+      "frost_free_days": 181,
+      "hot_days": 60
+    },
+    {
+      "year": 2018,
+      "rainfall_mm": 245.43,
+      "frost_days": 97,
+      "last_spring_frost": "2018-04-03",
+      "first_fall_frost": "2018-11-08",
+      "frost_free_days": 218,
+      "hot_days": 41
+    },
+    {
+      "year": 2019,
+      "rainfall_mm": 253.54000000000002,
+      "frost_days": 113,
+      "last_spring_frost": "2019-03-19",
+      "first_fall_frost": "2019-10-10",
+      "frost_free_days": 204,
+      "hot_days": 35
+    },
+    {
+      "year": 2020,
+      "rainfall_mm": 237.29000000000002,
+      "frost_days": 102,
+      "last_spring_frost": "2020-04-12",
+      "first_fall_frost": "2020-10-24",
+      "frost_free_days": 194,
+      "hot_days": 46
+    },
+    {
+      "year": 2021,
+      "rainfall_mm": 225.63,
+      "frost_days": 98,
+      "last_spring_frost": "2021-04-12",
+      "first_fall_frost": "2021-11-16",
+      "frost_free_days": 217,
+      "hot_days": 68
+    },
+    {
+      "year": 2022,
+      "rainfall_mm": 301.93,
+      "frost_days": 124,
+      "last_spring_frost": "2022-04-19",
+      "first_fall_frost": "2022-11-03",
+      "frost_free_days": 197,
+      "hot_days": 56
+    },
+    {
+      "year": 2023,
+      "rainfall_mm": 266.21000000000004,
+      "frost_days": 119,
+      "last_spring_frost": "2023-04-20",
+      "first_fall_frost": "2023-10-25",
+      "frost_free_days": 187,
+      "hot_days": 50
+    },
+    {
+      "year": 2024,
+      "rainfall_mm": 315.81999999999994,
+      "frost_days": 96,
+      "last_spring_frost": "2024-05-01",
+      "first_fall_frost": "2024-11-05",
+      "frost_free_days": 187,
+      "hot_days": 49
+    },
+    {
+      "year": 2025,
+      "rainfall_mm": 311.75,
+      "frost_days": 94,
+      "last_spring_frost": "2025-04-13",
+      "first_fall_frost": "2025-11-19",
+      "frost_free_days": 219,
+      "hot_days": 41
+    }
+  ],
+  "monthly": [
+    {
+      "month": 1,
+      "rainfall_normal_mm": 44.904444444444444,
+      "rainfall_valid_years": 45,
+      "gwetroot_mean": 0.4283584229390681,
+      "gwetroot_valid_days": 1395,
+      "gwetroot_expected_days": 1395,
+      "gwetroot_first_date": "1981-01-01",
+      "gwetroot_last_date": "2025-01-31",
+      "rainfall_share_percent": 13.967457420924573
+    },
+    {
+      "month": 2,
+      "rainfall_normal_mm": 32.66133333333333,
+      "rainfall_valid_years": 45,
+      "gwetroot_mean": 0.43770259638080244,
+      "gwetroot_valid_days": 1271,
+      "gwetroot_expected_days": 1271,
+      "gwetroot_first_date": "1981-02-01",
+      "gwetroot_last_date": "2025-02-28",
+      "rainfall_share_percent": 10.159256801592567
+    },
+    {
+      "month": 3,
+      "rainfall_normal_mm": 30.57422222222222,
+      "rainfall_valid_years": 45,
+      "gwetroot_mean": 0.438336917562724,
+      "gwetroot_valid_days": 1395,
+      "gwetroot_expected_days": 1395,
+      "gwetroot_first_date": "1981-03-01",
+      "gwetroot_last_date": "2025-03-31",
+      "rainfall_share_percent": 9.51006414510064
+    },
+    {
+      "month": 4,
+      "rainfall_normal_mm": 23.076888888888888,
+      "rainfall_valid_years": 45,
+      "gwetroot_mean": 0.4261925925925926,
+      "gwetroot_valid_days": 1350,
+      "gwetroot_expected_days": 1350,
+      "gwetroot_first_date": "1981-04-01",
+      "gwetroot_last_date": "2025-04-30",
+      "rainfall_share_percent": 7.178030303030303
+    },
+    {
+      "month": 5,
+      "rainfall_normal_mm": 22.983555555555554,
+      "rainfall_valid_years": 45,
+      "gwetroot_mean": 0.40571326164874555,
+      "gwetroot_valid_days": 1395,
+      "gwetroot_expected_days": 1395,
+      "gwetroot_first_date": "1981-05-01",
+      "gwetroot_last_date": "2025-05-31",
+      "rainfall_share_percent": 7.14899911523999
+    },
+    {
+      "month": 6,
+      "rainfall_normal_mm": 17.37488888888889,
+      "rainfall_valid_years": 45,
+      "gwetroot_mean": 0.3838444444444445,
+      "gwetroot_valid_days": 1350,
+      "gwetroot_expected_days": 1350,
+      "gwetroot_first_date": "1981-06-01",
+      "gwetroot_last_date": "2025-06-30",
+      "rainfall_share_percent": 5.404432094669321
+    },
+    {
+      "month": 7,
+      "rainfall_normal_mm": 7.869999999999999,
+      "rainfall_valid_years": 45,
+      "gwetroot_mean": 0.35979928315412185,
+      "gwetroot_valid_days": 1395,
+      "gwetroot_expected_days": 1395,
+      "gwetroot_first_date": "1981-07-01",
+      "gwetroot_last_date": "2025-07-31",
+      "rainfall_share_percent": 2.447951227604512
+    },
+    {
+      "month": 8,
+      "rainfall_normal_mm": 7.1608888888888895,
+      "rainfall_valid_years": 45,
+      "gwetroot_mean": 0.3474910394265233,
+      "gwetroot_valid_days": 1395,
+      "gwetroot_expected_days": 1395,
+      "gwetroot_first_date": "1981-08-01",
+      "gwetroot_last_date": "2025-08-31",
+      "rainfall_share_percent": 2.2273833222738335
+    },
+    {
+      "month": 9,
+      "rainfall_normal_mm": 12.056444444444443,
+      "rainfall_valid_years": 45,
+      "gwetroot_mean": 0.347362962962963,
+      "gwetroot_valid_days": 1350,
+      "gwetroot_expected_days": 1350,
+      "gwetroot_first_date": "1981-09-01",
+      "gwetroot_last_date": "2025-09-30",
+      "rainfall_share_percent": 3.7501382437513815
+    },
+    {
+      "month": 10,
+      "rainfall_normal_mm": 25.44111111111111,
+      "rainfall_valid_years": 45,
+      "gwetroot_mean": 0.35900358422939066,
+      "gwetroot_valid_days": 1395,
+      "gwetroot_expected_days": 1395,
+      "gwetroot_first_date": "1981-10-01",
+      "gwetroot_last_date": "2025-10-31",
+      "rainfall_share_percent": 7.913417938509179
+    },
+    {
+      "month": 11,
+      "rainfall_normal_mm": 44.97977777777778,
+      "rainfall_valid_years": 45,
+      "gwetroot_mean": 0.38464444444444446,
+      "gwetroot_valid_days": 1350,
+      "gwetroot_expected_days": 1350,
+      "gwetroot_first_date": "1981-11-01",
+      "gwetroot_last_date": "2025-11-30",
+      "rainfall_share_percent": 13.990889736783895
+    },
+    {
+      "month": 12,
+      "rainfall_normal_mm": 52.40977777777778,
+      "rainfall_valid_years": 45,
+      "gwetroot_mean": 0.4064229390681004,
+      "gwetroot_valid_days": 1395,
+      "gwetroot_expected_days": 1395,
+      "gwetroot_first_date": "1981-12-01",
+      "gwetroot_last_date": "2025-12-31",
+      "rainfall_share_percent": 16.301979650519797
+    }
+  ],
+  "coverage": {
+    "T2M_MAX": {
+      "valid_days": 16436,
+      "expected_days": 16436,
+      "missing_days": 0,
+      "percent": 100.0,
+      "first_valid_date": "1981-01-01",
+      "last_valid_date": "2025-12-31",
+      "missing_months": []
+    },
+    "T2M_MIN": {
+      "valid_days": 16436,
+      "expected_days": 16436,
+      "missing_days": 0,
+      "percent": 100.0,
+      "first_valid_date": "1981-01-01",
+      "last_valid_date": "2025-12-31",
+      "missing_months": []
+    },
+    "PRECTOTCORR": {
+      "valid_days": 16436,
+      "expected_days": 16436,
+      "missing_days": 0,
+      "percent": 100.0,
+      "first_valid_date": "1981-01-01",
+      "last_valid_date": "2025-12-31",
+      "missing_months": []
+    },
+    "RH2M": {
+      "valid_days": 16436,
+      "expected_days": 16436,
+      "missing_days": 0,
+      "percent": 100.0,
+      "first_valid_date": "1981-01-01",
+      "last_valid_date": "2025-12-31",
+      "missing_months": []
+    },
+    "ALLSKY_SFC_SW_DWN": {
+      "valid_days": 15341,
+      "expected_days": 16436,
+      "missing_days": 1095,
+      "percent": 93.33779508396204,
+      "first_valid_date": "1984-01-01",
+      "last_valid_date": "2025-12-31",
+      "missing_months": [
+        "1981-01",
+        "1981-02",
+        "1981-03",
+        "1981-04",
+        "1981-05",
+        "1981-06",
+        "1981-07",
+        "1981-08",
+        "1981-09",
+        "1981-10",
+        "1981-11",
+        "1981-12",
+        "1982-01",
+        "1982-02",
+        "1982-03",
+        "1982-04",
+        "1982-05",
+        "1982-06",
+        "1982-07",
+        "1982-08",
+        "1982-09",
+        "1982-10",
+        "1982-11",
+        "1982-12",
+        "1983-01",
+        "1983-02",
+        "1983-03",
+        "1983-04",
+        "1983-05",
+        "1983-06",
+        "1983-07",
+        "1983-08",
+        "1983-09",
+        "1983-10",
+        "1983-11",
+        "1983-12"
+      ]
+    },
+    "GWETROOT": {
+      "valid_days": 16436,
+      "expected_days": 16436,
+      "missing_days": 0,
+      "percent": 100.0,
+      "first_valid_date": "1981-01-01",
+      "last_valid_date": "2025-12-31",
+      "missing_months": []
+    }
+  },
+  "quality": {
+    "duplicate_dates": 0,
+    "missing_dates": 0,
+    "invalid_values": 0,
+    "warnings": [
+      "ALLSKY_SFC_SW_DWN: 1095 missing days"
+    ]
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "period": {
+    "start": "1981-01-01",
+    "end": "2025-12-31"
+  },
+  "hotDayThresholdC": 32,
+  "frostThresholdC": 0,
+  "chunkYears": 5,
+  "rainfallReviewAnnualMm": 3000,
+  "farms": [
+    {
+      "id": "skagit",
+      "name": "Skagit Valley",
+      "latitude": 48.439586,
+      "longitude": -122.386062
+    },
+    {
+      "id": "yakima",
+      "name": "Yakima Valley",
+      "latitude": 46.25474339,
+      "longitude": -119.7284636
+    },
+    {
+      "id": "palouse",
+      "name": "Palouse",
+      "latitude": 46.760917,
+      "longitude": -117.185694
+    }
+  ]
+}
