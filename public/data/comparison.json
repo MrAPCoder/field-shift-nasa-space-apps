@@ -1,0 +1,56 @@
+[
+  {
+    "farm": "Skagit Valley",
+    "mean_rainfall_mm": 1323.2526666666665,
+    "rainfall_mm_valid_years": 45,
+    "mean_frost_free_days": 247.4418604651163,
+    "frost_free_days_valid_years": 43,
+    "mean_hot_days": 0.6444444444444445,
+    "hot_days_valid_years": 45,
+    "gwetroot_coverage": {
+      "valid_days": 16436,
+      "expected_days": 16436,
+      "missing_days": 0,
+      "percent": 100.0,
+      "first_valid_date": "1981-01-01",
+      "last_valid_date": "2025-12-31",
+      "missing_months": []
+    }
+  },
+  {
+    "farm": "Yakima Valley",
+    "mean_rainfall_mm": 321.4933333333333,
+    "rainfall_mm_valid_years": 45,
+    "mean_frost_free_days": 195.82222222222222,
+    "frost_free_days_valid_years": 45,
+    "mean_hot_days": 37.86666666666667,
+    "hot_days_valid_years": 45,
+    "gwetroot_coverage": {
+      "valid_days": 16436,
+      "expected_days": 16436,
+      "missing_days": 0,
+      "percent": 100.0,
+      "first_valid_date": "1981-01-01",
+      "last_valid_date": "2025-12-31",
+      "missing_months": []
+    }
+  },
+  {
+    "farm": "Palouse",
+    "mean_rainfall_mm": 731.6802222222223,
+    "rainfall_mm_valid_years": 45,
+    "mean_frost_free_days": 152.17777777777778,
+    "frost_free_days_valid_years": 45,
+    "mean_hot_days": 14.0,
+    "hot_days_valid_years": 45,
+    "gwetroot_coverage": {
+      "valid_days": 16436,
+      "expected_days": 16436,
+      "missing_days": 0,
+      "percent": 100.0,
+      "first_valid_date": "1981-01-01",
+      "last_valid_date": "2025-12-31",
+      "missing_months": []
+    }
+  }
+]
