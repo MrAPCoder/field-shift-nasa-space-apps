@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "farm": {
+    "id": "skagit",
+    "name": "Skagit Valley",
+    "latitude": 48.439586,
+    "longitude": -122.386062
+  },
+  "status": "unavailable",
+  "reason": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>",
+  "rows": [],
+  "units": {
+    "depth": "cm",
+    "available_water_capacity": "cm water / cm soil",
+    "organic_matter": "% by weight",
+    "slope": "%",
+    "component_share": "%",
+    "pH": "1:1 water"
+  },
+  "provenance": {
+    "source": "USDA NRCS Soil Data Access / SSURGO",
+    "endpoint": "https://sdmdataaccess.sc.egov.usda.gov/Tabular/post.rest",
+    "retrieved_at": "2026-11-14T20:48:11.577586+00:00",
+    "raw_path": "data/skagit/soil-source.json",
+    "sha256": "2cac29552cefc1f7ce6de1965984b43bfca9cac0b5d3090dc55c320b8f385a8a"
+  },
+  "limitations": [
+    "Map-unit components are survey estimates, not confirmed soil at the point.",
+    "All components and horizons retained; no dominant-component or depth averaging.",
+    "Missing properties remain null. No field measurement or soil-health score is inferred.",
+    "Restrictive depth is not retrieved by this query; no rooting restriction is assumed."
+  ]
+}

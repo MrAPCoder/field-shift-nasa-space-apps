@@ -1,0 +1,16 @@
+{
+  "farm": {
+    "id": "yakima",
+    "name": "Yakima Valley",
+    "latitude": 46.25474339,
+    "longitude": -119.7284636
+  },
+  "endpoint": "https://sdmdataaccess.sc.egov.usda.gov/Tabular/post.rest",
+  "attempted_at": "2026-11-14T20:48:11.607402+00:00",
+  "request": {
+    "query": "SELECT mu.mukey, mu.muname, l.areasymbol, sa.saversion, sa.saverest,\nc.cokey, c.compname, c.comppct_r, c.drainagecl, c.slope_r,\nh.chkey, h.hzname, h.hzdept_r, h.hzdepb_r, h.awc_l, h.awc_r, h.awc_h,\nh.om_r, h.ph1to1h2o_r,\n(SELECT MAX(t.texdesc) FROM chtexturegrp t WHERE t.chkey=h.chkey AND t.rvindicator='Yes') AS texture\nFROM mapunit mu JOIN legend l ON l.lkey=mu.lkey\nLEFT JOIN sacatalog sa ON sa.areasymbol=l.areasymbol\nLEFT JOIN component c ON c.mukey=mu.mukey\nLEFT JOIN chorizon h ON h.cokey=c.cokey\nWHERE mu.mukey IN (SELECT mukey FROM SDA_Get_Mukey_from_intersection_with_WktWgs84('point(-119.7284636 46.25474339)'))\nORDER BY mu.mukey, c.comppct_r DESC, c.cokey, h.hzdept_r",
+    "format": "JSON+COLUMNNAME"
+  },
+  "response": null,
+  "error": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>"
+}

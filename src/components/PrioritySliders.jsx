@@ -1,9 +1,9 @@
 import React from 'react';
 export const PRIORITIES = [
-  { id: 'water', name: 'Water savings', detail: 'Use water thoughtfully.' },
-  { id: 'soil', name: 'Soil health', detail: 'Care for soil over time.' },
+  { id: 'water', name: 'Water savings', detail: 'Water-demand comparison; not measured water savings.' },
+  { id: 'soil', name: 'Soil health', detail: 'Management practices; not measured soil health.' },
   { id: 'income', name: 'Extra income', detail: 'Consider the farm business.' },
-  { id: 'erosion', name: 'Erosion control', detail: 'Keep soil in the field.' },
+  { id: 'erosion', name: 'Erosion control', detail: 'Rainfall exposure; not measured erosion or soil loss.' },
 ];
 export default function PrioritySliders({ values, onChange }) {
   return <section className="panel priorities" aria-labelledby="priorities-title">

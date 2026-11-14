@@ -2138,12 +2138,12 @@
         "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/new-minimum-tillage-systems-for-legume-winter-wheat-cropping-sequence/"
       ],
       "why": "Use a published Palouse sequence as the demonstration baseline.",
-      "benefits": "The sourced sequence includes a legume phase; this is not a soil-health measurement.",
+      "benefits": "Includes a pulse phase and a cereal break. Published sequence evidence does not establish a numerical water saving or soil-health improvement on this field.",
       "risks": "Check residue retention, compaction, soil pH and disease history.",
       "data_gaps": [
         "Local suitability and management remain unverified; only the published demonstration sequence is approved.",
         "Published planting/harvest months and ground-cover schedules remain TODO. Farmer inputs are separate assumptions.",
-        "Water-need categories and rooting-depth categories are TODO.",
+        "General crop water/root ranges are available for review; local scoring categories remain unapproved.",
         "Not confirmed as the current rotation of this demonstration location."
       ],
       "sequence_approval": {
@@ -2151,7 +2151,9 @@
         "scope": "research_demonstration_only",
         "approved_by": "Project team via explicit user approval",
         "limitations": "Published sequence only. Local suitability, farm history, traits, dates and management are not approved."
-      }
+      },
+      "comparison_note": "Regional research baseline: USDA ARS describes this sequence under no-till management. It is not a confirmed history for this point, nor a treatment in the historical winter-pea trial.",
+      "management_evidence": "The 2012\u20132020 ARS study supplies a sequence and farming-system context, not a complete monthly field calendar."
     },
     {
       "id": "palouse-alternative-a",
@@ -2459,12 +2461,12 @@
         "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/new-minimum-tillage-systems-for-legume-winter-wheat-cropping-sequence/"
       ],
       "why": "Review a documented three-year Moscow-area research sequence.",
-      "benefits": "The winter pea phase offers nitrogen-fixation potential; no fertilizer credit is calculated.",
+      "benefits": "Retains a pea seed harvest and a legume phase. Nitrogen removed in seed and residue handling distinguish it from green manure; no fertilizer credit or net return is calculated.",
       "risks": "Check overwinter survival, markets, disease management and current local advice.",
       "data_gaps": [
         "Local suitability and management remain unverified; only the published demonstration sequence is approved.",
         "Published planting/harvest months and ground-cover schedules remain TODO. Farmer inputs are separate assumptions.",
-        "Water-need categories and rooting-depth categories are TODO.",
+        "General crop water/root ranges are available for review; local scoring categories remain unapproved.",
         "Historical 1981\u20131985 trial; modern applicability needs review."
       ],
       "sequence_approval": {
@@ -2472,7 +2474,9 @@
         "scope": "research_demonstration_only",
         "approved_by": "Project team via explicit user approval",
         "limitations": "Published sequence only. Local suitability, farm history, traits, dates and management are not approved."
-      }
+      },
+      "comparison_note": "Historical Moscow, Idaho research (1981\u20131985). The seed and green-manure alternatives were studied together; the ARS baseline was not part of that trial.",
+      "management_evidence": "Trial I reports early-October 1982 winter-wheat planting and spring 1984 barley establishment. These historical events are not adopted as current local planting dates."
     },
     {
       "id": "palouse-alternative-b",
@@ -2780,12 +2784,12 @@
         "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/new-minimum-tillage-systems-for-legume-winter-wheat-cropping-sequence/"
       ],
       "why": "Compare the green-manure treatment with the seed treatment in the same study.",
-      "benefits": "A green-manure phase may contribute organic inputs; no measured soil-health gain is claimed.",
-      "risks": "Check termination timing, soil water use and the opportunity cost of a non-harvested phase.",
+      "benefits": "Returns pea biomass instead of harvesting pea seed. Nitrogen release depends on decomposition and management; no fertilizer credit or long-term organic-matter gain is assumed.",
+      "risks": "Check termination, incorporation, stored soil water, residue protection and opportunity cost of no pea seed harvest. A cover crop still uses water.",
       "data_gaps": [
         "Local suitability and management remain unverified; only the published demonstration sequence is approved.",
         "Published planting/harvest months and ground-cover schedules remain TODO. Farmer inputs are separate assumptions.",
-        "Water-need categories and rooting-depth categories are TODO.",
+        "General crop water/root ranges are available for review; local scoring categories remain unapproved.",
         "Historical trial management is not a local planting calendar."
       ],
       "sequence_approval": {
@@ -2793,7 +2797,9 @@
         "scope": "research_demonstration_only",
         "approved_by": "Project team via explicit user approval",
         "limitations": "Published sequence only. Local suitability, farm history, traits, dates and management are not approved."
-      }
+      },
+      "comparison_note": "Historical Moscow, Idaho research (1981\u20131985). The seed and green-manure alternatives were studied together; the ARS baseline was not part of that trial.",
+      "management_evidence": "Trial I reports early-October 1982 winter-wheat planting and spring 1984 barley establishment. These historical events are not adopted as current local planting dates. Green manure was incorporated in early July. The reported fraction of residue left at the surface is not a ground-cover percentage."
     }
   ]
 }
