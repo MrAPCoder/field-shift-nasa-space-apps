@@ -165,7 +165,64 @@ eligible priorities are not necessarily comparable; the app does not rank them.
 
 ### Current release eligibility
 
-All nine comparison slots are unscored: all proposals await review, all cover
-months are unknown, all water and rooting categories are TODO, and some sequences
-are incomplete. Only synthetic, clearly labeled unit tests exercise numeric
-scores. They never appear as NASA measurements or agricultural recommendations.
+The three Palouse published sequences are approved only as research demonstration
+scenarios through `sequence_approval`. The broad `verified` flags remain false:
+local suitability, crop traits, dates and original published schedules are not
+approved. Six regional candidates remain pending. All calendars initially remain
+unscored; a complete confirmed farmer calendar can enable Palouse exposure only.
+Water and soil remain unavailable because their independent evidence gates fail.
+Income is always unavailable.
+
+
+### Approved M3 farmer-calendar provenance extension
+
+The user explicitly approved a simple management-input calendar for M3. It is not
+M4's visual risk calendar, peak-rainfall highlighting or printable plan.
+
+`src/lib/management.js` creates 36 Unknown months with null exposure, never sample
+farm data. The farmer chooses Planted crop (`cash`), Cover crop (`cover`), Bare
+soil (`bare`) or Unknown. Crop/cover statuses may include retained residue after
+harvest; selecting Bare soil explicitly means fully exposed, not merely harvested.
+Planted/cover status alone never implies soil protection.
+
+Each crop/cover month additionally needs an explicit exposed-soil percentage
+0–100: an approximate average across the soil surface and the month, accounting
+for canopy, residue and transitions. Bare soil explicitly sets 100%; Unknown has
+no value. Changing status to crop/cover clears exposure rather than carrying over
+an assumption. Partial months need a farmer estimate or must remain unknown.
+There are no default crop-specific percentages or cover-date inferences.
+
+A separate in-memory management object records `source_kind: farmer_input`,
+`method: monthly-exposed-soil-v1`, rotation ID, observed/proposed mode, a field/year
+or scenario description, confirmer name, confirmation timestamp and all 36 rows.
+These are self-attestations, not authenticated identities or independent verification.
+They do not change the crop library or any published schedule's `verified` flag.
+No fabricated citation URL is attached. Every edit clears confirmation. Farm and
+baseline changes retain separate entries within the tab; refresh resets them.
+Nothing is uploaded or persisted. This limitation is stated beside the controls.
+
+For month m of year y, let R_m be the cached NASA rainfall normal and E_ym the
+farmer-entered exposed percentage / 100. Then:
+
+`rainfall_weighted_exposure = sum(R_m * E_ym) / (3 * sum(R_m))`
+
+`exposure_index = 100 * (1 - rainfall_weighted_exposure)`
+
+The UI reports both exposure percent (lower is less assumed exposure) and the
+0–100 index (higher is less assumed exposure). The extension generalizes the
+existing binary bare-month formula; it equals that formula for 0/100% inputs.
+Legacy independently approved published schedules retain the existing validation
+path; the UI always supplies the separate farmer-input path, which fails closed
+on missing provenance, confirmation, months, statuses or percentages.
+
+This is a transparent scenario proxy, not a calibrated erosion model. Multiplying
+monthly mean rainfall by average exposure assumes the average represents exposure
+during rainfall. It cannot resolve storm timing, canopy interception, infiltration,
+slope, residue effectiveness or soil erodibility. A 100 index means zero exposure
+under entered assumptions, not zero erosion. Observed-mode entries remain farmer
+reports: the rainfall is still 1981–2025 normals, not weather observed in those years.
+
+Farmer inputs do not satisfy soil-scoring research gates or water-demand gates.
+With erosion as the only eligible metric, a positive erosion slider gives a total
+identical to that index, regardless of other sliders. Zero erosion importance means
+no total. Compare totals only when their eligible metrics and assumption bases match.

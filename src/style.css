@@ -772,3 +772,16 @@ footer p {
 .method-summary { margin: 20px 0; font-size: 13px; line-height: 1.8; } .method-summary p { margin-top: 10px; max-width: 900px; }
 @media(max-width:1000px) { .rotation-grid { grid-template-columns: 1fr; } .rotation-card { padding: 22px; } }
 @media(max-width:540px) { .rotation-section > h2 { font-size: 25px; } .rotation-card p, .rotation-card li { font-size: 13px; } }
+
+/* M3 farmer calendars: explicit assumptions, responsive month controls. */
+.management-calendar { margin: 1.2rem 0; padding: 1rem; background: #f4f7f2; border: 1px solid #d6dfd4; border-radius: 12px; }
+.management-calendar summary { font-weight: 700; cursor: pointer; }
+.management-calendar label { display: block; font-size: .8rem; margin: .6rem 0; }
+.management-calendar input, .management-calendar select { display: block; width: 100%; min-width: 0; padding: .55rem; border: 1px solid #aab8aa; border-radius: 6px; color: #213e30; background: white; font: inherit; }
+.management-calendar fieldset { min-width: 0; border: 1px solid #c7d3c6; border-radius: 8px; margin: 1rem 0; padding: .65rem; }
+.calendar-months { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; }
+.calendar-month { border-bottom: 1px solid #d6dfd4; padding-bottom: .4rem; }
+.management-calendar button { padding: .7rem; border: 0; border-radius: 6px; background: #244e3b; color: white; cursor: pointer; }
+.management-calendar button:disabled { opacity: .5; cursor: not-allowed; }
+.exposure-result { background: #edf5f1; border-left: 3px solid #39765a; padding: .8rem; margin-top: 1rem; }
+@media (max-width: 380px) { .calendar-months { grid-template-columns: 1fr; } }

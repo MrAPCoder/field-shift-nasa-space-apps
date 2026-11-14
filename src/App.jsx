@@ -14,6 +14,7 @@ export default function App() {
   const [priorities, setPriorities] = useState({ water: 5, soil: 5, income: 5, erosion: 5 });
   const [state, setState] = useState({ status: 'loading' });
   const [attempt, setAttempt] = useState(0);
+  const [management, setManagement] = useState({});
   const farm = config.farms.find(item => item.id === selected);
   useEffect(() => {
     const controller = new AbortController();
@@ -49,7 +50,7 @@ export default function App() {
           <section className="source-note" aria-labelledby="source-title"><span className="source-symbol" aria-hidden="true">i</span><div><h3 id="source-title">A longer view of your local climate</h3><p>These averages describe historical patterns, not next year’s weather. NASA POWER uses gridded data that may not represent individual fields. Root-zone wetness has {formatValue(data.coverage.GWETROOT.percent)}% coverage ({data.coverage.GWETROOT.valid_days.toLocaleString()} of {data.coverage.GWETROOT.expected_days.toLocaleString()} days).</p><details><summary>Data source and limitations</summary><p>Period: {data.period.start} to {data.period.end}. Rainfall totals use complete months; frost and hot-day averages use valid years. Frost-free days are counted strictly between the last January–June frost and first July–December frost, using minimum temperature ≤ {data.thresholds.frost_day_c}°C.</p><p>Solar radiation is not used in these charts. Its historical gaps are recorded in the saved data. Irrigation, soils, and local management also affect farm conditions.</p><a href={`./data/${farm.id}/climate.json`}>View this location’s cached NASA data ↗</a></details></div></section>
         </>}
       </div><aside className="sidebar"><PrioritySliders values={priorities} onChange={(id, value) => setPriorities(previous => ({ ...previous, [id]: value }))}/><div className="next-note"><span>REVIEW BEFORE SCORING</span><h3>Evidence comes first.</h3><p>Explore rotation candidates below. Missing or unapproved agricultural inputs remain unscored.</p></div></aside></div>
-      {data && <RotationComparison key={farm.id} climate={data} priorities={priorities}/>}
+      {data && <RotationComparison key={farm.id} climate={data} priorities={priorities} management={management} onManagementChange={(id, value) => setManagement(previous => ({ ...previous, [id]: value }))}/>}
       <footer><div className="footer-title">Field Shift <span>· NASA Space Apps 2026</span></div><p>This tool uses NASA climate data and documented agricultural information to support farm planning. It does not replace local agronomists, agricultural extension specialists, soil testing, or the farmer's own experience. Results may not represent individual field conditions.</p><span className="footer-credit">Built for Washington growers · Data: NASA POWER</span></footer>
     </main>
   </>;

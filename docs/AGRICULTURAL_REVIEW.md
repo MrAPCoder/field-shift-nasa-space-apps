@@ -1,7 +1,8 @@
 # Agricultural source review — M3
 
-Status: proposed evidence, not team-approved recommendations. Every crop,
-rotation and source record remains `verified: false`. `opened_and_read: true`
+Status: Palouse published sequences approved for research demonstrations only; no team-approved farm recommendations. Every broad crop,
+rotation and source record remains `verified: false`; narrowly scoped approval is
+recorded separately in `sequence_approval`. `opened_and_read: true`
 records research activity only. The original master prompt explicitly requires
 this distinction. No actual farm's current rotation has been supplied; “current”
 means a selectable demonstration baseline, not an assertion of farm history.
@@ -158,3 +159,21 @@ Limit: Historical guidance; no field-specific cover fractions or erosion predict
 ## Research access limits
 
 WSU Skagit Crops, Yakima Crop Production, Wheat Beat episode 100 and the CSANR long-term-experiment page returned 403 when opened. Search snippets from those pages were not treated as verified evidence. Accessible USDA, WSU-hosted PDF, STEEP and Washington Soil Health Initiative sources above were read instead. The WaSHI material describes regional systems, not an exact three-year Skagit rotation.
+
+
+## Team approval: Palouse-first M3 demonstration
+
+The user approved these published sequences, not actual histories, local
+recommendations, planting/harvest dates, crop traits or ground-cover conditions:
+
+| Approved scenario | Exact source | Locator | Remaining limitation |
+|---|---|---|---|
+| Spring pea → winter wheat → spring wheat | https://www.ars.usda.gov/research/publications/publication/?seqNo115=427958 | Technical Abstract, conventional no-till (NT) system | Regional research baseline; farm history and management unverified |
+| Austrian winter pea for seed → winter wheat → spring barley | https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/austrian-winter-pea-a-good-alternative-to-fallow/ | Research Focus, rotation (2) | Historical Moscow-area trials, 1981–1985; modern suitability unverified |
+| Austrian winter pea green manure → winter wheat → spring barley | Same WSU URL above | Research Focus, rotation (1); Trial I | Termination/residue practices cannot be inferred for this field |
+
+The farmer may supply a proposed or observed calendar separately. Confirmation
+is an explicit assumption/report, never a published scientific finding. No month
+or trait becomes independently verified through the form. See METHODS.md for
+provenance, exposure definitions and limits. Skagit and Yakima candidates remain
+present and pending; a completed form cannot approve their sequences.

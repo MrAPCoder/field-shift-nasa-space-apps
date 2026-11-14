@@ -1,3 +1,4 @@
+import { managementIssues } from './management.js';
 /** Deterministic comparative heuristics, not predictions. See docs/METHODS.md. */
 const keys = ['water', 'soil', 'erosion', 'income'];
 const clamp = n => Math.max(0, Math.min(100, n));
@@ -7,9 +8,12 @@ const scored = (value, evidence) => Number.isFinite(value)
   : unavailable('The calculation is not finite; check input values and coefficients.');
 const sourced = urls => Array.isArray(urls) && urls.length > 0 && urls.every(url => typeof url === 'string' && url.startsWith('https://'));
 
+export function demonstrationApproved(rotation) {
+  return rotation?.sequence_status === 'sourced' && rotation?.sequence_approval?.status === 'approved' && rotation.sequence_approval.scope === 'research_demonstration_only';
+}
 function rotationIssues(rotation) {
   const issues = [];
-  if (!rotation || rotation.verified !== true) issues.push('Rotation is awaiting team approval.');
+  if (!rotation || rotation.verified !== true && !demonstrationApproved(rotation)) issues.push('Rotation is awaiting team approval.');
   if (!sourced(rotation?.source_urls)) issues.push('Rotation source evidence is missing.');
   if (!Array.isArray(rotation?.years) || rotation.years.length !== 3 || rotation.years.some((year, i) => year.year !== i + 1 || !Array.isArray(year.crop_ids) || !year.crop_ids.length)) issues.push('An explicit three-year crop sequence is required.');
   return issues;
@@ -87,17 +91,20 @@ export function scoreSoil(rotation, library, config) {
   return scored(100 * Object.keys(components).reduce((sum,key) => sum + weights[key]*components[key],0)/denominator, { components, weights: { ...weights } });
 }
 
-export function scoreErosion(rotation, climate) {
+export function scoreErosion(rotation, climate, management) {
   const issues = rotationIssues(rotation);
   if (issues.length) return unavailable(issues);
-  const schedule = scheduleIssues(rotation.schedule);
+  if (climate?.farm?.id !== rotation.farm_id) return unavailable('Climate location does not match the rotation.');
+  const schedule = management === undefined ? scheduleIssues(rotation.schedule) : managementIssues(management, rotation.id);
   if (schedule.length) return unavailable(schedule);
   const rain = rainNormals(climate);
   if (!rain || rain.reduce((a,b) => a+b,0) <= 0) return unavailable('All 12 rainfall normals and a positive annual total are required.');
   const annual = rain.reduce((a,b) => a+b,0);
-  const exposed = rotation.schedule.filter(row => row.status === 'bare').reduce((sum,row) => sum + rain[row.month-1],0);
+  const exposed = management === undefined
+    ? rotation.schedule.filter(row => row.status === 'bare').reduce((sum,row) => sum + rain[row.month-1],0)
+    : management.months.reduce((sum,row) => sum + rain[row.month-1] * row.exposed_percent / 100,0);
   const fraction = exposed / (3 * annual);
-  return scored(100 * (1 - fraction), { rainExposureFraction: fraction, exposedRainMmOverThreeYears: exposed, annualRainMm: annual });
+  return scored(100 * (1 - fraction), { rainExposureFraction: fraction, exposedRainMmOverThreeYears: exposed, annualRainMm: annual, sourceKind: management ? 'farmer_input' : 'published_schedule', mode: management?.mode ?? 'published', method: management?.method ?? 'binary-bare-months' });
 }
 
 export function weightedTotal(scores, priorities) {
@@ -114,12 +121,12 @@ export function weightedTotal(scores, priorities) {
   if (!denominator) return { ...unavailable('No scored priority has a positive weight.'), evidence: { included, excluded, denominator } };
   return scored(numerator / denominator, { included, excluded, denominator });
 }
-export function scoreRotation(rotation, library, climate, priorities, config) {
+export function scoreRotation(rotation, library, climate, priorities, config, management) {
   const mismatch = climate?.farm?.id !== rotation?.farm_id;
   const scores = {
     water: mismatch ? unavailable('Climate location does not match the rotation.') : scoreWater(rotation, library, climate, config),
     soil: scoreSoil(rotation, library, config),
-    erosion: mismatch ? unavailable('Climate location does not match the rotation.') : scoreErosion(rotation, climate),
+    erosion: mismatch ? unavailable('Climate location does not match the rotation.') : scoreErosion(rotation, climate, management),
     income: unavailable('Not scored yet — crop prices and production costs are not included.'),
   };
   return { scores, total: weightedTotal(scores, priorities) };

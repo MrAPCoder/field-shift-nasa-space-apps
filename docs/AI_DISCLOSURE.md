@@ -32,3 +32,16 @@ values, citations, current farm histories, or profitability estimates were inven
 Numeric test fixtures are explicitly synthetic and never rendered as real results.
 Existing NASA caches and dependencies were not changed or regenerated. No M4
 calendar, print plan or deployment changes were made.
+
+
+## Approved M3 completion
+Codex implemented the user-approved Palouse-first demonstration and farmer-editable
+management inputs. It recorded narrow published-sequence approvals separately from
+broad verification flags; no unsupported crop trait or schedule was verified. It
+added monthly explicit exposure assumptions, provenance/confirmation validation,
+rainfall-weighted scenario calculations, responsive controls, unit/browser tests
+and updated documentation. Percentages are supplied by users, not invented by AI.
+All numeric calendar fixtures in automated tests are labeled synthetic. NASA data,
+dependencies and M1/M2 climate behavior remain unchanged. The simple input calendar
+was explicitly authorized for M3; no M4 risk visualization or print plan was added.
+The precise files modified in this completion are listed in M3_VERIFICATION.md.

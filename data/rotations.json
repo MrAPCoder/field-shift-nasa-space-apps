@@ -1838,7 +1838,7 @@
       "slot": "current",
       "name": "Spring pea \u2192 winter wheat \u2192 spring wheat",
       "verified": false,
-      "review_status": "pending",
+      "review_status": "sequence_only_approved",
       "sequence_status": "sourced",
       "cycle_years": 3,
       "years": [
@@ -2141,19 +2141,25 @@
       "benefits": "The sourced sequence includes a legume phase; this is not a soil-health measurement.",
       "risks": "Check residue retention, compaction, soil pH and disease history.",
       "data_gaps": [
-        "Team approval and local suitability are pending.",
-        "Local planting and harvest months and all 36 cover statuses are TODO.",
+        "Local suitability and management remain unverified; only the published demonstration sequence is approved.",
+        "Published planting/harvest months and ground-cover schedules remain TODO. Farmer inputs are separate assumptions.",
         "Water-need categories and rooting-depth categories are TODO.",
         "Not confirmed as the current rotation of this demonstration location."
-      ]
+      ],
+      "sequence_approval": {
+        "status": "approved",
+        "scope": "research_demonstration_only",
+        "approved_by": "Project team via explicit user approval",
+        "limitations": "Published sequence only. Local suitability, farm history, traits, dates and management are not approved."
+      }
     },
     {
       "id": "palouse-alternative-a",
       "farm_id": "palouse",
       "slot": "alternative-a",
-      "name": "Winter pea seed \u2192 wheat \u2192 barley",
+      "name": "Austrian winter pea for seed \u2192 winter wheat \u2192 spring barley",
       "verified": false,
-      "review_status": "pending",
+      "review_status": "sequence_only_approved",
       "sequence_status": "sourced",
       "cycle_years": 3,
       "years": [
@@ -2456,19 +2462,25 @@
       "benefits": "The winter pea phase offers nitrogen-fixation potential; no fertilizer credit is calculated.",
       "risks": "Check overwinter survival, markets, disease management and current local advice.",
       "data_gaps": [
-        "Team approval and local suitability are pending.",
-        "Local planting and harvest months and all 36 cover statuses are TODO.",
+        "Local suitability and management remain unverified; only the published demonstration sequence is approved.",
+        "Published planting/harvest months and ground-cover schedules remain TODO. Farmer inputs are separate assumptions.",
         "Water-need categories and rooting-depth categories are TODO.",
         "Historical 1981\u20131985 trial; modern applicability needs review."
-      ]
+      ],
+      "sequence_approval": {
+        "status": "approved",
+        "scope": "research_demonstration_only",
+        "approved_by": "Project team via explicit user approval",
+        "limitations": "Published sequence only. Local suitability, farm history, traits, dates and management are not approved."
+      }
     },
     {
       "id": "palouse-alternative-b",
       "farm_id": "palouse",
       "slot": "alternative-b",
-      "name": "Winter pea green manure \u2192 wheat \u2192 barley",
+      "name": "Austrian winter pea green manure \u2192 winter wheat \u2192 spring barley",
       "verified": false,
-      "review_status": "pending",
+      "review_status": "sequence_only_approved",
       "sequence_status": "sourced",
       "cycle_years": 3,
       "years": [
@@ -2771,11 +2783,17 @@
       "benefits": "A green-manure phase may contribute organic inputs; no measured soil-health gain is claimed.",
       "risks": "Check termination timing, soil water use and the opportunity cost of a non-harvested phase.",
       "data_gaps": [
-        "Team approval and local suitability are pending.",
-        "Local planting and harvest months and all 36 cover statuses are TODO.",
+        "Local suitability and management remain unverified; only the published demonstration sequence is approved.",
+        "Published planting/harvest months and ground-cover schedules remain TODO. Farmer inputs are separate assumptions.",
         "Water-need categories and rooting-depth categories are TODO.",
         "Historical trial management is not a local planting calendar."
-      ]
+      ],
+      "sequence_approval": {
+        "status": "approved",
+        "scope": "research_demonstration_only",
+        "approved_by": "Project team via explicit user approval",
+        "limitations": "Published sequence only. Local suitability, farm history, traits, dates and management are not approved."
+      }
     }
   ]
 }
