@@ -3,12 +3,16 @@ import cropData from '../../data/crops.json';
 import { formatValue } from '../lib/climate.js';
 import { knownMonthNames, DISCLAIMER } from '../lib/plan.js';
 import { demonstrationApproved } from '../lib/score.js';
+import CropEvidence from './CropEvidence.jsx';
+import SoilProfile from './SoilProfile.jsx';
+import { SCORE_LABELS, totalDescription } from '../lib/scorePresentation.js';
 import RainfallCalendar from './RainfallCalendar.jsx';
 
 export default function RotationPlan({ rotation, climate, priorities, management, result, onClose }) {
   const panel=useRef(null);
   useEffect(()=>{panel.current?.focus();},[rotation.id]);
-  const sources=[...new Set([...rotation.source_urls,...rotation.years.flatMap(y=>y.source_urls??[])])];
+  const traitSources=rotation.years.flatMap(y=>y.crop_ids).flatMap(id=>Object.values(cropData.crops.find(c=>c.id===id)?.research_traits ?? {}).map(trait=>trait.source_url));
+  const sources=[...new Set([...rotation.source_urls,...rotation.years.flatMap(y=>y.source_urls??[]),...traitSources,'https://sdmdataaccess.sc.egov.usda.gov/'])];
   const gaps=[...new Set([...rotation.data_gaps,...Object.values(result.scores).flatMap(s=>s.reasons)])];
   return <section className="print-plan" aria-label="Printable three-year rotation plan" tabIndex="-1" ref={panel}>
     <div className="plan-actions"><button onClick={()=>window.print()}>Print this plan</button><button onClick={onClose}>Close print view</button><p>Uses your current inputs. Select your browser’s Save as PDF or printer. Incomplete plans print with their gaps clearly marked.</p></div>
@@ -16,10 +20,14 @@ export default function RotationPlan({ rotation, climate, priorities, management
       <p>{demonstrationApproved(rotation)?'Published sequence approved for research demonstration only.':'Incomplete research candidate — sequence not approved.'} Not a confirmed farm history or planting recommendation.</p></header>
     <section><h3>Management provenance</h3><p><strong>{management.mode==='observed'?'Observed management — farmer-reported':'Proposed scenario — farmer assumptions'}</strong>; not independently verified.</p>
       <p>{management.confirmed?'Confirmed by its author':'Unconfirmed draft'} · {management.context||'Field, years or scenario description not supplied'}</p><p>Confirmed by: {management.confirmed_by||'Not supplied'} · Confirmation time (UTC): {management.confirmed_at||'Not confirmed'}</p></section>
-    <section><h3>Crop sequence and known timing</h3><ol>{rotation.years.map(year=><li key={year.year}><strong>Year {year.year}: </strong>{year.crop_ids.map(id=>cropData.crops.find(c=>c.id===id)?.name??'Unknown crop').join(' + ')||'Unknown — sequence missing'}<br/>Planting: {knownMonthNames(year.planting_months)}<br/>Harvest: {knownMonthNames(year.harvest_months)}</li>)}</ol><p>No planting or harvest dates are inferred from monthly status. All current catalog timing is unknown. Crop/cover status may include retained residue after harvest.</p></section>
+    <section><h3>Crop sequence and known timing</h3><ol>{rotation.years.map(year=><li key={year.year}><strong>Year {year.year}: </strong>{year.crop_ids.map(id=>cropData.crops.find(c=>c.id===id)?.name??'Unknown crop').join(' + ')||'Unknown — sequence missing'}<br/>Planting: {knownMonthNames(year.planting_months)}<br/>Harvest: {knownMonthNames(year.harvest_months)}</li>)}</ol><p>No planting or harvest dates are inferred from monthly status. Dates appear only when supplied in the rotation catalog; unknown dates remain unavailable. Crop/cover status may include retained residue after harvest.</p></section>
     <section><h3>Historical climate context</h3><p>NASA POWER · {climate.period.start} to {climate.period.end}. Representative regional location; gridded estimates may differ from fields.</p>
       <dl className="plan-metrics"><div><dt>Mean annual rainfall</dt><dd>{formatValue(climate.summary.mean_rainfall_mm)} mm/year ({climate.summary.rainfall_mm_valid_years} valid years)</dd></div><div><dt>Mean frost-free season</dt><dd>{formatValue(climate.summary.mean_frost_free_days)} days ({climate.summary.frost_free_days_valid_years} valid years)</dd></div><div><dt>Mean hot days (daily high ≥ {climate.thresholds.hot_day_c}°C)</dt><dd>{formatValue(climate.summary.mean_hot_days)} days/year ({climate.summary.hot_days_valid_years} valid years)</dd></div></dl></section>
-    <section><h3>Your priorities and scores</h3><p>Importance, 0–10: Water {priorities.water} · Soil {priorities.soil} · Income {priorities.income} · Erosion {priorities.erosion}.</p><p>Water savings: Not scored. Soil health: Not scored. Extra income: Not scored yet. Required agricultural traits, prices and costs are missing.</p><p>Overall comparative index: {result.total.status==='SCORED'?`${formatValue(result.total.value)} / 100`:'Not scored'}. Currently only the rainfall-exposure index can contribute. Other sliders cannot change an erosion-only total.</p></section>
+    <section><h3>Your priorities and scores</h3><p>Importance, 0–10: Water {priorities.water} · Soil {priorities.soil} · Income {priorities.income} · Erosion {priorities.erosion}.</p><dl>{Object.entries(SCORE_LABELS).map(([key,label])=><div key={key}><dt>{label}</dt><dd>{result.scores[key].status==='SCORED'?`${formatValue(result.scores[key].value)} / 100`:'Not scored'}{result.scores[key].reasons.length>0 && <p>{result.scores[key].reasons.join(' ')}</p>}</dd></div>)}</dl><p>Overall comparative index: {result.total.status==='SCORED'?`${formatValue(result.total.value)} / 100`:'Not scored'}. {totalDescription(result)}</p></section>
+    <SoilProfile farm={climate.farm} expanded/>
+    <CropEvidence rotation={rotation} expanded/>
+    {rotation.comparison_note && <p>{rotation.comparison_note}</p>}
+    {rotation.management_evidence && <p>{rotation.management_evidence}</p>}
     <RainfallCalendar climate={climate} management={management} score={result.scores.erosion}/>
     <section><h3>Calculation and assumptions</h3><p>Exposure (%) = 100 × sum(monthly NASA rain × farmer exposed-soil percentage / 100) / (3 × annual sum of monthly NASA rain). Index = 100 − exposure (%). Higher index means less assumed exposure, not less measured erosion.</p>
       {result.scores.erosion.status==='SCORED'&&<p>Rain weighted by exposure across three years: {formatValue(result.scores.erosion.evidence.exposedRainMmOverThreeYears)} mm. Denominator: 3 × {formatValue(result.scores.erosion.evidence.annualRainMm)} mm.</p>}

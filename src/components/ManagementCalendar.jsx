@@ -1,4 +1,5 @@
 import React from 'react';
+import CalendarTools from './CalendarTools.jsx';
 import { MONTHS } from '../lib/climate.js';
 import { editManagement, managementIssues } from '../lib/management.js';
 
@@ -16,6 +17,8 @@ export default function ManagementCalendar({ rotation, value, onChange }) {
     <label>Field and actual years, or scenario description<input value={value.context} onChange={e => edit({ context: e.target.value })} placeholder="Describe the scenario and what years 1–3 mean" /></label>
     <label>Confirmed by<input value={value.confirmed_by} onChange={e => edit({ confirmed_by: e.target.value })} /></label>
     <p>For each month, estimate the average soil surface exposed to rain, allowing for canopy, retained residue and changes within the month: 0% = none exposed; 100% = fully exposed. Leave it blank if unknown. A planted crop does not imply protection. After harvest, retain crop/cover status if residue remains; do not automatically choose Bare soil. This simplified estimate cannot model storm timing or erosion.</p>
+    <p role="status">{value.months.filter(row=>row.status!=='unknown' && Number.isFinite(row.exposed_percent)).length} / 36 months entered. Review all entries before confirming.</p>
+    <CalendarTools value={value} onChange={onChange}/>
     {[1, 2, 3].map(year => <fieldset key={year}><legend>Year {year}</legend>
       <div className="calendar-months">{value.months.map((row, index) => row.year !== year ? null : <div className="calendar-month" key={row.month}>
         <strong>{MONTHS[row.month - 1]}</strong>

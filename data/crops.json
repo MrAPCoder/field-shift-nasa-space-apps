@@ -80,6 +80,36 @@
       "accessed": "2026-11-14",
       "opened_and_read": true,
       "verified": false
+    },
+    "fao_water": {
+      "title": "FAO Irrigation Water Management: Crop Water Needs",
+      "url": "https://www.fao.org/4/s2022e/s2022e02.htm",
+      "locator": "Chapter 2, Tables 4 and 5",
+      "supports": "General seasonal water requirements and indicative growing periods.",
+      "limitations": "Not Washington-specific; not irrigation quantities or cultivar-specific maturity.",
+      "accessed": "2026-11-14",
+      "opened_and_read": true,
+      "verified": false
+    },
+    "fao_roots": {
+      "title": "FAO Irrigation and Drainage Paper 56",
+      "url": "https://www.fao.org/4/x0490e/x0490e0e.htm",
+      "locator": "Chapter 8, Table 22 and footnote 1",
+      "supports": "Maximum effective rooting depth ranges.",
+      "limitations": "Unrestricted-soil potential; not measured roots at the demonstration points.",
+      "accessed": "2026-11-14",
+      "opened_and_read": true,
+      "verified": false
+    },
+    "nonlegume_distinction": {
+      "title": "Government of Saskatchewan: Soil Improvements With Legumes",
+      "url": "https://www.saskatchewan.ca/business/agriculture-natural-resources-and-industry/agribusiness-farmers-and-ranchers/crops-and-irrigation/soils-fertility-and-nutrients/soil-improvements-with-legumes",
+      "locator": "Legumes; Biological Nitrogen Fixation",
+      "supports": "Distinguishes nodulated nitrogen-fixing legumes from cereals and other non-legumes.",
+      "limitations": "Botanical distinction only; regional management rates are not transferred to Washington.",
+      "accessed": "2026-11-14",
+      "opened_and_read": true,
+      "verified": false
     }
   },
   "crops": [
@@ -127,7 +157,55 @@
           "https://www.ars.usda.gov/research/publications/publication/?seqNo115=427958"
         ]
       },
-      "review_status": "pending"
+      "review_status": "pending",
+      "research_traits": {
+        "seasonal_water_need": {
+          "value": [
+            450,
+            650
+          ],
+          "unit": "mm / growing period",
+          "source_url": "https://www.fao.org/4/s2022e/s2022e02.htm",
+          "locator": "Table 5: Barley/Oats/Wheat",
+          "scope": "General crop reference, not a local prescription",
+          "limitations": "Generic cereal range; does not distinguish winter and spring cultivation.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        },
+        "effective_root_depth": {
+          "value": [
+            1.5,
+            1.8
+          ],
+          "unit": "m",
+          "source_url": "https://www.fao.org/4/x0490e/x0490e0e.htm",
+          "locator": "Table 22: Winter Wheat",
+          "scope": "Maximum effective rooting depth in suitable soils",
+          "limitations": "Layering and restrictions can reduce actual root depth.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        },
+        "nitrogen_fixing": {
+          "value": false,
+          "unit": "boolean",
+          "source_url": "https://www.saskatchewan.ca/business/agriculture-natural-resources-and-industry/agribusiness-farmers-and-ranchers/crops-and-irrigation/soils-fertility-and-nutrients/soil-improvements-with-legumes",
+          "locator": "Legumes; Biological Nitrogen Fixation",
+          "scope": "Legume-type symbiotic nitrogen fixation capability",
+          "limitations": "Non-legume classification; does not claim absence of all microbial nitrogen fixation in soil.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        },
+        "growing_period": {
+          "value": null,
+          "unit": "days",
+          "source_url": "https://www.fao.org/4/s2022e/s2022e02.htm",
+          "locator": "Table 4: Barley/Oats/Wheat",
+          "scope": "Winter wheat local duration unavailable",
+          "limitations": "Broad reference is not a cultivar-specific minimum; winter dormancy and preceding-fall planting are not resolved by this table.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        }
+      }
     },
     {
       "id": "spring_wheat",
@@ -150,7 +228,58 @@
           "https://www.ars.usda.gov/research/publications/publication/?seqNo115=427958"
         ]
       },
-      "review_status": "pending"
+      "review_status": "pending",
+      "research_traits": {
+        "seasonal_water_need": {
+          "value": [
+            450,
+            650
+          ],
+          "unit": "mm / growing period",
+          "source_url": "https://www.fao.org/4/s2022e/s2022e02.htm",
+          "locator": "Table 5: Barley/Oats/Wheat",
+          "scope": "General crop reference, not a local prescription",
+          "limitations": "Generic cereal range; does not distinguish winter and spring cultivation.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        },
+        "effective_root_depth": {
+          "value": [
+            1.0,
+            1.5
+          ],
+          "unit": "m",
+          "source_url": "https://www.fao.org/4/x0490e/x0490e0e.htm",
+          "locator": "Table 22: Spring Wheat",
+          "scope": "Maximum effective rooting depth in suitable soils",
+          "limitations": "Layering and restrictions can reduce actual root depth.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        },
+        "nitrogen_fixing": {
+          "value": false,
+          "unit": "boolean",
+          "source_url": "https://www.saskatchewan.ca/business/agriculture-natural-resources-and-industry/agribusiness-farmers-and-ranchers/crops-and-irrigation/soils-fertility-and-nutrients/soil-improvements-with-legumes",
+          "locator": "Legumes; Biological Nitrogen Fixation",
+          "scope": "Legume-type symbiotic nitrogen fixation capability",
+          "limitations": "Non-legume classification; does not claim absence of all microbial nitrogen fixation in soil.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        },
+        "growing_period": {
+          "value": [
+            120,
+            150
+          ],
+          "unit": "days",
+          "source_url": "https://www.fao.org/4/s2022e/s2022e02.htm",
+          "locator": "Table 4: Barley/Oats/Wheat",
+          "scope": "Generic cereal reference",
+          "limitations": "Broad reference is not a cultivar-specific minimum; winter dormancy and preceding-fall planting are not resolved by this table.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        }
+      }
     },
     {
       "id": "spring_barley",
@@ -173,7 +302,58 @@
           "https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/austrian-winter-pea-a-good-alternative-to-fallow/"
         ]
       },
-      "review_status": "pending"
+      "review_status": "pending",
+      "research_traits": {
+        "seasonal_water_need": {
+          "value": [
+            450,
+            650
+          ],
+          "unit": "mm / growing period",
+          "source_url": "https://www.fao.org/4/s2022e/s2022e02.htm",
+          "locator": "Table 5: Barley/Oats/Wheat",
+          "scope": "General crop reference, not a local prescription",
+          "limitations": "Generic cereal range; does not distinguish winter and spring cultivation.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        },
+        "effective_root_depth": {
+          "value": [
+            1.0,
+            1.5
+          ],
+          "unit": "m",
+          "source_url": "https://www.fao.org/4/x0490e/x0490e0e.htm",
+          "locator": "Table 22: Barley",
+          "scope": "Maximum effective rooting depth in suitable soils",
+          "limitations": "Layering and restrictions can reduce actual root depth.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        },
+        "nitrogen_fixing": {
+          "value": false,
+          "unit": "boolean",
+          "source_url": "https://www.saskatchewan.ca/business/agriculture-natural-resources-and-industry/agribusiness-farmers-and-ranchers/crops-and-irrigation/soils-fertility-and-nutrients/soil-improvements-with-legumes",
+          "locator": "Legumes; Biological Nitrogen Fixation",
+          "scope": "Legume-type symbiotic nitrogen fixation capability",
+          "limitations": "Non-legume classification; does not claim absence of all microbial nitrogen fixation in soil.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        },
+        "growing_period": {
+          "value": [
+            120,
+            150
+          ],
+          "unit": "days",
+          "source_url": "https://www.fao.org/4/s2022e/s2022e02.htm",
+          "locator": "Table 4: Barley/Oats/Wheat",
+          "scope": "Generic cereal reference",
+          "limitations": "Broad reference is not a cultivar-specific minimum; winter dormancy and preceding-fall planting are not resolved by this table.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        }
+      }
     },
     {
       "id": "spring_pea",
@@ -199,7 +379,58 @@
           "https://plants.usda.gov/DocumentLibrary/plantguide/pdf/pg_pisa6.pdf"
         ]
       },
-      "review_status": "pending"
+      "review_status": "pending",
+      "research_traits": {
+        "seasonal_water_need": {
+          "value": [
+            350,
+            500
+          ],
+          "unit": "mm / growing period",
+          "source_url": "https://www.fao.org/4/s2022e/s2022e02.htm",
+          "locator": "Table 5: Pea",
+          "scope": "General crop reference, not a local prescription",
+          "limitations": "Pea range does not distinguish spring, winter, seed or green-manure treatments.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        },
+        "effective_root_depth": {
+          "value": [
+            0.6,
+            1.0
+          ],
+          "unit": "m",
+          "source_url": "https://www.fao.org/4/x0490e/x0490e0e.htm",
+          "locator": "Table 22: Peas, dry/seed",
+          "scope": "Maximum effective rooting depth in suitable soils",
+          "limitations": "Actual roots depend on growth stage and soil restrictions. Dry/seed pea reference is not a measured green-manure rooting depth.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        },
+        "nitrogen_fixing": {
+          "value": true,
+          "unit": "boolean",
+          "source_url": "https://plants.usda.gov/DocumentLibrary/plantguide/pdf/pg_pisa6.pdf",
+          "locator": "Pages 1\u20132: Uses and Establishment",
+          "scope": "Legume-type symbiotic nitrogen fixation capability",
+          "limitations": "No nitrogen credit or fertilizer replacement is estimated; effective nodulation and management matter.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        },
+        "growing_period": {
+          "value": [
+            60,
+            150
+          ],
+          "unit": "days",
+          "source_url": "https://plants.usda.gov/DocumentLibrary/plantguide/pdf/pg_pisa6.pdf",
+          "locator": "Page 2: Establishment",
+          "scope": "Spring-planted peas, broad reference range",
+          "limitations": "Not a local cultivar maturity requirement or minimum frost-free threshold.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        }
+      }
     },
     {
       "id": "winter_pea_seed",
@@ -228,7 +459,58 @@
           "https://plants.usda.gov/DocumentLibrary/plantguide/pdf/pg_pisa6.pdf"
         ]
       },
-      "review_status": "pending"
+      "review_status": "pending",
+      "research_traits": {
+        "seasonal_water_need": {
+          "value": [
+            350,
+            500
+          ],
+          "unit": "mm / growing period",
+          "source_url": "https://www.fao.org/4/s2022e/s2022e02.htm",
+          "locator": "Table 5: Pea",
+          "scope": "General crop reference, not a local prescription",
+          "limitations": "Pea range does not distinguish spring, winter, seed or green-manure treatments.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        },
+        "effective_root_depth": {
+          "value": [
+            0.6,
+            1.0
+          ],
+          "unit": "m",
+          "source_url": "https://www.fao.org/4/x0490e/x0490e0e.htm",
+          "locator": "Table 22: Peas, dry/seed",
+          "scope": "Maximum effective rooting depth in suitable soils",
+          "limitations": "Actual roots depend on growth stage and soil restrictions. Dry/seed pea reference is not a measured green-manure rooting depth.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        },
+        "nitrogen_fixing": {
+          "value": true,
+          "unit": "boolean",
+          "source_url": "https://plants.usda.gov/DocumentLibrary/plantguide/pdf/pg_pisa6.pdf",
+          "locator": "Pages 1\u20132: Uses and Establishment",
+          "scope": "Legume-type symbiotic nitrogen fixation capability",
+          "limitations": "No nitrogen credit or fertilizer replacement is estimated; effective nodulation and management matter.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        },
+        "growing_period": {
+          "value": [
+            300,
+            320
+          ],
+          "unit": "days",
+          "source_url": "https://plants.usda.gov/DocumentLibrary/plantguide/pdf/pg_pisa6.pdf",
+          "locator": "Page 2: Establishment",
+          "scope": "Fall-planted peas, broad reference range",
+          "limitations": "Includes overwintering; cannot be compared directly with frost-free days.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        }
+      }
     },
     {
       "id": "winter_pea_green",
@@ -257,7 +539,55 @@
           "https://plants.usda.gov/DocumentLibrary/plantguide/pdf/pg_pisa6.pdf"
         ]
       },
-      "review_status": "pending"
+      "review_status": "pending",
+      "research_traits": {
+        "seasonal_water_need": {
+          "value": [
+            350,
+            500
+          ],
+          "unit": "mm / growing period",
+          "source_url": "https://www.fao.org/4/s2022e/s2022e02.htm",
+          "locator": "Table 5: Pea",
+          "scope": "General crop reference, not a local prescription",
+          "limitations": "Pea range does not distinguish spring, winter, seed or green-manure treatments.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        },
+        "effective_root_depth": {
+          "value": [
+            0.6,
+            1.0
+          ],
+          "unit": "m",
+          "source_url": "https://www.fao.org/4/x0490e/x0490e0e.htm",
+          "locator": "Table 22: Peas, dry/seed",
+          "scope": "Maximum effective rooting depth in suitable soils",
+          "limitations": "Actual roots depend on growth stage and soil restrictions. Dry/seed pea reference is not a measured green-manure rooting depth.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        },
+        "nitrogen_fixing": {
+          "value": true,
+          "unit": "boolean",
+          "source_url": "https://plants.usda.gov/DocumentLibrary/plantguide/pdf/pg_pisa6.pdf",
+          "locator": "Pages 1\u20132: Uses and Establishment",
+          "scope": "Legume-type symbiotic nitrogen fixation capability",
+          "limitations": "No nitrogen credit or fertilizer replacement is estimated; effective nodulation and management matter.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        },
+        "growing_period": {
+          "value": null,
+          "unit": "days",
+          "source_url": "https://plants.usda.gov/DocumentLibrary/plantguide/pdf/pg_pisa6.pdf",
+          "locator": "Page 3: Green manure and cover crop management",
+          "scope": "Green-manure termination rather than seed maturity",
+          "limitations": "No numeric local duration established. Source discusses termination at full bloom; timing and incorporation need local review.",
+          "review_status": "pending",
+          "accessed": "2026-11-14"
+        }
+      }
     },
     {
       "id": "silage_corn",

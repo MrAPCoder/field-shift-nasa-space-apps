@@ -177,3 +177,36 @@ is an explicit assumption/report, never a published scientific finding. No month
 or trait becomes independently verified through the form. See METHODS.md for
 provenance, exposure definitions and limits. Skagit and Yakima candidates remain
 present and pending; a completed form cannot approve their sequences.
+
+## M4.2 evidence supplement — research references, review pending
+
+The six Palouse entries now carry `research_traits` with values/ranges, units,
+source URLs, locators, scope, limitations and review status. Existing scoring
+fields and every `verified` flag are unchanged. Thus statements above about
+missing scoring categories and approved monthly schedules still apply; general
+numeric reference information is now available without pretending it resolves
+those gaps.
+
+| Source opened during M4.2 | What it supports | What it does not support |
+|---|---|---|
+| [FAO Crop Water Needs](https://www.fao.org/4/s2022e/s2022e02.htm), Tables 4–5 | Generic wheat/barley and pea seasonal water ranges; indicative cereal duration | Washington irrigation needs; low/medium/high cutoffs; winter-wheat local duration; a green-manure water budget |
+| [FAO-56 Chapter 8](https://www.fao.org/4/x0490e/x0490e0e.htm), Table 22 | Maximum effective rooting ranges for winter/spring wheat, barley and dry peas | Field-specific roots or a scientifically approved shallow/deep threshold |
+| [NRCS Pullman Pea Guide](https://plants.usda.gov/DocumentLibrary/plantguide/pdf/pg_pisa6.pdf), Uses and Establishment | Symbiotic fixation; broad spring/fall growing-period ranges; distinctions between seed and green-manure use | Fixed fertilizer credits, a local minimum frost-free duration, or complete soil cover |
+| [Government of Saskatchewan: Soil Improvements With Legumes](https://www.saskatchewan.ca/business/agriculture-natural-resources-and-industry/agribusiness-farmers-and-ranchers/crops-and-irrigation/soils-fertility-and-nutrients/soil-improvements-with-legumes), Legumes / Biological Nitrogen Fixation | Legume-type fixation distinction from cereal crops; dependence on rhizobia | Transfer of regional management rates or absence of all soil microbial fixation |
+| [USDA ARS 427958](https://www.ars.usda.gov/research/publications/publication/?seqNo115=427958), Technical Abstract | Baseline sequence and 2012–2020 no-till research context | Comparison against the app's two historical winter-pea treatments in the same trial |
+| [WSU STEEP winter-pea study](https://pnwsteep.wsu.edu/pnw-conservation-tillage-handbook/austrian-winter-pea-a-good-alternative-to-fallow/), Research Focus / Trial I | Seed versus green-manure sequences; recorded incorporation and planting events | Modern local planting prescriptions or percentages of ground protected by residue |
+
+The WSU garden cover-crop page was found in search but returned HTTP 403 when
+opened; it is not marked opened/read or used in the new records. The accessible
+Saskatchewan government source supports the narrower botanical distinction.
+
+No local frost-injury thresholds, numeric nitrogen credits, green-manure season
+length, soil-series assignments, exposure percentages or new approval flags were
+created. General pea water/root ranges are explicitly not treatment-specific
+values for Austrian winter pea seed or green manure. Winter-wheat duration and
+green-manure duration remain unavailable. Local cultivar/management review is
+still needed. Nitrogen-fixation evidence for cereals is recorded separately and
+does not overwrite their unresolved scoring boolean.
+
+Soil attempts and limitations are documented in METHODS.md and each farm's saved
+query receipt. No soil values were available through this environment's proxy.

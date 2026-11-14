@@ -56,3 +56,17 @@ exposure results remain M3 calculations. Browser fixtures are labeled synthetic.
 Codex ran tests and inspected browser-generated print output; no PDF dependency
 was introduced. Modified files and results are listed in M4_VERIFICATION.md.
 No Sunday AI features or trend analysis were implemented.
+
+## M4.2
+
+AI assisted with USDA query/normalization code, failure receipts, crop-source
+research and transcription, comparison explanations, bulk calendar editing,
+score presentation, print content, tests and documentation. The complete file
+inventory and verification outcomes are in `docs/M42_VERIFICATION.md`.
+
+All source-backed crop additions remain pending team review; AI research does not
+approve agronomic suitability. USDA access failed, so no soil measurements were
+created. Test soil rows and calendar percentages are explicitly synthetic and
+are confined to tests/ignored work artifacts. Actual scientific calculations,
+coefficients and NASA archives were preserved. The team remains responsible for
+reviewing claims, applicability, submission content and future deployment.

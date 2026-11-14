@@ -2,6 +2,7 @@ import React, { lazy, Suspense, useEffect, useState } from 'react';
 import config from './config/config.js';
 import FarmSelector from './components/FarmSelector.jsx';
 import PrioritySliders from './components/PrioritySliders.jsx';
+import SoilProfile from './components/SoilProfile.jsx';
 import RotationComparison from './components/RotationComparison.jsx';
 const ClimateCharts = lazy(() => import('./components/ClimateCharts.jsx'));
 import { formatValue, loadClimate } from './lib/climate.js';
@@ -33,6 +34,7 @@ export default function App() {
     <header className="topbar"><div className="topbar-inner"><a className="brand" href="./" aria-label="Field Shift home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25V7h22M5 14h18M5 21h13"/><path d="M21 27c0-8 3-11 7-12-1 6-3 10-7 12Z"/></svg>Field Shift<span className="brand-dot">.</span></a><span className="topbar-label">NASA SPACE APPS <span>2026</span></span></div></header>
     <main>
       <section className="intro"><div><div className="section-kicker">WASHINGTON FARM PLANNING</div><h1>Know your climate.<br/><span>Plan with perspective.</span></h1><p>Explore the seasons behind your farm decisions,<br className="desktop-break"/> with 45 years of NASA climate data.</p></div><div className="intro-stamp"><span className="status-dot"/>NASA POWER DATA<span className="stamp-years">1981 — 2025</span><span>Historical patterns, not a forecast</span></div></section>
+      <button type="button" onClick={()=>setSelected('palouse')}>Start Palouse demonstration</button>
       <section className="location-bar" aria-label="Choose a location"><FarmSelector farms={config.farms} selected={selected} onChange={setSelected}/><div className="location-coordinates"><span>REPRESENTATIVE LOCATION</span><strong>{farm.latitude.toFixed(4)}° N · {Math.abs(farm.longitude).toFixed(4)}° W</strong><span>Regional data may differ from your field.</span></div></section>
       <div className="dashboard-layout"><div id="climate" tabIndex="-1" aria-busy={!data && state.status !== 'error'}>
         <div className="profile-heading"><div><div className="section-kicker">YOUR CLIMATE PROFILE</div><h2>{farm.name}</h2></div><span className="period-label">1981–2025 averages</span></div>
@@ -50,6 +52,7 @@ export default function App() {
           <section className="source-note" aria-labelledby="source-title"><span className="source-symbol" aria-hidden="true">i</span><div><h3 id="source-title">A longer view of your local climate</h3><p>These averages describe historical patterns, not next year’s weather. NASA POWER uses gridded data that may not represent individual fields. Root-zone wetness has {formatValue(data.coverage.GWETROOT.percent)}% coverage ({data.coverage.GWETROOT.valid_days.toLocaleString()} of {data.coverage.GWETROOT.expected_days.toLocaleString()} days).</p><details><summary>Data source and limitations</summary><p>Period: {data.period.start} to {data.period.end}. Rainfall totals use complete months; frost and hot-day averages use valid years. Frost-free days are counted strictly between the last January–June frost and first July–December frost, using minimum temperature ≤ {data.thresholds.frost_day_c}°C.</p><p>Solar radiation is not used in these charts. Its historical gaps are recorded in the saved data. Irrigation, soils, and local management also affect farm conditions.</p><a href={`./data/${farm.id}/climate.json`}>View this location’s cached NASA data ↗</a></details></div></section>
         </>}
       </div><aside className="sidebar"><PrioritySliders values={priorities} onChange={(id, value) => setPriorities(previous => ({ ...previous, [id]: value }))}/><div className="next-note"><span>REVIEW BEFORE SCORING</span><h3>Evidence comes first.</h3><p>Explore rotation candidates below. Missing or unapproved agricultural inputs remain unscored.</p></div></aside></div>
+      <SoilProfile farm={farm}/>
       {data && <RotationComparison key={farm.id} climate={data} priorities={priorities} management={management} onManagementChange={(id, value) => setManagement(previous => ({ ...previous, [id]: value }))}/>}
       <footer><div className="footer-title">Field Shift <span>· NASA Space Apps 2026</span></div><p>This tool uses NASA climate data and documented agricultural information to support farm planning. It does not replace local agronomists, agricultural extension specialists, soil testing, or the farmer's own experience. Results may not represent individual field conditions.</p><span className="footer-credit">Built for Washington growers · Data: NASA POWER</span></footer>
     </main>

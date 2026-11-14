@@ -27,3 +27,30 @@ export function managementIssues(input, rotationId, requireConfirmation = true) 
 export function editManagement(input, patch) {
   return { ...input, ...patch, confirmed: false, confirmed_at: null };
 }
+
+// Bulk edits copy only explicit user inputs. They never confirm a calendar.
+export function rangeEdit(input, start, end, status, exposure) {
+  if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end > 35 || end < start)
+    throw new Error('Choose an ordered range within the 36 months.');
+  if (!['unknown', 'cash', 'cover', 'bare'].includes(status)) throw new Error('Choose a valid status.');
+  const exposed_percent = status === 'unknown' ? null : status === 'bare' ? 100 : exposure;
+  if (status !== 'unknown' && (!Number.isFinite(exposed_percent) || exposed_percent < 0 || exposed_percent > 100))
+    throw new Error('Enter an explicit exposure from 0 to 100.');
+  return editManagement(input, { months: input.months.map(row => {
+    const index = (row.year - 1) * 12 + row.month - 1;
+    return index >= start && index <= end ? { ...row, status, exposed_percent } : { ...row };
+  }) });
+}
+export function copyYear(input, fromYear, toYear) {
+  if (![1,2,3].includes(fromYear) || ![1,2,3].includes(toYear) || fromYear === toYear)
+    throw new Error('Choose two different years.');
+  const source = input.months.filter(row=>row.year===fromYear);
+  if (source.length !== 12 || new Set(source.map(row=>row.month)).size !== 12)
+    throw new Error('Source year is incomplete.');
+  return editManagement(input, { months: input.months.map(row => {
+    if (row.year !== toYear) return { ...row };
+    const match = source.find(item=>item.month===row.month);
+    if (!match) throw new Error('Source month missing.');
+    return { ...row, status: match.status, exposed_percent: match.exposed_percent };
+  }) });
+}

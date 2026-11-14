@@ -747,7 +747,7 @@ footer p {
   }
 }
 
-/* M3 comparisons use the existing visual system. No M4 calendar or print view. */
+/* Rotation comparisons use the existing visual system. */
 .rotation-section { margin: 32px 0; border-top: 1px solid #dce3d5; padding-top: 28px; }
 .rotation-section > h2 { margin-top: 7px; font-size: 28px; letter-spacing: -.6px; }
 .rotation-controls { margin: 22px 0 16px; max-width: 640px; display: grid; gap: 7px; }
@@ -839,3 +839,18 @@ footer p {
   .print-plan h4, .print-plan h5 { break-after: avoid; }
   .print-plan p { orphans: 3; widows: 3; }
 }
+
+/* M4.2 functional controls; retain the M4 visual design. */
+.soil-profile { margin: 1.5rem 0; }
+.bulk-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: .75rem; }
+.calendar-tools { min-width: 0; }
+.calendar-tools button { margin: .5rem .5rem .5rem 0; }
+.bulk-preview { border-left: 3px solid #44765a; padding-left: .75rem; }
+.bulk-preview ul { max-height: 15rem; overflow: auto; }
+.bulk-preview input[type="checkbox"] { width: auto; }
+.crop-evidence dd { margin: .4rem 0 1rem; }
+.crop-evidence a, .soil-profile a { overflow-wrap: anywhere; }
+.comparison-summary { min-width: 680px; }
+.comparison-summary th, .comparison-summary td { padding: .75rem; text-align: left; vertical-align: top; }
+
+@media print { .print-plan .crop-evidence dl > div { break-inside: avoid; } }

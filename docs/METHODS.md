@@ -146,7 +146,7 @@ prevent scoring. Do not assume planted means covered, or harvested means bare:
 establishment, residue, tillage and termination matter. Status assignment is a
 separate evidence/review task. This simplified binary exposure heuristic omits
 slope, soil type, storm intensity and residue density. It predicts neither soil
-loss nor runoff. The M4 calendar and printable plan are not implemented.
+loss nor runoff. M4 adds a visual calendar and printable plan using the same exposure result; see the M4 section below.
 
 ### Income and overall total
 
@@ -262,3 +262,72 @@ also preserve incomplete plans with explicit gaps. Planting/harvest months are
 shown only when present in the catalog; all current entries are unknown and no
 dates are inferred from monthly management. Evidence URLs, NASA cache path,
 climate indicators, priorities, formula, provenance, gaps and disclaimer are printed.
+
+## M4.2: evidence and usability, unchanged calculations
+
+All scoring arithmetic in `src/lib/score.js`, all config coefficients, the NASA
+pipeline and the original climate caches remain unchanged. Published numeric
+crop references are stored in `research_traits` separately from the unresolved
+scoring fields. They are pending review, not local observations or automatic
+approval. General seasonal evapotranspiration ranges are not irrigation demand;
+maximum effective rooting ranges are not measured rooting depths; broad growing
+periods are not minimum frost-free requirements. Winter crop duration can include
+winter dormancy. A green-manure termination period is not seed maturity.
+
+The water score is labeled a provisional water-demand comparison, and the soil
+score a provisional soil-management practice index. These are not calibrated
+water savings or measured soil health. Low water-demand category still maps to
+zero penalty, summer rain remains a fraction rather than absolute supply, and
+cover/non-bare soil components remain related. New evidence does not resolve
+these methodological limits. Exposure remains a rainfall-weighted assumption,
+not an erosion forecast. The total and print plan state their actual eligible
+components. No new coefficients or scoring categories were assigned.
+
+### USDA soil acquisition
+
+`scripts/fetch_soils.py` uses Python's standard library to POST a read-only SQL
+query to USDA NRCS Soil Data Access. It intersects WGS84 longitude/latitude from
+the existing config with map-unit polygons, then joins mapunit, legend,
+sacatalog, component and chorizon. The representative texture description is
+selected from chtexturegrp. All returned components/horizons are retained.
+There is no dominant-component choice, depth aggregation, extrapolation or
+assignment of a regional soil series to the point. Restrictive depth is not
+queried; no inference of unrestricted rooting is made.
+
+Each farm has `soil-source.json` (endpoint, exact query, configured coordinates,
+attempt time, response or exact failure) and `soil.json` (normalized rows, units,
+status, limitations and SHA-256 of the receipt). Nulls stay null; real zeros stay
+zero. Invalid ranges, reversed horizons, missing headers and duplicate rows fail
+validation. `--offline` reproduces summaries without network access. Exit 1 means
+at least one location is unavailable. Refresh failures retain prior successful
+records and save a separate failure receipt. The UI bundles these static records;
+rebuild after a successful refresh. No USDA requests occur during app use.
+
+M4.2 acquisition at all three points failed with:
+`URLError: <urlopen error Tunnel connection failed: 403 Forbidden>`.
+The proxy rejected the connection before USDA returned soil data. Both the
+sc.egov.usda.gov endpoint and an nrcs.usda.gov hostname attempt were blocked;
+a request outside the sandbox encountered the same proxy failure. This does not
+prove that USDA itself is down. The committed receipts show the canonical endpoint
+attempts. No soil numbers, map-unit IDs or soil names were obtained. Success-path
+parsing is tested with synthetic records, but the live SQL response is unverified.
+
+Schema reference: https://sdmdataaccess.sc.egov.usda.gov/QueryHelp.aspx
+and the linked SDM Table Column Descriptions / Tables and Columns reports.
+
+### Calendar edits and plans
+
+Range edits and year copying stage explicit user values. A before/after preview
+and a review checkbox are required before applying replacements. Applying clears
+confirmation and timestamp; the complete 36-month calendar still needs its own
+confirmation. Unknown remains null. Bare explicitly means 100% exposure; no crop
+status supplies a default protective percentage. Year copies retain unknowns.
+Changing a manual entry or bulk controls cancels a pending preview. Inputs remain
+tab-local and are lost on reload. No agricultural verification is granted.
+
+Printable plans render current scores, reasons and included metrics, rather than
+hardcoding M4 eligibility. Soil provenance and crop evidence are expanded in the
+plan. Historical trial events remain narrative evidence; no planting, harvest or
+cover months have been invented. Existing all-unknown published schedules remain
+unchanged. The Palouse comparison does not imply a single controlled trial of its
+three options or rank totals with differing evidence bases.

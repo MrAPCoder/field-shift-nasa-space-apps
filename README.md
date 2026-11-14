@@ -120,3 +120,36 @@ node tests/m4-browser.cjs
 Optional browser overrides: `PREVIEW_URL` and `CHROMIUM_PATH`. Test screenshots and
 browser-generated sample PDF go to ignored `work/`; all sample calendar inputs
 are synthetic. This completes M4 only; Sunday AI features and trends are out of scope.
+
+## M4.2 — scientific and usability improvements
+
+Use **Start Palouse demonstration** to inspect three sourced research sequences,
+a concise benefits/risks comparison, and expandable crop reference ranges. Trait
+review remains pending; the new information does not unlock water or soil scores.
+Score wording distinguishes practice/demand proxies from measurements.
+
+In a calendar, choose a range and explicitly enter its status and exposure, or
+copy one year's entries into another. **Preview** shows every replacement.
+Check the review box and apply, then review and **Confirm complete calendar**.
+Edits withdraw confirmation. Unknown remains unknown; copies are assumptions,
+not evidence of identical conditions. No inputs are uploaded or retained on reload.
+The printable plan now reflects current eligibility and includes crop/soil sources.
+
+USDA soil acquisition was blocked by a network-proxy HTTP 403 for all three
+locations. The app displays unavailable characteristics with exact provenance,
+not fabricated soil values. To retry from an environment with USDA access:
+
+```sh
+python scripts/fetch_soils.py
+python scripts/fetch_soils.py --offline
+```
+
+Exit 1 means acquisition/validation is incomplete; inspect `soil-source.json` and
+`soil.json` in each `public/data/<farm>/` directory. Rebuild after successful
+acquisition. Existing successful data are retained on a failed refresh.
+Live successful soil retrieval is not verified in this environment.
+
+Additional checks: `node tests/m42-browser.cjs` against the existing local preview.
+See `docs/M42_VERIFICATION.md` for results, limitations and AI-modified files.
+M4.2 does not merge to main, change production, redesign visuals, add dependencies,
+or modify NASA data, scoring formulas or coefficients.

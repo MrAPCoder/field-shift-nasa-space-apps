@@ -47,7 +47,7 @@ const fs = require('node:fs');
   await calendar.getByRole('button',{name:'Confirm complete calendar'}).click();
   assert.match(await card.getByTestId('exposure-result').innerText(),/Scenario estimate/);
   assert.equal(await card.locator('.rotation-total strong').innerText(),`${[50,75,25][c]}.0 / 100`);
-  assert.match(await card.locator('.subscores').innerText(),/Soil health\s+Not scored/);
+  assert.match(await card.locator('.subscores').innerText(),/Provisional soil-management practice index\s+Not scored/);
   await calendar.locator('summary').click();
  }
  // Other priorities cannot change an erosion-only total.

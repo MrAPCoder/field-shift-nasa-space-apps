@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "farm": {
+    "id": "palouse",
+    "name": "Palouse",
+    "latitude": 46.760917,
+    "longitude": -117.185694
+  },
+  "status": "unavailable",
+  "reason": "URLError: <urlopen error Tunnel connection failed: 403 Forbidden>",
+  "rows": [],
+  "units": {
+    "depth": "cm",
+    "available_water_capacity": "cm water / cm soil",
+    "organic_matter": "% by weight",
+    "slope": "%",
+    "component_share": "%",
+    "pH": "1:1 water"
+  },
+  "provenance": {
+    "source": "USDA NRCS Soil Data Access / SSURGO",
+    "endpoint": "https://sdmdataaccess.sc.egov.usda.gov/Tabular/post.rest",
+    "retrieved_at": "2026-11-14T20:48:11.614705+00:00",
+    "raw_path": "data/palouse/soil-source.json",
+    "sha256": "bbab406740c6ef7ae481c27479c609ee49e183b272929b3243da28f5cf35480e"
+  },
+  "limitations": [
+    "Map-unit components are survey estimates, not confirmed soil at the point.",
+    "All components and horizons retained; no dominant-component or depth averaging.",
+    "Missing properties remain null. No field measurement or soil-health score is inferred.",
+    "Restrictive depth is not retrieved by this query; no rooting restriction is assumed."
+  ]
+}
