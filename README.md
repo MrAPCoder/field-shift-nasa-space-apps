@@ -1,7 +1,8 @@
 # Field Shift — NASA Space Apps 2026
 
-Washington farm-planning prototype. **M1 only:** React/Vite scaffold and cached
-NASA POWER climate pipeline. M2 dashboard and deployment have not begun.
+Washington farm-planning prototype. **M2:** responsive climate dashboard using the
+verified M1 NASA POWER caches. Choose a farm, inspect rainfall and modeled wetness,
+and set four planning priorities. Crop scoring remains out of scope until M3.
 
 ## Setup and run
 Requires Node.js 20.19+ or 22.12+ and Python 3.12+.
@@ -13,7 +14,8 @@ python -m venv .venv
 npm run dev -- --host 0.0.0.0
 ```
 
-The initial page is a milestone placeholder, not an interactive dashboard.
+The dashboard reads cached climate JSON. No NASA requests are made during use.
+Priority values persist across farm switches within the page session.
 Dependencies are limited to the specified React, Vite, Recharts, requests and
 pandas (and their transitive dependencies). No backend or extra test framework.
 
@@ -38,9 +40,14 @@ Normal app use must read cached aggregates, never query NASA POWER.
 
 ## Documentation
 - `docs/METHODS.md`: formulas, missing data, units and scientific limitations.
-- `docs/M1_VERIFICATION.md`: actual verification results and comparison.
+- `docs/M1_VERIFICATION.md`: pipeline verification results and comparison.
+- `docs/M2_VERIFICATION.md`: dashboard tests, browser checks and changed files.
 - `docs/AI_DISCLOSURE.md`: AI assistance and team review responsibilities.
 
-## Later deployment
-M2 will use Vercel static hosting: build command `npm run build`, output `dist`.
-No deployment was created during M1. Do not start M2 without team authorization.
+## Preview deployment
+Vercel static hosting: build command `npm run build`, output `dist`, Vite preset.
+The connected Vercel team currently requires access authorization; no preview URL
+has been created. See the M2 verification report. Do not begin M3 without approval.
+
+Optional browser checks use an existing Playwright installation (no new project
+dependency): start `npm run preview`, then `node tests/browser-smoke.cjs`.
