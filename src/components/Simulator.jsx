@@ -6,8 +6,10 @@ import { loadReplay, REPLAY_LOAD_ERROR } from '../lib/replay.js';
 import { planFromCalendar, planFromWindow, simulate } from '../lib/simulate.js';
 import { evaluateConcerns, describePlan, DEMO_BANNER, NOT_A_FORECAST, PROVISIONAL_NOTE } from '../lib/concerns.js';
 import { managementIssues } from '../lib/management.js';
+import { compare } from '../lib/compare.js';
 import SimSetup from './SimSetup.jsx';
 import ConcernCard, { Chip } from './ConcernCard.jsx';
+import SimComparison from './SimComparison.jsx';
 
 const palouseRotations = rotationData.rotations.filter(rotation => rotation.farm_id === 'palouse');
 const RUN_COUNT = Number(config.period.end.slice(0, 4)) - Number(config.period.start.slice(0, 4)) - 1;
@@ -23,8 +25,12 @@ export default function Simulator({ farms, selected, onSelect, management }) {
   const [windowMonths, setWindowMonths] = useState({ start: '', end: '' });
   const [load, setLoad] = useState({ status: 'idle' });
   const [before, setBefore] = useState(null);
+  const [after, setAfter] = useState(null);
+  const [lever, setLever] = useState(null);
+  const [leverError, setLeverError] = useState(null);
   const [scrollTick, setScrollTick] = useState(0);
   const results = useRef(null);
+  const improve = useRef(null);
   const requestId = useRef(0);
 
   const isPalouse = selected === 'palouse';
@@ -52,11 +58,12 @@ export default function Simulator({ farms, selected, onSelect, management }) {
       if (id !== requestId.current) return;
       const simulation = simulate(replay, plan, config.simulation);
       setBefore({ farmId, replay, simulation, concerns: evaluateConcerns(simulation), demo: false, calendarRef: null, ...extra });
+      setAfter(null); setLever(null); setLeverError(null);
       setLoad({ status: 'idle' });
       setScrollTick(tick => tick + 1);
     } catch (error) {
       if (id !== requestId.current) return;
-      setBefore(null);
+      setBefore(null); setAfter(null); setLever(null);
       setLoad({ status: 'error', message: error?.message?.startsWith(REPLAY_LOAD_ERROR) ? error.message.slice(REPLAY_LOAD_ERROR.length + 2) : 'The simulation could not be completed.', retry: () => run(farmId, plan, extra) });
     }
   }
@@ -65,6 +72,20 @@ export default function Simulator({ farms, selected, onSelect, management }) {
     : planFromWindow(Number(windowMonths.start), Number(windowMonths.end), { rotationId: isPalouse ? rotationId : null }),
     { calendarRef: usingCalendar ? farmerCalendar : null, rotationId: isPalouse ? rotationId : null });
   const simulateDemo = () => { onSelect('palouse'); return run('palouse', demoPlan('baseline'), { demo: true, rotationId: demoData.rotation_id }); };
+
+  // Same replay object and start years as "before": only the plan changes. compare() throws otherwise.
+  const applyImprovement = (plan, description) => {
+    try {
+      const simulation = simulate(before.replay, plan, config.simulation);
+      setAfter({ simulation, concerns: evaluateConcerns(simulation), comparison: compare(before.simulation, simulation), description });
+      setLeverError(null);
+    } catch (error) { setAfter(null); setLeverError(error.message); }
+  };
+  const openLever = id => {
+    setLever(id); setAfter(null); setLeverError(null);
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    improve.current?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  };
 
   const farm = farms.find(item => item.id === selected);
   const plan = shown ? describePlan(shown.simulation.plan) : null;
@@ -82,7 +103,7 @@ export default function Simulator({ farms, selected, onSelect, management }) {
         <p className="sim-summary" data-testid="sim-summary"><strong>{farm.name}</strong> · {plan.label} <Chip label={plan.chip}/> · {shown.simulation.startYears.length} replays, {shown.simulation.startYears[0]}–{shown.simulation.startYears[0] + 2} to {shown.simulation.startYears.at(-1)}–{shown.simulation.startYears.at(-1) + 2}</p>
         {stale && <p className="sim-hint">Your field calendar changed after this simulation. Select Simulate My Farm again to use the current calendar.</p>}
         {shown.concerns.concerns.length > 0
-          ? <div className="concern-grid">{shown.concerns.concerns.map((card, i) => <ConcernCard key={card.family} card={card} rank={i + 1}/>)}</div>
+          ? <div className="concern-grid">{shown.concerns.concerns.map((card, i) => <ConcernCard key={card.family} card={card} rank={i + 1} onLever={openLever}/>)}</div>
           : <p className="sim-empty" data-testid="no-concern">{shown.concerns.message}</p>}
         <ul className="sim-other">
           {shown.concerns.alsoQualified.map(item => <li key={item.family}><strong>Also met the bar (only the top three are shown as cards):</strong> {item.title} — {item.howOften}. {item.rule}. <Chip label="Simulated indicator"/></li>)}
@@ -90,6 +111,12 @@ export default function Simulator({ farms, selected, onSelect, management }) {
           {shown.concerns.notEvaluated.map(item => <li key={item.family} data-testid="not-evaluated"><strong>Not evaluated:</strong> {item.title} — {item.reason}{item.family === 'exposed' && selected === 'palouse' && <> <a href="#rotation-title">Go to the field calendars ↓</a></>}</li>)}
         </ul>
         <p className="sim-fine">{PROVISIONAL_NOTE} A concern is listed when its screen was met in at least {Math.round(config.simulation.concernMinFrequency * 100)}% of valid replays; order is by frequency, then a fixed planning convention, not a measure of harm. {NOT_A_FORECAST}</p>
+      </section>
+      <section className="sim-step" aria-labelledby="sim-step-3" ref={improve}>
+        <h3 id="sim-step-3"><span className="sim-step-number">3</span>Try an improvement · before / after</h3>
+        <SimComparison key={shown.simulation.replayHash + shown.simulation.plan.label} before={shown} after={after} lever={lever} onLever={openLever} onApply={applyImprovement}
+          rotations={palouseRotations} management={management} error={leverError}
+          defaultWindow={shown.simulation.plan.window ? { start: String(shown.simulation.plan.window.start), end: String(shown.simulation.plan.window.end) } : windowMonths}/>
       </section>
     </div>}
     <div className="sim-details-divider"><span aria-hidden="true">▼</span><div><strong>Explore the details</strong><p>The climate dashboard, soil context, rotation comparison, field calendars and printable plans continue below, unchanged.</p></div></div>
