@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Field Shift is a NASA Space Apps 2026 prototype for farm planning in Washington. It is a static React/Vite dashboard with no backend. It shows 1981–2025 NASA POWER climate data for three representative farms (Skagit, Yakima, Palouse) and compares three-year crop rotations (3 slots per farm, 9 total) using deterministic, evidence-gated heuristics. Work is organized into milestones (M1, M2, M3, M4, M4.2). Each one was built on a `codex/m*` branch and merged into `main`.
+Field Shift is a NASA Space Apps 2026 prototype for farm planning in Washington. It is a static React/Vite dashboard with no backend. It shows 1981–2025 NASA POWER climate data for three representative farms (Skagit, Yakima, Palouse) and compares three-year crop rotations (3 slots per farm, 9 total) using deterministic, evidence-gated heuristics. Work is organized into milestones (M1, M2, M3, M4, M4.2, M5). M1–M4.2 were each built on a `codex/m*` branch and merged into `main`. M5 adds a historical replay simulator at the top of the page: it replays a 36-month plan through every complete three-year window of the archived daily weather and reports how often provisional screening conditions occurred. It is not a forecast, yield, water-savings, profit or erosion model.
 
 ## Commands
 
@@ -26,7 +26,7 @@ node --test --test-name-pattern="weighted average" tests/score.test.js   # one J
 .venv/bin/python -m unittest tests.test_climate -v                 # one Python test module
 ```
 
-Browser checks (`tests/*.cjs`) need a running `npm run preview` and an existing Playwright install. Playwright is deliberately **not** a project dependency. They default to `/usr/bin/chromium` and `http://127.0.0.1:4173/`, so on macOS set `CHROMIUM_PATH` (and `PREVIEW_URL` if needed). Run them one at a time: `node tests/browser-smoke.cjs`, `m3-browser.cjs`, `m4-browser.cjs`, `m42-browser.cjs`. Screenshots and sample PDFs go to the ignored `work/` directory.
+Browser checks (`tests/*.cjs`) need a running `npm run preview` and an existing Playwright install. Playwright is deliberately **not** a project dependency. They default to `/usr/bin/chromium` and `http://127.0.0.1:4173/`, so on macOS set `CHROMIUM_PATH` (and `PREVIEW_URL` if needed). Run them one at a time: `node tests/browser-smoke.cjs`, `m3-browser.cjs`, `m4-browser.cjs`, `m42-browser.cjs`, `sim-browser.cjs`. Screenshots and sample PDFs go to the ignored `work/` directory.
 
 Data pipelines (network calls only happen here, never during app use):
 
@@ -34,6 +34,8 @@ Data pipelines (network calls only happen here, never during app use):
 .venv/bin/python scripts/fetch_nasa.py            # reuses existing raw chunks; delete chunks to force re-download
 .venv/bin/python scripts/fetch_nasa.py --offline  # recompute from archived raw responses only
 python scripts/fetch_soils.py [--offline]         # USDA NRCS SDA; exit 1 = acquisition/validation incomplete
+.venv/bin/python scripts/build_replay.py          # offline: raw archives → public/data/<farm>/replay.json (M5)
+.venv/bin/python scripts/build_replay.py --check  # verify committed replay files; writes nothing; exit 1 on mismatch
 ```
 
 ## Architecture
@@ -44,12 +46,15 @@ python scripts/fetch_soils.py [--offline]         # USDA NRCS SDA; exit 1 = acqu
 - `scripts/fetch_nasa.py` downloads NASA POWER daily data in 5-year chunks, archived gzipped as `public/data/<farm>/raw/*.json.gz`. It validates fail-closed and aggregates to `public/data/<farm>/climate.json` (`schema_version: 1`). This compact file is the frontend contract. `src/lib/climate.js#validateClimate` enforces the schema at load time, so if you change the pipeline output, update the validator too.
 - `scripts/fetch_soils.py` writes `soil.json` and `soil-source.json` per farm. USDA acquisition is currently blocked (HTTP 403), so these hold explicit "unavailable" records with provenance. A failed refresh keeps any existing successful data. `SoilProfile.jsx` imports these files statically.
 - `data/crops.json` (`sources`, `crops`) and `data/rotations.json` (`rotations`) hold the agricultural records. `RotationComparison.jsx` imports them at build time.
+- `scripts/build_replay.py` (offline only) flattens the raw archives into `public/data/<farm>/replay.json` (schema `field-shift-replay` v1: columnar daily `PRECTOTCORR`, `T2M_MAX`, `T2M_MIN`, `GWETROOT`; −999 → `null`; 16,436 days; raw SHA-256 provenance). It never modifies the raw archives or `climate.json`. `src/lib/replay.js#validateReplay` enforces the schema, so if you change the builder output, update the validator too. Rebuild after any change to the raw archives.
+- `data/demo-scenarios.json` holds two **illustrative** Palouse calendars (`source_kind: 'illustrative_demo'`, `values_status: 'illustrative_pending_review'`) used only by the simulator's demo button.
 
 **Frontend** (`src/App.jsx` holds all state: selected farm, priority sliders, per-rotation management calendars). State is tab-local and is cleared on refresh by design. Logic is kept in pure modules in `src/lib/`, which `node:test` tests directly. Components only present it.
 
 - `lib/score.js` computes water, soil and erosion subscores plus `weightedTotal`. Each score returns `{status: 'SCORED'|'NOT_SCORED', value, reasons, evidence}`. Scores are **gated**: anything that is unverified, unsourced (non-`https://` URLs), unknown, or misconfigured returns `NOT_SCORED` with human-readable reasons instead of a guessed number. Income is always excluded, even if it is given a numeric value. A rotation passes the gate if `verified === true` **or** `demonstrationApproved()` (`sequence_status: 'sourced'` + `sequence_approval.scope: 'research_demonstration_only'`). Today only the three Palouse sequences pass.
 - `lib/management.js` handles farmer-entered 36-month calendars (`source_kind: 'farmer_input'`, `method: 'monthly-exposed-soil-v1'`). If a confirmed calendar exists, `scoreErosion` uses it in place of the rotation's published `schedule`. Any edit (`editManagement`, `rangeEdit`, `copyYear`) resets `confirmed`.
 - `lib/plan.js` builds calendar and print-plan rows (high-rain months = top `HIGH_RAIN_RANK` normals, a display convention only). `lib/scorePresentation.js` holds labels and wording only.
+- **M5 simulator** (`components/Simulator.jsx`, `SimSetup.jsx`, `ConcernCard.jsx`, `SimComparison.jsx`, `SimulationReport.jsx`) renders above the intro and keeps its own state. It shares `selected`/`setSelected` with `FarmSelector` (keep `#farm` the only element with that id) and reads `management` but never writes it. `lib/replay.js` lazily fetches and caches the replay and maps dates to day indexes (UTC math). `lib/simulate.js` builds 43 runs (start years 1981–2023) and computes the dry, heat, frost and exposed-soil precipitation indicators. `lib/concerns.js` qualifies, ranks (≤3) and words the concern cards. `lib/compare.js` pairs before/after results and throws unless both use the same replay fingerprint and start years. Thresholds come only from `config.simulation` (`status: 'provisional'`).
 
 ## Scientific-integrity rules (enforced by tests and docs)
 
@@ -61,6 +66,7 @@ These are core requirements of the project, not style preferences:
 - Normal app use must never call NASA POWER or USDA (the browser tests assert there are no `power.larc.nasa.gov` requests).
 - Unit-test fixtures are labeled SYNTHETIC and must never be rendered as real results.
 - Dependencies are deliberately limited to React, React-DOM, Recharts, Vite, requests and pandas. Do not add packages (including test frameworks or PDF libraries) without approval.
+- Simulator rules: thresholds in `config.simulation` are provisional screening conventions pending team approval, never crop-damage thresholds; do not change them, or the demo calendar values, without approval. Every displayed simulator number carries one provenance label (Historical NASA weather · Model estimate (GWETROOT) · Farmer assumption / Illustrative demo assumption · Simulated indicator). Demo assumptions are never stored in `management` or passed to `scoreRotation`. Changing a plan never changes weather. Comparison wording never claims erosion reduced, water saved, yield, profit or soil loss. A screen that is not met is not evidence of low risk.
 - Changing formulas or coefficients requires updating `docs/METHODS.md`. Each milestone records its scope, results and AI-modified files in `docs/M*_VERIFICATION.md` and `docs/AI_DISCLOSURE.md`.
 
 ## Deployment

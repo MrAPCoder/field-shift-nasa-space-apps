@@ -70,3 +70,23 @@ created. Test soil rows and calendar percentages are explicitly synthetic and
 are confined to tests/ignored work artifacts. Actual scientific calculations,
 coefficients and NASA archives were preserved. The team remains responsible for
 reviewing claims, applicability, submission content and future deployment.
+
+## M5 — historical replay simulator
+
+An AI coding agent (Claude Code) implemented the M5 simulator from a written
+plan supplied by the team: the offline replay builder and replay files, the
+`simulation` config block, the pure replay/simulate/concerns/compare modules,
+the simulator components and styles, the printable report, unit and browser
+tests, and documentation. The complete file inventory and verification results
+are in `docs/M5_VERIFICATION.md`.
+
+The screening thresholds came from the team's plan and are stored as
+provisional; the AI did not derive or validate them agronomically. The demo
+calendar months and exposure percentages (20%, 100%, 30%) were chosen by the AI
+as plainly illustrative values because the plan asked for a hypothetical demo;
+they are labeled illustrative everywhere, are not sourced agronomic values, and
+await team review. No crop trait, citation, farm history, soil value, approval
+flag, NASA archive, climate cache or scoring coefficient was created or changed.
+Unit-test weather and calendars are labeled SYNTHETIC and are confined to tests.
+The team remains responsible for approving thresholds and demo values, reviewing
+wording and claims, and for submission and deployment decisions.

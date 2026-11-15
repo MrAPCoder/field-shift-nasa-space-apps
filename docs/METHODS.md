@@ -331,3 +331,213 @@ plan. Historical trial events remain narrative evidence; no planting, harvest or
 cover months have been invented. Existing all-unknown published schedules remain
 unchanged. The Palouse comparison does not imply a single controlled trial of its
 three options or rank totals with differing evidence bases.
+
+## M5 historical replay simulator
+
+The simulator replays a farmer's three-year plan through every complete
+three-year window of the archived daily NASA POWER weather and reports how often
+provisional screening conditions occurred. It is **not** a forecast, and not a
+yield, water-savings, profit or erosion model. It does not use, change or feed
+`src/lib/score.js`, the scoring coefficients, any `verified` or
+`sequence_approval` flag, the calendar tools or the printable rotation plans.
+
+### Data flow and replay contract
+
+`public/data/<farm>/raw/*.json.gz` (unchanged) → `scripts/build_replay.py`
+(offline; standard library plus pandas) → `public/data/<farm>/replay.json` →
+`src/lib/replay.js` → `simulate.js` → `concerns.js` / `compare.js` → components.
+The browser fetches `replay.json` on the first Simulate and keeps it in memory.
+No NASA or USDA request is made during app use.
+
+`replay.json` (schema `field-shift-replay`, version 1) is columnar: `farm`
+(id and the configured coordinates), `start` 1981-01-01, `end` 2025-12-31,
+`time_standard` LST, `days` 16,436, `units`, four `series` arrays and
+`provenance` (source, every raw archive path with its SHA-256, build time,
+builder). Index `i` is `start + i` days using UTC date arithmetic only. The
+series are `PRECTOTCORR` (mm/day), `T2M_MAX` and `T2M_MIN` (°C) and `GWETROOT`
+(unitless 0–1). The NASA sentinel −999 becomes `null`; a real zero stays zero;
+values are rounded to two decimals (the archive's own precision). The file is
+written atomically and left untouched when its content would not change.
+
+The builder fails closed, exits non-zero and writes nothing for a farm when:
+the archive does not hold exactly 16,436 consecutive days, a date is duplicated,
+an archive's stored coordinates differ from `src/config/config.json`, a unit
+differs, the time standard or sentinel is unexpected, a value is non-finite or
+outside the M1 sanity bounds, or minimum exceeds maximum temperature.
+`--check` rebuilds in memory, compares with the committed file and writes
+nothing. `src/lib/replay.js#validateReplay` re-checks schema, location, period,
+length, units, value ranges and provenance in the browser and freezes the
+series; a failed load shows “Simulation data could not be loaded” with Retry and
+leaves the dashboard working.
+
+In the current archive all four series are complete (no nulls) at all three
+locations. Monthly precipitation normals recomputed from `replay.json` match
+`climate.json` within 0.1 mm (tested).
+
+### Plans and runs
+
+A plan is a 36-month calendar. Month `m ∈ 0..35` has a status in
+{cash, cover, bare, unknown} and an exposed-soil percentage in [0, 100] or null.
+The plan starts January 1 of plan year 1.
+
+A run starting in year `Y` maps plan month `m` to calendar year
+`Y + floor(m / 12)`, month `(m mod 12) + 1`. Valid `Y` = 1981 … 2023, giving
+**43 runs**; the last ends 2025-12-31 and no run requests 2026 weather. October
+of plan year 1 to July of plan year 2 are contiguous calendar months, so a
+winter crop's fall weather comes from the correct preceding year. Overlapping
+runs share years and are **not independent trials**.
+
+**In-crop day:** a day in a month whose status is cash or cover. Because the
+existing calendar convention lets cash/cover status include retained residue
+after harvest, such months also count as crop months here.
+
+**Climate-only mode** (Skagit, Yakima, or Palouse without a confirmed calendar):
+in-crop months are the farmer-chosen growing window, first month → last month,
+wrapping allowed (for example Oct → Jul), repeated in every plan year and
+labeled a farmer assumption. The exposed-soil family is not evaluated.
+
+Plan sources are kept distinct and labeled: illustrative demo calendar,
+farmer-confirmed field calendar (must pass `managementIssues` including
+confirmation), an unsaved what-if edit of a confirmed calendar, or a growing
+window. An unconfirmed or incomplete farmer calendar is not used by the UI.
+
+### Indicators per run (k = plan year 1..3)
+
+Let `P_d`, `Tmax_d`, `Tmin_d` be the day's archived values.
+
+- **Dry.** `DS_max` = the longest run of consecutive in-crop days with
+  `P_d < 1.0 mm` over the whole 36-month run. A spell may cross month and year
+  boundaries. A non-in-crop day ends the spell. A missing (`null`) in-crop day
+  ends the spell and invalidates the run for this family: missing is neither dry
+  nor wet. Flag the run if `DS_max ≥ 21`.
+- **Heat.** `H_k` = in-crop days in plan year `k` with `Tmax_d ≥ 32 °C`. A
+  missing in-crop maximum invalidates the run. Flag if `max_k H_k ≥ 5`.
+- **Frost.** `F_k` = in-crop days in plan year `k` with `Tmin_d ≤ 0 °C`, counted
+  only in the shoulder months April, May, June, September and October. A missing
+  minimum on such a day invalidates the run. Flag if `max_k F_k ≥ 1`.
+- **Exposed-soil precipitation.** With `x_d` = the month's exposed percentage /
+  100 (all months; bare = 100):
+  `Efrac_k = Σ_{d∈k} P_d · x_d / Σ_{d∈k} P_d` and `E_mm_run = Σ_run P_d · x_d`.
+  A zero denominator or any missing precipitation makes the run unavailable.
+  Requires a complete calendar: an unknown month or missing percentage makes the
+  whole family “Not evaluated”; unknown is never treated as bare. A bare month
+  whose percentage is not 100 is treated as invalid input, not as 100. Flag if
+  `max_k Efrac_k ≥ 0.25`.
+- **Root-zone wetness context (never a trigger).** For the plan year in which
+  the worst run's longest dry spell starts, take each in-crop calendar month's
+  mean `GWETROOT` and its empirical percentile against the same calendar month
+  in 1991–2020: `percentile = (n_below + 0.5 · n_equal) / N`. Report the mean of
+  those percentiles and the smallest `N`. A month with any missing day, or fewer
+  than `minValidRuns` reference years, makes the context unavailable. The
+  evaluated year is not removed from the reference when it lies inside it.
+  `GWETROOT` is a model estimate of relative wetness, not measured soil water.
+  It appears as one evidence line on the Dry card only.
+
+For each family, `frequency = flagged_runs / valid_runs`. Fewer than 20 valid
+runs makes the family unavailable, not “low”. The worst example is the valid run
+with the largest family metric (`DS_max`, `max_k H_k`, `max_k F_k`,
+`max_k Efrac_k`); ties keep the earliest start year. It is shown with real
+dates and values.
+
+POWER precipitation includes the water equivalent of frozen precipitation, so
+the wording is “precipitation”, not rain impact.
+
+### Provisional thresholds
+
+All thresholds live in `src/config/config.json` under the new `simulation` key
+with `"status": "provisional"`. They are screening conventions pending approval
+by the team (Rehan and Nakul), shown as provisional in the UI and the report.
+They are **never crop-damage thresholds**. Values are duplicated rather than
+shared with the root `hotDayThresholdC` / `frostThresholdC`, so changing one
+cannot silently change the other. `scripts/fetch_nasa.py --offline` output is
+unchanged by the new key (tested).
+
+| Key | Value | Meaning |
+|---|---|---|
+| `dryDayMm` | 1.0 | A day is dry when precipitation is below this |
+| `drySpellDays` | 21 | Dry screen: consecutive in-crop dry days |
+| `hotDayC` | 32 | Hot day: daily maximum at or above |
+| `hotDaysPerYear` | 5 | Heat screen: in-crop hot days in any plan year |
+| `frostDayC` | 0 | Frost day: daily minimum at or below |
+| `frostShoulderMonths` | 4, 5, 6, 9, 10 | Months in which frost days are counted |
+| `frostDaysPerYear` | 1 | Frost screen: in-crop frost days in any plan year |
+| `exposedFraction` | 0.25 | Exposed screen: share of a plan year's precipitation |
+| `concernMinFrequency` | 0.20 | A concern needs its screen met in ≥ 1 in 5 valid runs |
+| `minValidRuns` | 20 | Minimum valid runs (also minimum wetness reference years) |
+| `wetnessBaseline` | 1991–2020 | Reference years for the wetness context |
+| `familyOrder` | exposed, dry, heat, frost | Tie order between families |
+
+### Concerns
+
+1. Each family reports frequency, valid runs and its worst example. A family
+   with missing inputs is listed as “Not evaluated” with the reason, never as a
+   card.
+2. A family qualifies when `frequency ≥ 0.20`.
+3. Qualifying families are ranked by frequency, descending; ties follow
+   `familyOrder`. That order is a stable planning convention, not a measure of
+   expected harm.
+4. At most three cards are shown. Further qualifying families and families below
+   the bar are listed as plain lines. With none qualifying the app says: “No
+   screening concern met the bar in these replays. This is not evidence of low
+   risk.” Cards are never padded.
+5. Card text comes from unit-tested templates in `src/lib/concerns.js`: title,
+   how often, rule, one generic why-it-matters sentence with no crop-specific
+   claim, the worst example, the uncertainty statement, and one allowed lever.
+   The Dry card always notes that irrigation may offset low precipitation.
+
+Every displayed number carries one label: Historical NASA weather, Model
+estimate (GWETROOT), Farmer assumption or Illustrative demo assumption, or
+Simulated indicator.
+
+### Improvements and comparison
+
+Only three levers exist: (A) keep cover or residue in selected months — the app
+lists the three plan months with the most precipitation on assumed-exposed soil
+and the farmer enters every status and percentage (nothing is prefilled; the
+what-if is not saved to the field calendar and is not confirmed); (B) replay a
+different Palouse research rotation, using its confirmed farmer calendar if one
+exists and otherwise a growing window with the exposed family not evaluated;
+(C) change the growing window of a climate-only plan.
+
+`src/lib/compare.js#compare` pairs a before and an after simulation. It throws
+unless both carry the same replay fingerprint and the same list of start years,
+so changing a plan can never change the weather. Per family it reports flagged
+runs before → after, the paired per-run metric (median before → after and the
+number of runs in which it went down or up), and which families newly meet or no
+longer meet the bar. For the exposed family the paired metric is `E_mm_run`.
+Months changed to a crop or cover status become in-crop months, so dry, heat and
+frost counts can rise after such a change; the comparison says so. A family that
+is no longer evaluated is reported as such, not as an improvement.
+
+Allowed wording: “less precipitation on assumed-exposed soil”, “fewer in-crop
+hot days in these replays”. Comparison output never says erosion reduced, water
+saved, yield, profit or soil loss (tested).
+
+### Illustrative demo
+
+`data/demo-scenarios.json` holds two complete 36-month calendars for
+`palouse-current` with `source_kind: "illustrative_demo"`, `confirmed: false`
+and `values_status: "illustrative_pending_review"`. The months and percentages
+are hypothetical values chosen for demonstration; they are not sourced planting
+dates, measured cover, farm data or recommendations, and they await team review.
+Crop months (cash, 20% exposed): year 1 April–August, year 1 October – year 2
+July, year 3 April–August. Baseline: the 16 other months are bare (100%).
+Improved: identical except those 16 months are cover at 30%. Demo calendars are
+rejected by `managementIssues`, are never stored in farmer `management` state,
+and are never passed to `scoreRotation` (tested).
+
+### Limits
+
+Gridded data (roughly 50 km) is not a field measurement. Irrigation, soil
+storage, crop growth stage, slope and storm intensity are not modeled. Daily
+extremes do not give time below or above a threshold. A monthly exposure
+percentage is an assumption held constant within the month. Screens met in a
+replay are counts under stated assumptions, not probabilities of crop damage,
+and a screen that is not met is not evidence of low risk.
+
+With the provisional values, several screens are met in nearly every replay at
+Palouse and Yakima (for example 21 dry days inside any summer crop window, one
+shoulder-month frost, five hot days). A screen met in 43 of 43 replays does not
+separate plans; in that case the paired per-run metric in the comparison is the
+informative number. Choosing less saturated thresholds is a team decision and
+was not made here.

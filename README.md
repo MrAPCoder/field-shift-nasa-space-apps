@@ -49,6 +49,9 @@ Normal app use must read cached aggregates, never query NASA POWER.
 - `docs/AGRICULTURAL_REVIEW.md`: source URLs, proposed claims and exact data gaps.
 - `docs/M3_VERIFICATION.md`: M3 tests, scope and completion limits.
 - `docs/M4_VERIFICATION.md`: visual calendars, print checks and M4 scope.
+- `docs/M42_VERIFICATION.md`: M4.2 evidence, soil acquisition and calendar tools.
+- `docs/M5_VERIFICATION.md`: historical replay simulator, values awaiting approval, results.
+- `docs/NASA_SIMULATION_DATA_AUDIT.md`: NASA data audit behind the simulator.
 
 ## Preview deployment
 Vercel static hosting: build command `npm run build`, output `dist`, Vite preset.
@@ -153,3 +156,41 @@ Additional checks: `node tests/m42-browser.cjs` against the existing local previ
 See `docs/M42_VERIFICATION.md` for results, limitations and AI-modified files.
 M4.2 does not merge to main, change production, redesign visuals, add dependencies,
 or modify NASA data, scoring formulas or coefficients.
+
+## M5 — historical farm simulator
+
+The top of the page now replays a three-year plan through the archived daily
+NASA POWER weather: **Set up farm → Simulate My Farm → Top concerns (0–3) → Try
+an improvement → Before / after → Print simulation report.** Each plan is run
+through 43 overlapping three-year windows (start years 1981–2023) and the app
+reports how often provisional screening conditions occurred. It is a replay of
+history, not a forecast, and not a yield, water-savings, profit or erosion model.
+
+- **Try the illustrative Palouse demo** runs a hypothetical calendar under a
+  persistent HYPOTHETICAL banner. Its values are illustrative, not farm data.
+- Palouse can use a complete, confirmed field calendar from the rotation
+  comparison below. Without one, and always for Skagit and Yakima, choose a
+  growing window; exposed-soil precipitation is then “Not evaluated”.
+- Thresholds live in `src/config/config.json` under `simulation` and are
+  **provisional** screening conventions pending team approval, never
+  crop-damage thresholds. Formulas: `docs/METHODS.md`.
+- Every number is labeled: Historical NASA weather, Model estimate (GWETROOT),
+  Farmer assumption / Illustrative demo assumption, or Simulated indicator.
+
+Build and verify the replay data (offline; no NASA request):
+
+```sh
+.venv/bin/python scripts/build_replay.py           # raw archives → public/data/<farm>/replay.json
+.venv/bin/python scripts/build_replay.py --check   # verify committed files; writes nothing
+.venv/bin/python -m unittest discover -s tests -p 'test_*.py' -v
+npm test
+npm run build
+npm run preview -- --host 127.0.0.1
+# In a second terminal (existing Playwright; set CHROMIUM_PATH / PREVIEW_URL if needed):
+node tests/sim-browser.cjs
+```
+
+Rebuild `replay.json` only if the raw archives change. The existing dashboard,
+soil context, rotation comparison, calendars, scores and printable plans are
+unchanged. See `docs/M5_VERIFICATION.md` for results, the demo values and the
+thresholds awaiting approval.
