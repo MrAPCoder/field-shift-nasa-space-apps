@@ -1,7 +1,7 @@
 # M5 — Historical Farm Simulator
 
 Base: `e43b36c` (main, NASA simulation data audit merged).
-Branches: `claude/farm-simulator-implementation-pi98a3` and `fable/m5-simulator` (same commits).
+Branch: built on the coding session's assigned branch `claude/farm-simulator-implementation-pi98a3`; the plan's name was `fable/m5-simulator`.
 Deadline supplied by the team: Sunday November 15, 2026, 8 PM Pacific.
 Not merged to main. No production deployment and no change to deployment protection.
 
@@ -102,8 +102,10 @@ Three numbers and one rule. They are hypothetical, not sourced agronomic values.
 
 ## Differences from the plan
 
-- Work was committed on the session's assigned branch and pushed to
-  `fable/m5-simulator` as well.
+- Work was committed on the coding session's assigned branch rather than
+  `fable/m5-simulator`. The session had read-only GitHub access, so the push
+  was refused (HTTP 403) and the commits were handed to the team as a git
+  bundle to push themselves.
 - “▼ Explore the details” is a divider heading, not a collapsible wrapper.
   Wrapping the existing sections would break the existing print rule
   `main > :not(.rotation-section)` and the existing browser tests.
@@ -164,10 +166,11 @@ zero `power.larc.nasa.gov` or USDA requests; no runtime errors.
 
 ## Preview deployment
 
-No Vercel CLI, token or project link is available in this environment, so no
-deployment was started from here. If the repository's Vercel Git integration is
-enabled, pushing the branch creates a preview deployment automatically; its URL
-is recorded in the task completion report when one could be observed.
+Not deployed from the coding session: the branch could not be pushed (GitHub
+write access refused), and the environment has no Vercel CLI, token or project
+link. If the repository's Vercel Git integration is enabled, pushing the branch
+creates a preview deployment automatically. Production and deployment protection
+were not touched.
 
 ## Files
 
