@@ -812,3 +812,74 @@ and the panel marks the day unreliable.
   Roots are a fixed schematic and do not grow. No tubers, yield or damage are drawn.
 - **Ground cover:** residue segments cover the configured 70% of the surface length.
   Live cover appears only outside the crop season. Bare is drawn fully exposed.
+
+## M8 farm score, biggest weakness and model-supported improvement
+
+The `daily-bucket-v1` model is unchanged. M8 adds `src/lib/grade.js`, which scores one
+simulated historical year out of 100. Settings live in `config.soilSimulation.grading`
+(`status: provisional_model_scoring_convention`). The score is a model scoring
+convention. **100/100 means the scenario met every model target. It is not a perfect
+real farm, measured soil health, yield or erosion outcome.**
+
+### Categories
+
+Each category is linear between a zero point and a target, clamped, and rounded to whole
+points. The total is the sum of the rounded category points, so displayed parts always
+add up. If any category cannot be calculated, the total is "Not scored". No points are
+estimated.
+
+| Category | Max | Metric, from the daily records | Full | Zero |
+| --- | --- | --- | --- | --- |
+| Irrigation Efficiency | 35 | (annual drainage − drainage of the same scenario with irrigation 0) ÷ applied net irrigation | ≤ 10% | ≥ 60% |
+| Crop Water Supply | 35 | Σ actual ET ÷ Σ demand over crop-season days | ≥ 90% | ≤ 50% |
+| Rain Exposure Protection | 30 | Σ exposed precipitation ÷ Σ NASA precipitation over the year | ≤ 30% | ≥ 90% |
+
+- Irrigation Efficiency uses a paired zero-irrigation run on identical weather, so it
+  counts only drainage that irrigation caused. Without that pair it is "Not scored".
+  With no irrigation, nothing applied drained away, so it earns full points. Crop Water
+  Supply still loses points if the crop runs short.
+- Rain Exposure uses the assumed cover fractions. It is an exposure proxy, not erosion.
+- Grades: A ≥ 90, B ≥ 80, C ≥ 70, D ≥ 60, otherwise F.
+
+### Biggest weakness and how to improve
+
+1. Candidate changes alter one practical setting: net irrigation (0–80 mm/week in
+   `irrigationOptions`), ground cover, or the whole season shifted ±1 month at the same
+   length. Seasons that cross New Year are not shifted. Soil type, location, crop and
+   year never change. Each candidate is a full rerun with its own paired zero-irrigation
+   run, on the same NASA weather, location, year and model.
+2. A candidate counts for a category only if it uses that category's lever and raises
+   that category's points. The levers are less irrigation or a season shift for
+   efficiency, more irrigation or a season shift for crop water, and cover for exposure.
+   It must also raise the **total** by at least `minMeaningfulGain` (1) point.
+3. Among categories that lost at least `minMeaningfulLoss` (2) points, the biggest
+   weakness is the one whose best candidate gives the largest total gain. Tradeoffs in
+   other categories are already netted out. Ties go to more points lost. This is
+   deliberately not the lowest raw score: Palouse 2023 unirrigated wheat loses 35
+   points on crop water but only 22 on exposure, yet residue gives +22 total while the
+   best crop-water change gives +9.
+4. If no category qualifies, the tool says there is no meaningful weakness (all targets
+   within one point) or that no tested single change helped. It invents nothing.
+5. Tradeoffs listed: categories that drop, more crop-stress days, more irrigation, more
+   drainage, extra off-season water use by live cover, and the fact that planting-date
+   effects on frost, development and yield are not modeled.
+
+"Try this improvement" runs the suggested scenario through the same simulation path. It
+becomes the "after" run against the scenario that was showing, and Undo restores the
+previous runs and inputs. Tests check that the applied score equals the predicted
+`totalAfter`.
+
+### Palouse demonstration
+
+`config.soilSimulation.demo` runs Palouse spring wheat on loam, April–August, bare
+between crops. It compares **no irrigation** with **40 mm/week**. The 40 mm/week is an
+*illustrative* amount, chosen to show storage filling and draining. It is not a
+schedule or recommendation and is labelled that way in the UI. In 2023 both runs score
+43/100. Irrigation fixes crop water (0 → 35) but most of it drains (efficiency 35 → 0).
+
+### Storage overflow in the illustration
+
+On any day with model drainage (stored water + precipitation + irrigation exceeded
+capacity), the scene draws a blue band on the soil surface and gauge, labelled "Soil
+store full · extra water drains". The panel states how many mm came in and drained.
+Nothing is drawn when drainage is zero.

@@ -80,3 +80,14 @@ Static hosting on Vercel (Vite preset, build `npm run build`, output `dist`). Mi
 ## M6 daily soil-water scenario
 
 `VisualSimulator.jsx` now presents six inputs and the daily water balance in `lib/soilWater.js`; M5 and legacy tools remain in Advanced Details. All numeric soil/crop assumptions and primary citations are in `config.soilSimulation`. Do not imply local validation of generic parameters or present plant-available percentage as volumetric moisture or soil health. The new weather period is 2021–2025. `python scripts/build_soil_weather.py --check` verifies derived files offline; `--fetch` acquires only missing supplemental wind/pressure archives, never overwriting original raw data. Missing required weather fails closed. GWETROOT is separate regional model context; SMAP is explicitly unavailable. Run `tests/soil-water.test.js`, `tests/visual-browser.cjs` and Python provenance tests in addition to legacy checks. See M6 sections in METHODS and M6_VERIFICATION.
+
+## M8 farm score and biggest weakness
+
+`lib/grade.js` scores one simulated year out of 100: Irrigation Efficiency 35, Crop Water
+Supply 35, Rain Exposure Protection 30. Targets are in `config.soilSimulation.grading`.
+Any unscorable category makes the total "Not scored". The biggest weakness is the
+category whose best single-setting rerun (irrigation, cover or a ±1 month season shift;
+never soil) raises the total most, not the lowest raw score. `ScorePanel.jsx` shows the
+score, weakness, improvement and apply/undo. The Palouse demo compares 0 vs. an
+illustrative 40 mm/week (`config.soilSimulation.demo`). Do not change targets or the
+demo amount without team approval. See METHODS "M8" and `tests/grade.test.js`.

@@ -18,7 +18,8 @@ const path=require('node:path');
  const url=process.env.PREVIEW_URL||'http://127.0.0.1:4173/';
  await page.goto(url);const main=page.locator('#visual-simulator'),scene=main.getByTestId('farm-scene'),slider=main.getByRole('slider',{name:'Simulation day'});
  assert.equal(await page.locator('h1').count(),1);assert.equal(await page.locator('#advanced-details').getAttribute('open'),null);
- await main.getByRole('button',{name:'Try the Palouse demo',exact:true}).click();
+ // Default inputs are the Palouse base scenario; the demo is checked separately below.
+ await main.getByRole('button',{name:'Run simulation',exact:true}).click();
  await slider.waitFor();
  assert.equal(await main.locator('.water-chart').count(),0,'the main view is the farm illustration, not a graph');
  assert.equal(await scene.count(),1);
@@ -41,6 +42,25 @@ const path=require('node:path');
  }
  assert.match(await main.getByTestId('soil-panel').innerText(),/of 120 mm plant-available water/);
  await checkFrame(0);
+ // M8 score: every shown number equals an independent Node rerun; try-improvement and undo.
+ const {analyzeWeaknesses}=await import(path.join(root,'src/lib/grade.js'));
+ const analysis=analyzeWeaknesses(weather('palouse'),base),imp=analysis.biggest.improvement;
+ assert.equal(await main.getByTestId('score-total').innerText(),`${analysis.before.score.total}/100`);
+ assert.equal(await main.getByTestId('score-grade').innerText(),analysis.before.score.grade);
+ assert.match(await main.getByTestId('weakness-name').innerText(),new RegExp(analysis.biggest.label));
+ assert.match(await main.getByTestId('improve-total').innerText(),new RegExp(`${imp.totalBefore} → ${imp.totalAfter}`));
+ assert.equal(await main.locator('details.other').count(),2,'other two categories are collapsed');
+ await main.getByTestId('how-to-improve').getByRole('button',{name:'Try this improvement'}).click();
+ await main.getByTestId('applied-banner').waitFor();
+ assert.equal(await main.getByTestId('score-total').innerText(),`${imp.totalAfter}/100`,'applied score equals the predicted rerun');
+ assert.match(await main.getByTestId('applied-banner').innerText(),new RegExp(`${imp.totalBefore} → ${imp.totalAfter}`));
+ assert.match(await main.getByTestId('compare-score').innerText(),new RegExp(`${imp.totalBefore}.*→.*${imp.totalAfter}`,'s'));
+ assert.equal(await main.getByLabel('Ground cover',{exact:true}).inputValue(),imp.scenario.cover);
+ await slider.fill('10');assert.equal(await scene.getAttribute('data-cover'),imp.scenario.cover,'farm redrawn for the applied change');
+ await main.getByTestId('applied-banner').getByRole('button',{name:'Undo'}).click();
+ assert.equal(await main.getByTestId('score-total').innerText(),`${analysis.before.score.total}/100`);
+ assert.equal(await main.getByTestId('soil-comparison').count(),0,'undo returns to the single baseline run');
+ assert.equal(await main.getByLabel('Ground cover',{exact:true}).inputValue(),'bare');
  for(const i of [10,50,123,190,200,364]){await slider.fill(String(i));await checkFrame(i);}
  // Known archived days: freezing precipitation is not drawn as liquid infiltration; saturated day drains.
  await slider.fill('10');assert.equal(await scene.locator('.precip-frozen').count(),1);assert.equal(await scene.locator('.precip-liquid').count(),0);
@@ -89,7 +109,7 @@ const path=require('node:path');
  await main.getByLabel('Ground cover',{exact:true}).selectOption('residue');
  await main.getByRole('button',{name:'Run comparison',exact:true}).click();
  await page.waitForFunction(()=>document.querySelector('.scenario-pair')?.textContent.includes('Crop residue'));
- assert.match(await main.getByTestId('soil-comparison').innerText(),/491.*147.3/s);
+ assert.match(await main.locator('.water-compare').innerText(),/Precipitation on exposed soil: 491.*147.3/s);
  assert.equal(await scene.locator('.residue').count(),1);
  await main.getByLabel('Soil type',{exact:true}).selectOption('sandy');
  await main.getByRole('button',{name:'Run comparison',exact:true}).click();
@@ -134,6 +154,13 @@ const path=require('node:path');
  await slider.waitFor();
  assert.equal(await main.getByLabel('Location',{exact:true}).inputValue(),'palouse');
  assert.match(await main.getByTestId('soil-panel').innerText(),/of 120 mm plant-available/);
+ // Demo: no irrigation vs. a labelled illustrative amount, on identical weather, Apr–Aug season.
+ assert.match(await main.getByTestId('demo-label').innerText(),/illustrative amount, not a recommendation/);
+ assert.match(await main.locator('.scenario-pair').innerText(),/No irrigation:.*0 mm\/week, Apr–Aug.*Illustrative:.*40 mm\/week, Apr–Aug/s);
+ const demoIrr=runSoilSimulation(weather('palouse'),{...base,irrigation:40}),overflowDay=demoIrr.days.findIndex(d=>d.irrigation>0&&d.drainage>0);
+ await slider.fill(String(overflowDay));await checkFrame(overflowDay,demoIrr,'demo');
+ assert.equal(await scene.getByTestId('overflow').count(),1,'storage overflow is drawn when added water exceeds capacity');
+ assert.match(await main.getByTestId('panel-overflow').innerText(),/more than the soil could hold/);
  await page.locator('#advanced-details > summary').click();
  assert.equal(await page.locator('#soil-methods .water-chart').count(),2,'yearly graph + NASA wetness context live in Advanced Details');
  assert.equal(await page.getByTestId('month-balance').locator('tbody tr').count(),12);

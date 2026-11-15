@@ -1,13 +1,17 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { MODEL, loadSoilWeather, runSoilSimulation, compareSoil, startupSensitivity, periodBalance, monthlyBalance } from '../lib/soilWater.js';
 import { sceneFrame, mm } from '../lib/scene.js';
+import { analyzeWeaknesses, gradeScenario } from '../lib/grade.js';
 import FarmScene, { FlowLegend } from './FarmScene.jsx';
+import ScorePanel from './ScorePanel.jsx';
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const COVER = { bare:'Bare between crops', residue:'Crop residue · 70% assumed cover', cover:'Cover crops · reference-grass scenario' };
-const OFF_SEASON = { bare:'Bare soil between crops', residue:'Crop residue on the surface', cover:'Live cover crop (outside the cash-crop season)' };
+const OFF_SEASON = { bare:'Bare soil between crops', residue:'Crop residue on the surface', cover:'Live cover crop (outside the crop season)' };
+const DEMO = MODEL.demo;
 const defaults = location => ({location,crop:'spring_wheat',soil:'loamy',irrigation:0,planting:4,harvest:8,cover:'bare'});
+const demoScenario = irrigation => ({location:DEMO.location,crop:DEMO.crop,soil:DEMO.soil,irrigation,planting:DEMO.planting,harvest:DEMO.harvest,cover:DEMO.cover});
 const number = (v,digits=1) => v == null || !Number.isFinite(v) ? 'Unavailable' : v.toLocaleString('en-US',{maximumFractionDigits:digits});
 const fixed = (v,digits=1) => v == null || !Number.isFinite(v) ? 'Unavailable' : v.toLocaleString('en-US',{maximumFractionDigits:digits,minimumFractionDigits:digits});
 const signed = (v,digits=1) => `${v>0?'+':v<0?'−':'±'}${fixed(Math.abs(v),digits)}`;
@@ -31,18 +35,17 @@ function WaterChart({ before, after, index=null, context=false }) {
   </svg>;
 }
 
+// Two NASA numbers that drive the day; the other inputs stay one click away.
 function WeatherStrip({ day }) {
   return <div className="weather-strip" data-testid="weather-strip">
     <time className="weather-date" dateTime={day.date}>{dateLabel(day.date)}</time>
     <div className="weather-values"><span className="tag tag-nasa">NASA POWER daily</span>
-      <span>Precip. <b>{fixed(day.rain)} mm</b></span>
-      <span>High / low <b>{fixed(day.tMax)} / {fixed(day.tMin)} °C</b></span>
-      <span>Humidity <b>{number(day.rh,0)}%</b></span>
-      <span>Sunlight <b>{fixed(day.solar)} MJ/m²</b></span>
-      <span>Wind <b>{fixed(day.wind)} m/s</b></span>
-      <span>Pressure <b>{fixed(day.pressure)} kPa</b></span>
-      <span className="calc">→ Drying demand <b>{fixed(day.et0)} mm</b> <i className="tag tag-calc">calculated</i></span>
+      <span>Precipitation <b>{fixed(day.rain)} mm</b></span>
+      <span className="calc">Drying demand <b>{fixed(day.et0)} mm</b> <i className="tag tag-calc">calculated</i></span>
     </div>
+    <details className="weather-more"><summary>All NASA inputs</summary>
+      <p>High / low <b>{fixed(day.tMax)} / {fixed(day.tMin)} °C</b> · Humidity <b>{number(day.rh,0)}%</b> · Sunlight <b>{fixed(day.solar)} MJ/m²</b> · Wind <b>{fixed(day.wind)} m/s</b> · Pressure <b>{fixed(day.pressure)} kPa</b>. These drive the FAO-56 drying demand.</p>
+    </details>
   </div>;
 }
 
@@ -62,6 +65,7 @@ function SoilPanel({ frame, result, compareDay, compareLabel, startup, monthToDa
     <div className="panel-big"><strong data-testid="panel-percent">{number(day.availablePercent,0)}%</strong><span>{fixed(day.water)} of {number(result.capacity)} mm plant-available water</span></div>
     {compareDay&&<p className="panel-compare">{compareLabel} on this date: <b>{number(compareDay.availablePercent,0)}%</b> ({signed(day.availablePercent-compareDay.availablePercent,0)} pts)</p>}
     <p className={`panel-status status-${status.cls}`} data-testid="panel-status">{status.text}</p>
+    {day.drainage>0&&<p className="panel-status status-full" data-testid="panel-overflow">Soil store full: {fixed(day.rain+day.irrigation)} mm came in{day.irrigation>0?` (${fixed(day.irrigation)} mm irrigation)`:''}, more than the soil could hold, so {fixed(day.drainage)} mm drained below the modeled layer.</p>}
     <dl className="today-flows" data-testid="today-flows">
       <div><dt><i className="key key-nasa"/>NASA precipitation</dt><dd>+{mm(day.rain)} mm</dd></div>
       <div><dt><i className="key key-input"/>Irrigation</dt><dd>+{mm(day.irrigation)} mm</dd></div>
@@ -70,11 +74,13 @@ function SoilPanel({ frame, result, compareDay, compareLabel, startup, monthToDa
       <div className="net"><dt>Change in stored water</dt><dd>{signed(frame.change)} mm</dd></div>
     </dl>
     <p className="panel-explain" data-testid="panel-explain">{frame.explanation}</p>
-    <div className="panel-exposure"><span>Soil exposure</span><strong>{number(100*day.exposedFraction,0)}% of surface</strong><small>Assumed for {day.active?'the crop season':OFF_SEASON[s.cover].toLowerCase()}{s.cover==='residue'?' with residue':''}. {fixed(day.exposedRain)} mm of today’s precipitation hit exposed soil. Not an erosion measurement.</small></div>
     {cautions.length>0&&<ul className="panel-cautions" data-testid="panel-cautions">{cautions.map(c=><li key={c}>{c}</li>)}</ul>}
-    {m&&<div className="month-readout" data-testid="month-readout"><span>{MONTH_NAMES[Number(day.date.slice(5,7))-1]} 1–{Number(day.date.slice(8,10))}, summed from daily values</span>
-      <p>Stored {fixed(m.start)} → {fixed(m.end)} mm · rain +{fixed(m.rain)} · irrigation +{fixed(m.irrigation)} · water loss −{mm(m.actualET)} · drainage {m.drainage>0?'−':''}{mm(m.drainage)}</p>
-      <small>Balance check: {fixed(Math.abs(m.residual),3)} mm unexplained{m.dryDays?` · ${m.dryDays} day${m.dryDays>1?'s':''} below the stress line`:''}</small></div>}
+    <details className="panel-more"><summary>Soil exposure & month so far</summary>
+      <div className="panel-exposure"><span>Soil exposure</span><strong>{number(100*day.exposedFraction,0)}% of surface</strong><small>Assumed for {day.active?'the crop season':OFF_SEASON[s.cover].toLowerCase()}{s.cover==='residue'?' with residue':''}. {fixed(day.exposedRain)} mm of today’s precipitation hit exposed soil. Not an erosion measurement.</small></div>
+      {m&&<div className="month-readout" data-testid="month-readout"><span>{MONTH_NAMES[Number(day.date.slice(5,7))-1]} 1–{Number(day.date.slice(8,10))}, summed from daily values</span>
+        <p>Stored {fixed(m.start)} → {fixed(m.end)} mm · rain +{fixed(m.rain)} · irrigation +{fixed(m.irrigation)} · water loss −{mm(m.actualET)} · drainage {m.drainage>0?'−':''}{mm(m.drainage)}</p>
+        <small>Balance check: {fixed(Math.abs(m.residual),3)} mm unexplained{m.dryDays?` · ${m.dryDays} day${m.dryDays>1?'s':''} below the stress line`:''}</small></div>}
+    </details>
   </aside>;
 }
 
@@ -83,18 +89,22 @@ export default function VisualSimulator({farms,selected,onSelect,year,onResult})
   const [before,setBefore]=useState(null),[after,setAfter]=useState(null);
   const [load,setLoad]=useState('idle'),[error,setError]=useState('');
   const [index,setIndex]=useState(0),[playing,setPlaying]=useState(false),[view,setView]=useState('after');
-  const request=useRef(0),watch=useRef(null);
+  const [weather,setWeather]=useState(null),[demoMode,setDemoMode]=useState(false),[applied,setApplied]=useState(null);
+  const request=useRef(0),watch=useRef(null),scoreRef=useRef(null);
   const locationDraft={...draft,location:selected,year};
   const shown=before?.scenario.location===selected&&before.scenario.year===year?before:null;
   const compared=shown?after:null,current=compared??shown;
   const viewing=compared&&view==='before'?shown:current, other=compared?(viewing===shown?compared:shown):null;
-  const changed=current&&JSON.stringify(current.scenario)!==JSON.stringify(locationDraft);
+  const changed=current&&['location','crop','soil','irrigation','planting','harvest','cover','year'].some(k=>current.scenario[k]!==locationDraft[k]);
   const last=current?current.days.length-1:0, i=Math.min(index,last);
   const frame=useMemo(()=>viewing?sceneFrame(viewing,i,viewing.startup):null,[viewing,i]);
   const monthFirst=useMemo(()=>viewing?monthlyBalance(viewing).map(m=>m.first):[],[viewing]);
   const monthToDate=frame?periodBalance(viewing,monthFirst[Number(frame.date.slice(5,7))-1],i):null;
+  // Score + biggest weakness for the scenario currently on screen (reruns on the same weather).
+  const analysis=useMemo(()=>current&&weather?.farm.id===current.scenario.location&&weather.fingerprint===current.weatherFingerprint?analyzeWeaknesses(weather,current.scenario):null,[current,weather]);
+  const baselineScore=useMemo(()=>compared&&weather&&weather.fingerprint===shown.weatherFingerprint?gradeScenario(weather,shown.scenario).score:null,[compared,shown,weather]);
   const animate=playing&&!reducedMotion();
-  useEffect(()=>{request.current++;setBefore(null);setAfter(null);setPlaying(false);setIndex(0);setLoad('idle');setError('');},[selected,year]);
+  useEffect(()=>{request.current++;setBefore(null);setAfter(null);setPlaying(false);setIndex(0);setLoad('idle');setError('');setDemoMode(false);setApplied(null);},[selected,year]);
   useEffect(()=>{onResult(current?{current,baseline:compared?shown:null}:null);},[current,compared,shown,onResult]);
   useEffect(()=>{
     if(!playing||!current) return;
@@ -103,32 +113,61 @@ export default function VisualSimulator({farms,selected,onSelect,year,onResult})
   },[playing,current]);
   function edit(key,value){setDraft(p=>({...p,[key]:value}));setPlaying(false);}
   function go(k){setPlaying(false);setIndex(Math.max(0,Math.min(last,k)));}
-  async function run({demo=false,newBaseline=false}={}) {
-    const scenario=demo?{...defaults('palouse'),year}:locationDraft;
-    if(demo){onSelect('palouse');setDraft(defaults('palouse'));}
+  async function simulate(scenario) {
+    const w=await loadSoilWeather(farms.find(f=>f.id===scenario.location));
+    const simulated=runSoilSimulation(w,scenario);
+    if(simulated.status!=='ready') throw new Error(simulated.reason);
+    return {w,result:{...simulated,startup:startupSensitivity(w,scenario)}};
+  }
+  // mode: 'auto' (first run or comparison), 'baseline' (replace), 'demo', or 'apply' (try an improvement).
+  async function run({mode='auto',scenario=null,label=null}={}) {
     const id=++request.current;
     setLoad('loading');setError('');setPlaying(false);
     try {
-      const weather=await loadSoilWeather(farms.find(f=>f.id===scenario.location));
-      if(id!==request.current) return;
-      const simulated=runSoilSimulation(weather,scenario);
-      if(simulated.status!=='ready') throw new Error(simulated.reason);
-      const result={...simulated,startup:startupSensitivity(weather,scenario)};
-      if(shown&&!newBaseline&&!demo){compareSoil(shown,result);setAfter(result);setView('after');}else{setBefore(result);setAfter(null);}
+      if(mode==='demo'){
+        const base={...demoScenario(DEMO.baselineIrrigation),year}, illus={...demoScenario(DEMO.illustrativeIrrigation),year};
+        const a=await simulate(base), b=await simulate(illus);
+        if(id!==request.current) return;
+        compareSoil(a.result,b.result);
+        setWeather(a.w);setBefore(a.result);setAfter(b.result);setView('after');setDraft(demoScenario(DEMO.illustrativeIrrigation));setDemoMode(true);setApplied(null);
+      } else {
+        const next=scenario??locationDraft, baseline=current;
+        const {w,result}=await simulate(next);
+        if(id!==request.current) return;
+        setWeather(w);
+        if(mode==='apply'){
+          compareSoil(baseline,result);
+          setApplied({action:label,totalBefore:analysis.before.score.total,gradeBefore:analysis.before.score.grade,undo:{before,after,draft,view,demoMode,applied}});
+          setBefore(baseline);setAfter(result);setView('after');setDraft(next);setDemoMode(false);
+        } else {
+          setApplied(null);setDemoMode(false);
+          if(shown&&mode!=='baseline'){compareSoil(shown,result);setAfter(result);setView('after');}else{setBefore(result);setAfter(null);}
+        }
+      }
       setLoad('idle');setIndex(0);
-      watch.current?.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
+      if(mode==='apply') scoreRef.current?.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
+      else watch.current?.scrollIntoView({behavior:reducedMotion()?'auto':'smooth',block:'start'});
     } catch(e){if(id===request.current){setError(e.message);setLoad('error');}}
+  }
+  function tryImprovement(imp){run({mode:'apply',scenario:{...imp.scenario,year},label:imp.action});}
+  function undo(){
+    if(!applied) return;
+    const u=applied.undo;request.current++;
+    setBefore(u.before);setAfter(u.after);setDraft(u.draft);setView(u.view);setDemoMode(u.demoMode);setApplied(u.applied);setPlaying(false);setLoad('idle');
   }
   // One-click demo across locations: wait for location reset before starting its request.
   const [demoPending,setDemoPending]=useState(false);
-  useEffect(()=>{if(demoPending&&selected==='palouse'){setDemoPending(false);run({demo:true});}},[demoPending,selected]);
-  function demo(){if(selected!=='palouse'){onSelect('palouse');setDemoPending(true);}else run({demo:true});}
+  useEffect(()=>{if(demoPending&&selected===DEMO.location){setDemoPending(false);run({mode:'demo'});}},[demoPending,selected]);
+  function demo(){if(selected!==DEMO.location){onSelect(DEMO.location);setDemoPending(true);}else run({mode:'demo'});}
   const farmName=farms.find(f=>f.id===selected).name;
   const currentMonth=frame?Number(frame.date.slice(5,7)):0;
   const startup=viewing?.startup, startupEnd=startup?.status==='ready'?(startup.index??last+1):0;
   const comparison=compared?compareSoil(shown,compared):null, delta=key=>comparison?.find(c=>c.key===key);
+  const views=demoMode?[['after',`Illustrative irrigation · ${DEMO.illustrativeIrrigation} mm/week`],['before','No irrigation']]:[['after','After (your change)'],['before','Before (baseline)']];
+  const ghost=demoMode?(view==='before'?'Irrigated':'No irr.'):view==='before'?'After':'Before';
   return <section id="visual-simulator" className="water-simulator">
-    <div className="water-hero"><div><p className="eyebrow">REAL NASA WEATHER. CALCULATED SOIL WATER.</p><h1>Watch your field<br/><em>gain and lose water.</em></h1><p>Pick a farm setup, run a historical year of daily NASA weather through a soil-water model, then try a change and compare.</p></div><button className="primary" onClick={demo} disabled={load==='loading'}>Try the Palouse demo</button></div>
+    <div className="water-hero"><div><p className="eyebrow">REAL NASA WEATHER. CALCULATED SOIL WATER.</p><h1>Watch your field<br/><em>gain and lose water.</em></h1><p>Run a historical year of daily NASA weather through a soil-water model, see your farm score and its biggest weakness, then try the change the model supports.</p></div>
+      <div className="hero-demo"><button className="primary" onClick={demo} disabled={load==='loading'}>Try the Palouse demo</button><small>Spring wheat, Apr–Aug: no irrigation vs. an illustrative {DEMO.illustrativeIrrigation} mm/week</small></div></div>
     <section className="customize"><h2><b>01</b> Customize farm</h2><p className="quiet">Scenario inputs, not measurements or planting recommendations.</p>
       <div className="soil-inputs">
         <label>Location<select aria-label="Location" value={selected} onChange={e=>onSelect(e.target.value)}>{farms.map(f=><option key={f.id} value={f.id}>{f.name}</option>)}</select></label>
@@ -144,10 +183,11 @@ export default function VisualSimulator({farms,selected,onSelect,year,onResult})
     </section>
     <section className="water-watch" ref={watch}><div className="watch-heading"><h2><b>03</b> Watch your farm</h2><span>{farmName} · {year} historical weather</span></div>
       {!frame?<div className="water-empty"><strong>Rain in. Water used. Soil storage changes.</strong><p>Run your scenario to watch the calculated daily balance on your farm.</p></div>:<>
-        {compared&&<div className="view-toggle" role="group" aria-label="Scenario shown in the farm view">{[['after','After (your change)'],['before','Before (baseline)']].map(([id,label])=><button key={id} aria-pressed={view===id} onClick={()=>setView(id)}>{label}</button>)}</div>}
+        {demoMode&&<p className="demo-label" data-testid="demo-label"><b>Palouse demo.</b> Same {year} NASA weather, spring wheat, loamy soil, April–August season. <b>No irrigation</b> vs. <b>{DEMO.illustrativeIrrigation} mm/week</b> of irrigation, an <em>illustrative amount, not a recommendation</em>.</p>}
+        {compared&&<div className="view-toggle" role="group" aria-label="Scenario shown in the farm view">{views.map(([id,label])=><button key={id} aria-pressed={view===id} onClick={()=>setView(id)}>{label}</button>)}</div>}
         <div className="farm-layout"><div className="farm-card">
           <WeatherStrip day={frame.day}/>
-          <FarmScene frame={frame} ghostPercent={other?other.days[i].availablePercent:null} ghostLabel={view==='before'?'After':'Before'} animate={animate}/>
+          <FarmScene frame={frame} ghostPercent={other?other.days[i].availablePercent:null} ghostLabel={ghost} animate={animate}/>
           <p className="mobile-readout" aria-hidden="true"><b>{number(frame.percent,0)}% water</b> <span>+{mm(frame.flows.rain)} rain</span> <span>+{mm(frame.flows.irrigation)} irr.</span> <span>−{mm(frame.flows.actualET)} loss</span> <span>−{mm(frame.flows.drainage)} drain</span></p>
           <p className="stage-line" data-testid="stage-line">{frame.stage?<><b>{MODEL.crops[viewing.scenario.crop].label}: {frame.stage.label}</b> · assumed calendar stage, not predicted growth</>:<b>{OFF_SEASON[viewing.scenario.cover]}</b>}{frame.freezingPrecip&&<span className="freeze-flag"> · * Freezing-day precipitation: phase not modeled</span>}</p>
           <div className="playback" data-testid="playback">
@@ -162,18 +202,21 @@ export default function VisualSimulator({farms,selected,onSelect,year,onResult})
           {startupEnd>0&&<p className="startup-key"><i aria-hidden="true"/>Shaded timeline: results still depend on the assumed Jan 1 starting water{startup.date?` (until ${dateLabel(startup.date)})`:' (all year)'}.</p>}
           <FlowLegend/>
         </div>
-        <SoilPanel frame={frame} result={viewing} compareDay={other?.days[i]} compareLabel={view==='before'?'After':'Before'} startup={startup} monthToDate={monthToDate}/></div>
+        <SoilPanel frame={frame} result={viewing} compareDay={other?.days[i]} compareLabel={ghost==='No irr.'?'No irrigation':ghost==='Irrigated'?'Illustrative irrigation':ghost} startup={startup} monthToDate={monthToDate}/></div>
         <p className="water-limit">Illustration of modeled daily values, not an observed field. Plants follow the assumed season calendar; roots are a fixed schematic. Historical scenario, not a forecast. Generic soil and crop parameters; no snow, frozen ground, runoff routing, groundwater or field calibration. <a href="#soil-methods" onClick={openMethods}>Methods, yearly graph & NASA context</a></p>
       </>}
     </section>
-    <section className="water-improve"><h2><b>04</b> Try an improvement</h2><div><p>Change irrigation, soil, crop dates or ground cover above, then run comparison. Live cover may use water as well as protect soil.</p>{shown&&<button onClick={()=>run({newBaseline:true})} disabled={load==='loading'}>Use current inputs as a new baseline</button>}</div></section>
-    <section className="water-compare"><h2><b>05</b> Compare results</h2>{!compared?<p className="quiet">Run a second scenario to compare against your baseline on the same historical weather.</p>:<><p className="quiet">Before → after · identical {year} NASA weather, location and starting fraction. Calculated scenario results.</p><div className="water-comparison-cards" data-testid="soil-comparison">
+    <div ref={scoreRef} className="score-anchor">{analysis&&<ScorePanel analysis={analysis} year={year} farmName={farmName} applied={applied} onTry={tryImprovement} onUndo={undo} busy={load==='loading'}/>}</div>
+    {compared&&<section className="water-compare"><h2><b>05</b> Before and after</h2><p className="quiet">{demoMode?'No irrigation → illustrative irrigation':'Before → after'} · identical {year} NASA weather, location and starting fraction. Calculated scenario results.</p>
+      {baselineScore?.status==='SCORED'&&analysis?.before.score.status==='SCORED'&&<p className="compare-score" data-testid="compare-score">Farm score <b>{baselineScore.total} ({baselineScore.grade})</b> <i>→</i> <b>{analysis.before.score.total} ({analysis.before.score.grade})</b> <em className="delta">{analysis.before.score.total-baselineScore.total>0?'+':analysis.before.score.total<baselineScore.total?'−':'±'}{Math.abs(analysis.before.score.total-baselineScore.total)} points</em></p>}
+      <div className="water-comparison-cards" data-testid="soil-comparison">
       {[
-        ['Annual mean available water','meanAvailablePercent','%',1,' pts'],['Days below crop stress line','dryDays',' days',0,' days'],['Precipitation on exposed soil','exposedRain',' mm',1,' mm']
+        ['Annual mean available water','meanAvailablePercent','%',1,' pts'],['Days below crop stress line','dryDays',' days',0,' days'],['Water drained below the layer','drainage',' mm',0,' mm']
       ].map(([label,key,unit,digits,deltaUnit])=><div key={key}><span>{label}</span><strong>{number(shown.summary[key],digits)}{unit} <i>→</i> {number(compared.summary[key],digits)}{unit}</strong><em className="delta">{signed(delta(key).delta,digits)}{deltaUnit}</em></div>)}
-      </div><p className="quiet">Irrigation applied: {number(shown.summary.irrigation)} → {number(compared.summary.irrigation)} mm. Water loss: {number(shown.summary.actualET)} → {number(compared.summary.actualET)} mm. Drainage: {number(shown.summary.drainage)} → {number(compared.summary.drainage)} mm. Lower exposure is not proof of improved soil health.</p>
+      </div><p className="quiet">Irrigation applied: {number(shown.summary.irrigation)} → {number(compared.summary.irrigation)} mm. Water loss: {number(shown.summary.actualET)} → {number(compared.summary.actualET)} mm. Precipitation on exposed soil: {number(shown.summary.exposedRain)} → {number(compared.summary.exposedRain)} mm. Lower exposure is not proof of improved soil health.</p>
       {[shown,compared].some(r=>r.startup?.status==='ready'&&r.days.slice(0,r.startup.index??r.days.length).some(d=>d.active))&&<p className="quiet compare-caution">Caution: in at least one scenario the assumed starting water still matters during the crop season, so part of this difference reflects that assumption.</p>}
-      <div className="scenario-pair">{[['Before',shown],['After',compared]].map(([label,result])=><p key={label}><strong>{label}:</strong> {MODEL.crops[result.scenario.crop].label}, {result.scenario.soil}, {result.scenario.irrigation} mm/week, {MONTHS[result.scenario.planting-1]}–{MONTHS[result.scenario.harvest-1]}, {COVER[result.scenario.cover]}.</p>)}</div></>}</section>
+      <div className="scenario-pair">{[[demoMode?'No irrigation':'Before',shown],[demoMode?'Illustrative':'After',compared]].map(([label,result])=><p key={label}><strong>{label}:</strong> {MODEL.crops[result.scenario.crop].label}, {result.scenario.soil}, {result.scenario.irrigation} mm/week, {MONTHS[result.scenario.planting-1]}–{MONTHS[result.scenario.harvest-1]}, {COVER[result.scenario.cover]}.</p>)}</div>
+      <button className="secondary new-baseline" onClick={()=>run({mode:'baseline'})} disabled={load==='loading'}>Use current inputs as a new baseline</button></section>}
   </section>;
 }
 

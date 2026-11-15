@@ -131,3 +131,16 @@ AI-assisted changes on `claude/loving-ride-xv1d5o`, based on `codex/visual-farm-
   approvals, citations or dependencies changed.
 - The crop, root, sky and soil artwork is schematic interface illustration of modeled
   values, not observed fields, predicted growth or soil health.
+
+## M8 farm score and biggest weakness
+
+AI-assisted changes on `claude/farm-score`, based on `claude/farm-scene`:
+- Added `src/lib/grade.js`, `src/components/ScorePanel.jsx`, `tests/grade.test.js` and
+  `docs/M8_VERIFICATION.md`.
+- Revised `VisualSimulator.jsx`, `FarmScene.jsx`, `App.jsx`, `style.css`,
+  `tests/visual-browser.cjs` and METHODS.
+- Added `soilSimulation.grading` and `soilSimulation.demo` to `config.json`. These are
+  provisional scoring targets and an illustrative demo amount (40 mm/week). They are not
+  sourced agronomic thresholds or recommendations.
+- No model formulas, coefficients, NASA data, approvals, citations or dependencies
+  changed. Scores and suggestions come only from reruns of the existing model.

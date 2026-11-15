@@ -65,7 +65,7 @@ export default function FarmScene({ frame, ghostPercent = null, ghostLabel = 'Be
   return <svg className={`farm-scene${animate ? ' is-animated' : ''}`} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={summary}
     data-testid="farm-scene" data-date={day.date} data-available-percent={frame.percent.toFixed(3)} data-rain={flows.rain} data-irrigation={flows.irrigation.toFixed(4)}
     data-actual-et={flows.actualET.toFixed(4)} data-demand={flows.demand.toFixed(4)} data-drainage={flows.drainage.toFixed(4)} data-rain-class={frame.rainClass.id}
-    data-stage={frame.stage?.id ?? 'off-season'} data-cover={frame.cover.kind} data-freezing={String(frame.freezing)} data-soil-color={frame.soilColor}>
+    data-overflow={String(flows.drainage > 0)} data-stage={frame.stage?.id ?? 'off-season'} data-cover={frame.cover.kind} data-freezing={String(frame.freezing)} data-soil-color={frame.soilColor}>
     <defs>
       <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor={skyTop}/><stop offset="1" stopColor={skyBottom}/></linearGradient>
       <pattern id="tex-sandy" width="18" height="18" patternUnits="userSpaceOnUse"><circle cx="4" cy="5" r="2" fill="rgba(255,255,255,.22)"/><circle cx="13" cy="12" r="1.6" fill="rgba(0,0,0,.12)"/><circle cx="9" cy="16" r="1.2" fill="rgba(255,255,255,.18)"/></pattern>
@@ -105,6 +105,12 @@ export default function FarmScene({ frame, ghostPercent = null, ghostLabel = 'Be
     <Arrow name="et" x={525} y1={SURFACE + 40} y2={70} width={widths.actualET} color="#d28a3d" labelY={110}
       label={`Water loss −${mm(flows.actualET)}${frame.waterLimited ? ` of ${mm(flows.demand)} demand` : ''}`} />
     <Arrow name="drainage" x={395} y1={LAYER_BOTTOM - 50} y2={H - 6} width={widths.drainage} color="#1f5f86" label={`Drainage −${mm(flows.drainage)}`} labelY={LAYER_BOTTOM + 30}/>
+    {/* Water in exceeded what the store can hold: the model's drainage term, drawn only when it is non-zero. */}
+    {flows.drainage > 0 && <g data-testid="overflow" className="overflow">
+      <rect x="0" y={LAYER_TOP} width={FIELD} height="6" fill="#1f5f86" opacity=".55"/>
+      <text className="scene-label overflow-label" x={420} y={LAYER_BOTTOM - 62}>Soil store full · extra water drains</text>
+      <rect x="852" y={LAYER_TOP - 2} width="56" height="8" rx="3" fill="#1f5f86"/>
+    </g>}
     {/* Gauge: the same store as a percentage of plant-available capacity. */}
     <g className="gauge" transform="translate(0,0)">
       <rect x={FIELD} y="0" width={W - FIELD} height={H} fill="#f7f8f3"/>

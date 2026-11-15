@@ -180,6 +180,50 @@
       "coverOffSeasonKc": 1,
       "offSeasonDepletion": 0.5,
       "note": "Uniform 0.6 m soil bucket, initially half of plant-available capacity. Stage fractions rescale to user season, not predicted growth. Generic soils are not field samples. Off-season bare Kc 0.3 is a scenario evaporation coefficient; live cover is a hypothetical reference-grass demand (Kc 1), terminated at planting. Cover fractions are hypothetical. Irrigation is net water entering soil, spread evenly across crop-season days; no efficiency or scheduling recommendation."
+    },
+    "demo": {
+      "status": "illustrative_demo_not_a_recommendation",
+      "location": "palouse",
+      "crop": "spring_wheat",
+      "soil": "loamy",
+      "planting": 4,
+      "harvest": 8,
+      "cover": "bare",
+      "baselineIrrigation": 0,
+      "illustrativeIrrigation": 40,
+      "note": "Palouse spring wheat, April–August example season. 40 mm/week is an illustrative net irrigation amount chosen to show storage filling and drainage; it is not an irrigation schedule or recommendation."
+    },
+    "grading": {
+      "status": "provisional_model_scoring_convention",
+      "note": "Model-based targets for one simulated historical year. 100/100 means every category met its target in the model, not a perfect real farm, measured soil health, yield or erosion outcome.",
+      "categories": {
+        "irrigationEfficiency": {
+          "label": "Irrigation Efficiency",
+          "max": 35,
+          "metric": "Share of applied net irrigation that left the modeled layer as extra drainage (scenario drainage minus the same scenario without irrigation).",
+          "fullAt": 0.1,
+          "zeroAt": 0.6
+        },
+        "cropWaterSupply": {
+          "label": "Crop Water Supply",
+          "max": 35,
+          "metric": "Share of crop-season water demand (FAO-56 reference ET × crop coefficient) the modeled soil supplied.",
+          "fullAt": 0.9,
+          "zeroAt": 0.5
+        },
+        "rainExposure": {
+          "label": "Rain Exposure Protection",
+          "max": 30,
+          "metric": "Share of the year's NASA precipitation that fell on assumed exposed soil. An exposure proxy, not measured erosion.",
+          "fullAt": 0.3,
+          "zeroAt": 0.9
+        }
+      },
+      "grades": [[90, "A"], [80, "B"], [70, "C"], [60, "D"], [0, "F"]],
+      "minMeaningfulLoss": 2,
+      "minMeaningfulGain": 1,
+      "irrigationOptions": [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80],
+      "plantingShiftMonths": [-1, 1]
     }
   }
 }
