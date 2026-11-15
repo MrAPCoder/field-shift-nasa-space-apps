@@ -194,3 +194,18 @@ Rebuild `replay.json` only if the raw archives change. The existing dashboard,
 soil context, rotation comparison, calendars, scores and printable plans are
 unchanged. See `docs/M5_VERIFICATION.md` for results, the demo values and the
 thresholds awaiting approval.
+
+## Daily soil-water simulator (M6)
+
+The main page now connects six scenario inputs to a deterministic daily soil-water
+balance using archived NASA POWER weather for 2021–2025. It uses FAO-56 reference
+ET, sourced generic soil/crop parameters and explicitly hypothetical management
+assumptions. The original 1981–2025 climate dashboard, calendars, research and M5
+screening remain in Advanced Details. SMAP is explicitly unavailable.
+
+See [methods](docs/METHODS.md#m6-daily-nasa-powered-soil-water-scenario) and
+[verification](docs/M6_VERIFICATION.md). Rebuild the additional weather offline
+with `python scripts/build_soil_weather.py`; add `--check` to verify or `--fetch`
+to acquire missing supplemental wind/pressure archives. Original NASA archives
+are never overwritten. Run `npm test`, Python unittest discovery and the existing
+browser suites, including `node tests/visual-browser.cjs` against a preview server.

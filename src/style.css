@@ -1094,3 +1094,92 @@ footer { margin-top:25px; }
   body.sim-report-open .advanced-details > .simulator { display:block !important; margin:0; }
 }
 .watch-section { scroll-margin-top:24px; }
+
+/* Daily water balance: controls, calculated trajectory and mass-balance flows. */
+.water-simulator { padding:30px 0; }
+.water-hero { display:flex; align-items:center; justify-content:space-between; gap:32px; padding:20px 0 35px; }
+.water-hero h1 { font:400 clamp(36px,5vw,60px)/1.1 Georgia,serif; letter-spacing:-1.5px; margin:15px 0; }
+.water-hero h1 em { color:#6c8159; }
+.water-hero p:not(.eyebrow) { max-width:490px; color:#617364; line-height:1.65; }
+.water-simulator h2 { font-size:18px; font-weight:600; margin:0 0 12px; }
+.water-simulator h2 b { font-size:12px; color:#829075; margin-right:12px; font-weight:500; }
+.customize { padding:26px; background:#eef1e7; border-radius:14px; }
+.soil-inputs { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; margin:24px 0 30px; }
+.soil-inputs label,.soil-inputs legend { font-size:12px; font-weight:600; }
+.soil-inputs select,.soil-inputs input,.soil-methods select { display:block; width:100%; padding:11px 9px; margin-top:8px; border:1px solid #cad4c2; border-radius:7px; background:#fff; color:#294637; min-height:44px; }
+.soil-inputs small { display:block; font-size:10px; color:#687961; font-weight:400; line-height:1.5; margin-top:8px; }
+.soil-inputs fieldset { border:0; padding:0; margin:0; min-width:0; }
+.soil-inputs legend { padding:0; }
+.month-pair { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.run-row { display:flex; align-items:center; justify-content:space-between; gap:20px; border-top:1px solid #d0dac5; padding-top:24px; }
+.run-row p { margin-bottom:0; }
+.pending-change { color:#6c5c26; background:#f5efd8; padding:12px; border-radius:6px; font-size:12px; }
+.water-watch { margin-top:35px; scroll-margin-top:25px; }
+.water-layout { display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:20px; }
+.water-plot-card { background:#fff; border:1px solid #dce3d6; border-radius:12px; overflow:hidden; }
+.plot-title { padding:22px 22px 0; }
+.plot-title h3 { font-size:17px; margin:0 0 6px; }
+.plot-title>span { color:#6d7e69; font-size:10px; }
+.water-chart { display:block; width:100%; height:auto; min-height:180px; }
+.water-chart text { font-family:inherit; font-size:11px; fill:#71806e; }
+.chart-legend { display:flex; flex-wrap:wrap; gap:15px; padding:0 22px 12px; font-size:10px; color:#667761; }
+.chart-legend>span:last-child { margin-left:auto; }
+.before-key::before,.after-key::before { content:''; display:inline-block; width:16px; height:3px; background:#a58c65; margin-right:6px; vertical-align:middle; }
+.after-key::before { background:#376e64; }
+.water-simulator .playback { padding:12px 22px; border-top:1px solid #eef0e9; }
+.playback time { font-size:11px; min-width:110px; }
+.daily-flows { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; background:#f3f5ed; padding:20px; }
+.daily-flows span { font-size:10px; color:#687b62; display:block; line-height:1.5; }
+.daily-flows strong { display:block; font-weight:500; font-size:18px; margin-top:6px; }
+.daily-demand { padding:0 20px; }
+.water-conditions { padding:22px; background:#e9eee1; border-radius:12px; }
+.water-conditions h3 { font:25px Georgia,serif; margin:0 0 10px; }
+.soil-reading { display:flex; gap:18px; margin-top:22px; }
+.soil-column { position:relative; min-width:88px; height:180px; border-radius:8px; overflow:hidden; background:#d7c4a2; border:1px solid #b3a17e; }
+.soil-column-fill { position:absolute; bottom:0; width:100%; background:#70a39b; }
+.soil-column-label { position:absolute; inset:0; padding:15px 5px; text-align:center; color:#173f35; }
+.soil-column-label strong { font-size:28px; display:block; }
+.soil-column-label span { font-size:9px; line-height:1.5; }
+.soil-column-depth { position:absolute; bottom:8px; left:4px; right:4px; text-align:center; font-size:8px; color:#183c32; }
+.soil-reading>div:last-child>strong { font-size:24px; display:block; margin:8px 0; font-weight:500; }
+.soil-reading small,.soil-reading>div:last-child>span { display:block; font-size:10px; line-height:1.5; color:#607456; }
+.soil-reading strong small { display:inline; }
+.soil-reading p { font-size:11px; line-height:1.6; }
+.exposure-reading { border-top:1px solid #c9d5be; margin-top:22px; padding-top:18px; }
+.exposure-reading span,.exposure-reading small { display:block; font-size:10px; color:#5e7355; line-height:1.6; }
+.exposure-reading strong { display:block; font-size:22px; font-weight:500; margin:6px 0; }
+.water-limit { color:#72816c; font-size:11px; line-height:1.7; }
+.water-empty { background:#edf0e5; border:1px dashed #b5c3a7; padding:45px 25px; border-radius:12px; color:#607357; text-align:center; }
+.water-empty p { font-size:13px; margin-bottom:0; }
+.water-improve { border-top:1px solid #d7dfcd; padding:25px 0; margin-top:25px; }
+.water-improve>div { display:flex; justify-content:space-between; align-items:center; gap:20px; }
+.water-improve p { max-width:650px; font-size:13px; line-height:1.6; color:#65775c; }
+.water-improve button,.water-simulator .error button { background:transparent; border:1px solid #819575; border-radius:7px; padding:10px 14px; color:#395231; font-size:12px; }
+.water-compare { padding:25px; border-radius:12px; background:#e8eddf; }
+.water-comparison-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin:25px 0; }
+.water-comparison-cards span { display:block; font-size:11px; line-height:1.6; color:#5f7455; }
+.water-comparison-cards strong { display:block; font-size:22px; font-weight:500; margin-top:10px; }
+.water-comparison-cards i { font-size:16px; color:#819672; margin:0 5px; }
+.scenario-pair { border-top:1px solid #c6d2bb; padding-top:10px; font-size:10px; color:#5c7153; line-height:1.7; }
+.soil-methods { padding:20px 0 30px; border-bottom:1px solid #d6dfcd; }
+.soil-methods p,.soil-methods li { font-size:13px; line-height:1.8; max-width:950px; }
+.soil-methods h3 { margin-top:24px; }
+.soil-methods select { max-width:190px; }
+.soil-methods .water-chart { max-width:850px; background:white; border-radius:10px; }
+@media(max-width:900px) { .water-layout { grid-template-columns:1fr; } .water-conditions { display:block; } .soil-reading { max-width:350px; } }
+@media(max-width:620px) {
+ .water-simulator { padding:15px 0; } .water-hero { display:block; } .water-hero>.primary { margin-top:12px; }
+ .customize { padding:18px; } .soil-inputs { grid-template-columns:1fr 1fr; gap:20px 12px; }
+ .soil-inputs label:last-child { grid-column:1/-1; } .soil-inputs select { font-size:12px; }
+ .run-row,.water-improve>div { display:block; } .run-row>.primary { margin-top:18px; width:100%; }
+ .water-simulator .playback { flex-wrap:wrap; gap:10px; padding:12px; } .playback time { text-align:right; margin-left:auto; }
+ .chart-legend { padding:0 12px 12px; } .chart-legend>span:last-child { flex-basis:100%; }
+ .daily-flows { grid-template-columns:1fr 1fr; gap:16px; } .daily-demand { font-size:11px; }
+ .water-comparison-cards { grid-template-columns:1fr; gap:20px; } .water-compare { padding:20px; }
+ .water-comparison-cards strong { margin-top:4px; } .water-chart { min-height:150px; }
+}
+/* Keep nested planting/harvest labels side by side on narrow screens. */
+@media(max-width:620px) {
+ .soil-inputs .month-pair label { grid-column:auto; }
+ .soil-inputs fieldset { grid-column:1/-1; }
+}

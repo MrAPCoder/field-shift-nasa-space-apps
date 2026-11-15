@@ -59,5 +59,127 @@
     "minValidRuns": 20,
     "wetnessBaseline": [1991, 2020],
     "familyOrder": ["exposed", "dry", "heat", "frost"]
+  },
+  "soilSimulation": {
+    "version": "daily-bucket-v1",
+    "weatherStart": "2021-01-01",
+    "weatherEnd": "2025-12-31",
+    "sources": {
+      "et0": {
+        "title": "FAO-56 chapters 2\u20133: daily Penman\u2013Monteith, equations 6\u201339",
+        "url": "https://www.fao.org/4/x0490e/x0490e07.htm"
+      },
+      "crop": {
+        "title": "FAO-56 table 12: single crop coefficients",
+        "url": "https://www.fao.org/4/x0490e/x0490e0b.htm"
+      },
+      "basal": {
+        "title": "FAO-56 table 17: basal coefficients for residue adjustment",
+        "url": "https://www.fao.org/4/x0490e/x0490e0c.htm"
+      },
+      "balance": {
+        "title": "FAO-56 chapter 8: available water, depletion and water balance",
+        "url": "https://www.fao.org/4/x0490e/x0490e0e.htm"
+      },
+      "mulch": {
+        "title": "FAO-56 chapter 10: approximate organic mulch adjustment",
+        "url": "https://www.fao.org/4/x0490e/x0490e0g.htm"
+      },
+      "soil": {
+        "title": "Virginia Tech BSE-194P table 1: generic soil water storage",
+        "url": "https://www.pubs.ext.vt.edu/BSE/BSE-194/BSE-194.html"
+      }
+    },
+    "soils": {
+      "sandy": {
+        "label": "Sandy",
+        "fieldCapacity": 0.12,
+        "wiltingPoint": 0.05,
+        "source": "soil"
+      },
+      "loamy": {
+        "label": "Loamy",
+        "fieldCapacity": 0.36,
+        "wiltingPoint": 0.16,
+        "source": "soil"
+      },
+      "clay": {
+        "label": "Clay",
+        "fieldCapacity": 0.39,
+        "wiltingPoint": 0.27,
+        "source": "soil"
+      }
+    },
+    "crops": {
+      "spring_wheat": {
+        "label": "Spring wheat",
+        "kc": [
+          0.3,
+          1.15,
+          0.25
+        ],
+        "kcb": [
+          0.15,
+          1.1,
+          0.15
+        ],
+        "depletion": 0.55,
+        "source": "crop",
+        "basalSource": "basal",
+        "depletionSource": "balance"
+      },
+      "spring_pea": {
+        "label": "Spring pea (dry seed)",
+        "kc": [
+          0.5,
+          1.15,
+          0.3
+        ],
+        "kcb": [
+          0.15,
+          1.1,
+          0.2
+        ],
+        "depletion": 0.4,
+        "source": "crop",
+        "basalSource": "basal",
+        "depletionSource": "balance"
+      },
+      "potato": {
+        "label": "Potato",
+        "kc": [
+          0.5,
+          1.15,
+          0.75
+        ],
+        "kcb": [
+          0.15,
+          1.1,
+          0.65
+        ],
+        "depletion": 0.35,
+        "source": "crop",
+        "basalSource": "basal",
+        "depletionSource": "balance"
+      }
+    },
+    "assumptions": {
+      "status": "hypothetical_not_field_measurements",
+      "depthM": 0.6,
+      "initialAvailableFraction": 0.5,
+      "stageFractions": [
+        0.2,
+        0.3,
+        0.3,
+        0.2
+      ],
+      "cashExposedFraction": 0.2,
+      "residueCoverFraction": 0.7,
+      "coverCropExposedFraction": 0.3,
+      "bareOffSeasonKc": 0.3,
+      "coverOffSeasonKc": 1,
+      "offSeasonDepletion": 0.5,
+      "note": "Uniform 0.6 m soil bucket, initially half of plant-available capacity. Stage fractions rescale to user season, not predicted growth. Generic soils are not field samples. Off-season bare Kc 0.3 is a scenario evaporation coefficient; live cover is a hypothetical reference-grass demand (Kc 1), terminated at planting. Cover fractions are hypothetical. Irrigation is net water entering soil, spread evenly across crop-season days; no efficiency or scheduling recommendation."
+    }
   }
 }

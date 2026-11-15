@@ -5,7 +5,7 @@ import PrioritySliders from './components/PrioritySliders.jsx';
 import SoilProfile from './components/SoilProfile.jsx';
 import RotationComparison from './components/RotationComparison.jsx';
 import Simulator from './components/Simulator.jsx';
-import VisualSimulator from './components/VisualSimulator.jsx';
+import VisualSimulator, { SoilMethods } from './components/VisualSimulator.jsx';
 const ClimateCharts = lazy(() => import('./components/ClimateCharts.jsx'));
 import { formatValue, loadClimate } from './lib/climate.js';
 
@@ -13,6 +13,8 @@ function Metric({ label, value, unit, detail, tone, id }) {
   return <article className={`metric ${tone ?? ''}`}><p className="metric-label">{label}</p><div className="metric-value" data-testid={id}>{formatValue(value)}<span>{Number.isFinite(value) ? unit : ''}</span></div><p>{detail}</p></article>;
 }
 export default function App() {
+  const [soilYear, setSoilYear] = useState(2023);
+  const [soilResult, setSoilResult] = useState(null);
   const [selected, setSelected] = useState('palouse');
   const [priorities, setPriorities] = useState({ water: 5, soil: 5, income: 5, erosion: 5 });
   const [state, setState] = useState({ status: 'loading' });
@@ -35,8 +37,9 @@ export default function App() {
     <a className="skip-link" href="#visual-simulator">Skip to simulator</a>
     <header className="topbar"><div className="topbar-inner"><a className="brand" href="./" aria-label="Field Shift home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25V7h22M5 14h18M5 21h13"/><path d="M21 27c0-8 3-11 7-12-1 6-3 10-7 12Z"/></svg>Field Shift<span className="brand-dot">.</span></a><span className="topbar-label">NASA SPACE APPS <span>2026</span></span></div></header>
     <main>
-      <VisualSimulator farms={config.farms} selected={selected} onSelect={setSelected}/>
+      <VisualSimulator farms={config.farms} selected={selected} onSelect={setSelected} year={soilYear} onResult={setSoilResult}/>
       <details className="advanced-details" id="advanced-details"><summary>Advanced Details <span>Climate, calendars & research</span></summary>
+      <SoilMethods year={soilYear} onYear={setSoilYear} result={soilResult}/>
       <Simulator farms={config.farms} selected={selected} onSelect={setSelected} management={management}/>
       <section className="location-bar" aria-label="Choose a location"><FarmSelector farms={config.farms} selected={selected} onChange={setSelected}/><div className="location-coordinates"><span>REPRESENTATIVE LOCATION</span><strong>{farm.latitude.toFixed(4)}° N · {Math.abs(farm.longitude).toFixed(4)}° W</strong><span>Regional data may differ from your field.</span></div></section>
       <div className="dashboard-layout"><div id="climate" tabIndex="-1" aria-busy={!data && state.status !== 'error'}>

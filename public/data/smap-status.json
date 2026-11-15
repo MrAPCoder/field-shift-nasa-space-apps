@@ -1,0 +1,11 @@
+{
+  "status": "unavailable",
+  "checked_at": "2026-11-15",
+  "product": "SPL3SMP Version 9",
+  "source": "https://nsidc.org/data/spl3smp/versions/9",
+  "doi": "https://doi.org/10.5067/4XXOGX0OOW1S",
+  "attempted_url": "https://cmr.earthdata.nasa.gov/search/granules.json?short_name=SPL3SMP&version=009&temporal=2023-07-01T00:00:00Z,2023-07-01T23:59:59Z&page_size=1",
+  "result": "Environment tunnel returned HTTP 403 for the CMR metadata request. No granule was retrieved or validated. Official NSIDC product documentation also requires Earthdata Login for data access; no authenticated data access was available in this workflow.",
+  "interpretation": "SPL3SMP is a daily 36 km gridded surface-soil-moisture retrieval, available from 2015. It would be independent spatial context, not a direct observation of the selected field or this model's 0.6 m soil layer.",
+  "integration_gate": "Before inclusion, validate HDF5 units, geolocation on EASE-Grid, time, fill values, retrieval/quality flags, frozen-ground and snow flags, and spatial representativeness. Do not substitute POWER wetness or modeled water for unavailable SMAP retrievals."
+}

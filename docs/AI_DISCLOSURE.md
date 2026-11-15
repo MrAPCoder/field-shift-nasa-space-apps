@@ -99,3 +99,21 @@ AI-assisted changes on `codex/visual-farm-simulator`, based on `fable/m5-simulat
 - Added visual unit/browser checks; updated simulation/comparison expectations for the corrected crop scope and legacy browser checks to open Advanced Details.
 - Updated METHODS, verification notes, AGENTS and CLAUDE. No dependencies, raw data, climate files, thresholds, demo values, approvals or crop citations changed.
 - Illustrated crop symbols and colors are interface artwork, not plant growth, measured soil health or crop damage outputs. No new agricultural evidence was generated.
+
+## M6 NASA-powered daily soil-water model
+
+Continued on `codex/visual-farm-simulator`; no new project or main-based branch.
+AI-assisted implementation added `src/lib/soilWater.js`, the offline
+`scripts/build_soil_weather.py`, three `soil-weather.json` files and separately
+archived POWER wind/pressure responses, `public/data/smap-status.json`, unit tests
+and Python provenance tests. Revised `VisualSimulator.jsx`, `App.jsx`, styles,
+config and the existing visual browser test connect six inputs to the calculated
+daily trajectory. Documentation and guidance describe the sources, formulas,
+hypothetical assumptions, verification and limitations.
+
+NASA data were retrieved from POWER, not generated. Existing weather archives,
+research citations, M5 thresholds, demo calendars and agricultural approval flags
+were preserved. Generic soil values and crop coefficients cite primary FAO and
+extension sources. Initial storage, fixed layer depth, timing fractions and ground
+cover are explicitly hypothetical. SMAP was not retrieved and is unavailable.
+The model does not estimate crop growth, damage, soil health, yield or profit.

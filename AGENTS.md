@@ -76,3 +76,7 @@ Static hosting on Vercel (Vite preset, build `npm run build`, output `dist`). Mi
 ## Visual simulator
 
 `VisualSimulator.jsx` is the four-step main experience; the original M5 setup, reports, climate dashboard, calendars and research live in the collapsed Advanced Details section. `lib/visual.js` aggregates complete months only and preserves unknowns. Cash-crop weather screens exclude cover-only months; cover still contributes to soil exposure. See `docs/M5_VISUAL_VERIFICATION.md` and the visual simulator section in `docs/METHODS.md`.
+
+## M6 daily soil-water scenario
+
+`VisualSimulator.jsx` now presents six inputs and the daily water balance in `lib/soilWater.js`; M5 and legacy tools remain in Advanced Details. All numeric soil/crop assumptions and primary citations are in `config.soilSimulation`. Do not imply local validation of generic parameters or present plant-available percentage as volumetric moisture or soil health. The new weather period is 2021–2025. `python scripts/build_soil_weather.py --check` verifies derived files offline; `--fetch` acquires only missing supplemental wind/pressure archives, never overwriting original raw data. Missing required weather fails closed. GWETROOT is separate regional model context; SMAP is explicitly unavailable. Run `tests/soil-water.test.js`, `tests/visual-browser.cjs` and Python provenance tests in addition to legacy checks. See M6 sections in METHODS and M6_VERIFICATION.

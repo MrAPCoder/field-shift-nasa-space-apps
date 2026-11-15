@@ -569,3 +569,177 @@ Saturated frequencies are valid outputs of the existing provisional screens,
 not crop-damage probabilities. No thresholds or calendar values were tuned.
 Sources remain NASA POWER archives, their provenance manifests, existing crop
 citations and illustrative demo assumptions; no new agronomic inputs were added.
+
+## M6 daily NASA-powered soil-water scenario
+
+### Data and provenance
+
+This model is separate from M5 historical screening. Its forcing period is
+**2021-01-01 through 2025-12-31**, with 1,826 daily LST records per farm. The
+original 1981–2025 POWER archives, climate summaries and M5 replay remain intact.
+`scripts/build_soil_weather.py` reuses the six variables in each original
+2021–2025 archive and adds a separate POWER response for WS2M and PS. Default
+execution is offline; `--fetch` acquires missing supplemental archives only;
+`--check` verifies derived JSON without writing. Each source has its URL,
+retrieval timestamp and raw SHA-256. Coordinates, units, dates, finite bounds,
+fill values and temperature ordering are checked. Original `-999` becomes null;
+no values are interpolated or replaced. Each derived file also has a SHA-256 of
+its canonical weather content. There are no missing values in these 15 farm-years.
+
+- PRECTOTCORR (mm/day): precipitation input and exposure weighting.
+- T2M_MAX / T2M_MIN (°C): saturation vapor pressure and temperature terms.
+- RH2M (%): vapor-pressure estimate from daily mean humidity.
+- ALLSKY_SFC_SW_DWN (MJ/m²/day): incident solar energy, not sunshine duration.
+- WS2M (m/s): 2 m wind for the aerodynamic term; no height conversion needed.
+- PS (kPa): atmospheric pressure for the psychrometric constant.
+- POWER response elevation (m) and configured latitude: clear-sky radiation.
+- GWETROOT (dimensionless 0–1): regional **model-estimate context only**. It is
+  not volumetric water content or plant-available fraction, and does not initialize,
+  calibrate or validate this scenario model.
+
+POWER combines gridded satellite and reanalysis products (archive headers identify
+MERRA2, SYN1DEG and POWER); these are not observations at the user's field.
+The browser requests only saved same-origin files, never the NASA APIs.
+
+### Atmospheric demand: FAO-56 Penman–Monteith
+
+Sources: [FAO-56 chapter 2](https://www.fao.org/4/x0490e/x0490e06.htm),
+[chapter 3](https://www.fao.org/4/x0490e/x0490e07.htm), and the independent
+[worked daily example 18](https://www.fao.org/4/x0490e/x0490e08.htm).
+
+Daily reference evapotranspiration (ET0, mm/day) is:
+
+`ET0 = max(0, [0.408 Δ Rn + γ (900/(T+273)) u2 (es−ea)] / [Δ + γ (1+0.34 u2)])`
+
+Here T=(Tmax+Tmin)/2; G=0 for the daily reference surface; γ=0.000665 PS;
+`e°(T)=0.6108 exp(17.27T/(T+237.3))`; es is the mean saturation pressure at
+Tmin and Tmax; ea=es RH2M/100; and Δ=4098 e°(T)/(T+237.3)².
+The use of daily mean RH2M is an approximation to FAO equation 19, whose ideal
+RHmean is the average of RHmin and RHmax. This is less accurate than measured
+dewpoint or separate humidity extremes and is explicitly retained as a limitation.
+
+Extraterrestrial radiation Ra uses latitude and day-of-year (FAO equations
+21, 23–25); clear-sky radiation Rso=(0.75+0.00002 elevation)Ra.
+Net radiation Rn=0.77 Rs−Rnl with grass albedo 0.23. Longwave loss uses FAO
+Stefan–Boltzmann constant 4.903×10⁻⁹, the mean of Kelvin Tmin⁴/Tmax⁴, atmospheric
+emissivity `(0.34−0.14 sqrt(ea))` and cloud term `(1.35 Rs/Rso−0.35)`.
+Rs/Rso is capped at 1; emissivity and cloud terms are bounded at zero to avoid
+unphysical negative longwave loss. Net ET0 is bounded at zero (no dew model).
+These numeric bounds are documented implementation conventions, not imputed weather.
+No Hargreaves fallback or assumed wind is used. Missing required forcing makes
+the entire selected year's water trajectory unavailable, rather than silently
+restarting storage after a gap. Missing GWETROOT alone does not block the balance.
+
+### Published parameters versus hypothetical choices
+
+All parameter values and citations live in `config.soilSimulation`, separate
+from the existing crop evidence/approval flags. No old verification flag changed.
+[Virginia Tech BSE-194P table 1](https://www.pubs.ext.vt.edu/BSE/BSE-194/BSE-194.html)
+provides generic volumetric field-capacity / wilting-point pairs:
+
+| Soil choice | Field capacity | Wilting point | Available capacity in assumed 0.6 m layer |
+| --- | ---: | ---: | ---: |
+| Sandy (sand) | 0.12 | 0.05 | 42 mm |
+| Loamy (loam) | 0.36 | 0.16 | 120 mm |
+| Clay | 0.39 | 0.27 | 72 mm |
+
+Clay has more tightly held water than sand, but not the largest plant-available
+store. These are generic textural examples, not a soil survey or measured field.
+A fixed **0.6 m** layer and initial **50% of available capacity** are hypothetical,
+not NASA-derived moisture or predicted root depth. Holding depth fixed across
+crops isolates their demand coefficients and is a major simplification, especially
+for mature wheat. Changing soil changes initial water in mm because capacity changes.
+
+Supported crops are existing repository crop IDs with published FAO-56 demand
+parameters. Other crop/rotation options remain unavailable for this model:
+
+| Crop | Kc initial / mid / end | Kcb initial / mid / end | p at ETc≈5 mm/day |
+| --- | --- | --- | ---: |
+| Spring wheat, dry harvest endpoint | 0.30 / 1.15 / 0.25 | 0.15 / 1.10 / 0.15 | 0.55 |
+| Spring pea, dry seed | 0.50 / 1.15 / 0.30 | 0.15 / 1.10 / 0.20 | 0.40 |
+| Potato | 0.50 / 1.15 / 0.75 | 0.15 / 1.10 / 0.65 | 0.35 |
+
+Sources: FAO-56 [table 12](https://www.fao.org/4/x0490e/x0490e0b.htm),
+[table 17](https://www.fao.org/4/x0490e/x0490e0c.htm) and
+[table 22](https://www.fao.org/4/x0490e/x0490e0e.htm). The values represent
+standard-climate coefficients, without local calibration or RHmin/height adjustment.
+Kcb is used only for the published organic-mulch adjustment, not a full dual-Kc model.
+
+User planting begins on the first day of its month, harvest ends on the last day
+of its month. Wrapped seasons are supported and repeated at the calendar-year
+boundary. A hypothetical 20/30/30/20% allocation divides the chosen period into
+initial/development/mid/late coefficient stages: constant initial, linear rise,
+constant mid, linear decline to the end coefficient. This is an **assumed demand
+schedule**, not simulated growth, observed phenology or recommended planting dates.
+
+Ground cover has two transparent effects:
+
+1. Precipitation exposure: cash-season exposed fraction is assumed 0.20; bare
+   off-season fraction is 1; live-cover off-season fraction is 0.30. Residue is
+   assumed to cover 70% of otherwise exposed ground, so its multiplier is 0.30.
+   Daily exposure = NASA precipitation × exposed fraction. Fractions are
+   hypothetical, not crop-derived canopy observations or measured erosion.
+2. Demand: residue uses the approximate [FAO-56 organic-mulch rule](https://www.fao.org/4/x0490e/x0490e0g.htm):
+   reduction factor = 0.5 × residue cover fraction = 0.35. Initial Kc is reduced
+   by that fraction; mid/end Kc by that fraction of (Kc−Kcb). The coefficient
+   schedule is interpolated after this adjustment. Off-season bare evaporation
+   uses a **hypothetical Kc=0.3**; residue reduces that by 35%. Live cover uses
+   **hypothetical reference-grass demand Kc=1** outside the cash season, is terminated
+   at planting, and does not add a second crop demand during the cash season.
+   It can lower soil water while lowering precipitation exposure. This is not a
+   calibrated cover-crop species model or a promise of water savings.
+
+Irrigation is user-entered **net water entering the soil**, 0–200 mm/week,
+distributed uniformly as mm/week ÷ 7 on cash-season days only. The range is an
+interface input limit, not a recommendation. Efficiency, sprinkler losses,
+delivery timing and pumping costs are not inferred.
+
+### Daily water balance and comparison
+
+Following the storage and depletion concepts in
+[FAO-56 chapter 8](https://www.fao.org/4/x0490e/x0490e0e.htm):
+
+- Capacity C=1000(θFC−θWP)×0.6; initial available water S0=0.5C.
+- Input W=precipitation+net irrigation. Excess drainage D=max(0,Sprevious+W−C).
+- Wet storage B=min(C,Sprevious+W).
+- Potential loss ETc=Kc×ET0.
+- Adjusted depletion p=clamp(pbase+0.04(5−ETc),0.1,0.8).
+- Availability factor Ks=min(1,B/((1−p)C)).
+- Actual loss ETa=min(B,Ks ETc); next available water S=B−ETa.
+
+Off-season pbase=0.5 is hypothetical. This single-coefficient approximation applies
+Ks to total loss, including evaporation. FAO notes that separate evaporation and
+transpiration is more valid; this model deliberately does **not** claim full FAO dual-Kc
+or precise daily field predictions. Water below wilting point is not extracted.
+Snow accumulation/melt, frozen ground, runoff routing, capillary rise, soil layering,
+interception, salinity, lateral flows and delayed drainage are omitted. All precipitation
+is liquid input, so cold-season results need particular caution. Cold-day counts and
+an on-day note expose that limitation. Excess is labeled modeled drainage, never measured runoff.
+
+Each day checks the identity `Sprevious+P+I−D−ETa−S=0`. Annual residual is exposed
+in Advanced Details. The displayed water percentage is `100S/C`, **not** volumetric
+moisture percentage: 0% corresponds to wilting-point storage, not oven-dry soil;
+100% corresponds to field capacity, not saturation or "perfect soil health".
+A dryness indicator counts **cash-season end-of-day storage below (1−p)C**;
+it is not crop damage. Annual mean water and cumulative precipitation exposure
+are shown alongside irrigation and drainage in before/after comparisons.
+
+A new baseline is explicit. Edits preserve and label old results until recalculated.
+Location/year changes clear comparisons. `compareSoil` requires the same model
+version, year, location, archive fingerprint and serialized actual weather values;
+changing a fingerprint alone cannot disguise altered weather. No random inputs or
+visual presets affect calculations. The chart and soil-column fill derive only
+from the computed daily trajectory. Model output does not alter original M5 calendars.
+
+### SMAP access investigation
+
+The official [SPL3SMP v9 product](https://nsidc.org/data/spl3smp/versions/9)
+is a daily, 36 km surface-moisture retrieval beginning in 2015 and requires
+Earthdata Login. The attempt to query CMR for 2023-07-01 failed with an environment
+tunnel HTTP 403. No authenticated HDF5 granule was retrieved or validated.
+`public/data/smap-status.json` records the exact request, limitation and integration
+criteria. No SMAP values are displayed or substituted. Future integration must
+check EASE-Grid geolocation, units, fill values, acquisition times, retrieval-quality,
+snow/frozen-ground flags and spatial representativeness. It would be independent
+regional surface context, not a direct measurement of the user's field or this
+hypothetical 0.6 m layer. This limitation does not block verified POWER calculations.
