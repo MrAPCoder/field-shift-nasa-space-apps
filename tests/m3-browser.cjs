@@ -7,7 +7,7 @@ const fs = require('node:fs');
  const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[],nasa=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
  page.on('request',r=>{if(r.url().includes('power.larc.nasa.gov'))nasa.push(r.url())});
- await page.goto(process.env.PREVIEW_URL||'http://127.0.0.1:4173/');
+ await page.goto(new URL('research.html',process.env.PREVIEW_URL||'http://127.0.0.1:4173/').href);
  await page.locator('#advanced-details > summary').click();
  for(const farm of ['skagit','yakima','palouse']){
   await page.locator('#farm').selectOption(farm);

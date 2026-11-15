@@ -75,19 +75,30 @@ Static hosting on Vercel (Vite preset, build `npm run build`, output `dist`). Mi
 
 ## Visual simulator
 
-`VisualSimulator.jsx` is the four-step main experience; the original M5 setup, reports, climate dashboard, calendars and research live in the collapsed Advanced Details section. `lib/visual.js` aggregates complete months only and preserves unknowns. Cash-crop weather screens exclude cover-only months; cover still contributes to soil exposure. See `docs/M5_VISUAL_VERIFICATION.md` and the visual simulator section in `docs/METHODS.md`.
+`VisualSimulator.jsx` is the main experience. Since M9 the original M5 setup, reports, climate dashboard, calendars and research live on `research.html` (see M9 below). `lib/visual.js` aggregates complete months only and preserves unknowns. Cash-crop weather screens exclude cover-only months; cover still contributes to soil exposure. See `docs/M5_VISUAL_VERIFICATION.md` and the visual simulator section in `docs/METHODS.md`.
 
 ## M6 daily soil-water scenario
 
-`VisualSimulator.jsx` now presents six inputs and the daily water balance in `lib/soilWater.js`; M5 and legacy tools remain in Advanced Details. All numeric soil/crop assumptions and primary citations are in `config.soilSimulation`. Do not imply local validation of generic parameters or present plant-available percentage as volumetric moisture or soil health. The new weather period is 2021–2025. `python scripts/build_soil_weather.py --check` verifies derived files offline; `--fetch` acquires only missing supplemental wind/pressure archives, never overwriting original raw data. Missing required weather fails closed. GWETROOT is separate regional model context; SMAP is explicitly unavailable. Run `tests/soil-water.test.js`, `tests/visual-browser.cjs` and Python provenance tests in addition to legacy checks. See M6 sections in METHODS and M6_VERIFICATION.
+`VisualSimulator.jsx` now presents six inputs and the daily water balance in `lib/soilWater.js`; M5 and legacy tools are on `research.html`. All numeric soil/crop assumptions and primary citations are in `config.soilSimulation`. Do not imply local validation of generic parameters or present plant-available percentage as volumetric moisture or soil health. The new weather period is 2021–2025. `python scripts/build_soil_weather.py --check` verifies derived files offline; `--fetch` acquires only missing supplemental wind/pressure archives, never overwriting original raw data. Missing required weather fails closed. GWETROOT is separate regional model context; SMAP is explicitly unavailable. Run `tests/soil-water.test.js`, `tests/visual-browser.cjs` and Python provenance tests in addition to legacy checks. See M6 sections in METHODS and M6_VERIFICATION.
 
-## M8 farm score and biggest weakness
+## M9 simplified site and farm score v2
 
-`lib/grade.js` scores one simulated year out of 100: Irrigation Efficiency 35, Crop Water
-Supply 35, Rain Exposure Protection 30. Targets are in `config.soilSimulation.grading`.
-Any unscorable category makes the total "Not scored". The biggest weakness is the
-category whose best single-setting rerun (irrigation, cover or a ±1 month season shift;
-never soil) raises the total most, not the lowest raw score. `ScorePanel.jsx` shows the
-score, weakness, improvement and apply/undo. The Palouse demo compares 0 vs. an
-illustrative 40 mm/week (`config.soilSimulation.demo`). Do not change targets or the
-demo amount without team approval. See METHODS "M8" and `tests/grade.test.js`.
+The main page (`App.jsx`) renders only `VisualSimulator` plus a footer linking
+`public/docs/{nasa-data,how-it-works,limitations}.html`. The earlier dashboard, M5
+simulator, rotations and calendars live unchanged on `research.html` (`src/research.jsx`,
+built via `vite.config.js`). The legacy browser suites target it.
+
+`lib/grade.js` (`farm-score-v2`, rubric in `config.soilSimulation.grading`) scores one
+simulated season:
+- **Groups:** crop water 50, irrigation use 30, rain on exposed soil 20. Irrigation is
+  measured against a paired zero-irrigation run, and drainage is its reported complement,
+  not scored twice.
+- **Not scored:** New-Year or under-3-month seasons, more than 25% of crop-season
+  precipitation on freezing days, missing data, or a starting-water spread of 15+ points.
+- **`analyzeFarm`:** names the biggest problem and the best rerun improvement (irrigation ×
+  cover only, robust to 0/50/100% start and a dry-winter bound). It never suggests planting
+  dates or soil.
+
+`ScorePanel` shows only the score, problem and improvement, with apply/undo. Do not change
+weights, targets, thresholds or the demo amount without team approval. See METHODS "M9",
+`docs/M9_VERIFICATION.md` and `tests/grade.test.js`.

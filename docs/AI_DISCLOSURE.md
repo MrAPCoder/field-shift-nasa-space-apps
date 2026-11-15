@@ -144,3 +144,19 @@ AI-assisted changes on `claude/farm-score`, based on `claude/farm-scene`:
   sourced agronomic thresholds or recommendations.
 - No model formulas, coefficients, NASA data, approvals, citations or dependencies
   changed. Scores and suggestions come only from reruns of the existing model.
+
+## M9 simplified simulator and multi-factor farm score
+
+AI-assisted changes on `claude/farm-score`:
+- Rewrote `src/lib/grade.js` (farm-score-v2) and `src/components/ScorePanel.jsx`, and
+  `tests/grade.test.js`.
+- Revised `VisualSimulator.jsx`, `FarmScene.jsx`, `App.jsx`, `style.css`, `index.html`, and
+  `config.soilSimulation.grading`.
+- Added `src/research.jsx`, `research.html`, `vite.config.js`, `public/docs/*`,
+  `docs/M9_VERIFICATION.md` and METHODS "M9".
+- Updated `tests/visual-browser.cjs`, and pointed the five legacy browser suites at
+  `research.html`.
+- Weights, targets, thresholds and the 12.7 mm heavier-day convention are provisional
+  teaching conventions, not sourced agronomic thresholds. No NASA data, model formulas,
+  coefficients, approvals, citations or dependencies changed. Legacy components and data are
+  preserved.

@@ -103,7 +103,7 @@ export default function FarmScene({ frame, ghostPercent = null, ghostLabel = 'Be
     <Arrow name="irrigation" x={265} y1={SURFACE - 10} y2={LAYER_TOP + 80} width={widths.irrigation} color="#2f8f83" label={`Irrigation +${mm(flows.irrigation)}`} labelY={LAYER_TOP + 40}/>
     {frame.waterLimited && <Arrow name="demand" x={525} y1={SURFACE + 40} y2={70} width={widths.demand} color="#b86f22" outline dashed/>}
     <Arrow name="et" x={525} y1={SURFACE + 40} y2={70} width={widths.actualET} color="#d28a3d" labelY={110}
-      label={`Water loss −${mm(flows.actualET)}${frame.waterLimited ? ` of ${mm(flows.demand)} demand` : ''}`} />
+      label={`Water used −${mm(flows.actualET)}${frame.waterLimited ? ` of ${mm(flows.demand)} demand` : ''}`} />
     <Arrow name="drainage" x={395} y1={LAYER_BOTTOM - 50} y2={H - 6} width={widths.drainage} color="#1f5f86" label={`Drainage −${mm(flows.drainage)}`} labelY={LAYER_BOTTOM + 30}/>
     {/* Water in exceeded what the store can hold: the model's drainage term, drawn only when it is non-zero. */}
     {flows.drainage > 0 && <g data-testid="overflow" className="overflow">
@@ -130,14 +130,11 @@ export default function FarmScene({ frame, ghostPercent = null, ghostLabel = 'Be
 }
 
 export function FlowLegend() {
-  const bar = v => Math.min(v, FLOW_SCALE.capMm) * FLOW_SCALE.pxPerMm;
   return <div className="flow-legend" aria-label="How to read the farm illustration">
-    <span><i className="key key-nasa"/>NASA POWER weather</span>
-    <span><i className="key key-input"/>Your irrigation input</span>
-    <span><i className="key key-calc"/>Calculated by the model</span>
-    <span className="scale">Arrow width = mm of water that day:
-      <svg viewBox="0 0 150 22" aria-hidden="true">{[1, 5, 10, 20].map((v, i) => <g key={v}><rect x={4 + i * 38} y={11 - bar(v) / 6} width="8" height={bar(v) / 3} fill="#73828c"/><text x={16 + i * 38} y="15">{v}{v === 20 ? '+' : ''}</text></g>)}</svg>
-    </span>
-    <span>Dashed outline = water the weather could pull (demand); solid = what the soil supplied.</span>
+    <span><i className="key key-nasa"/>NASA precipitation</span>
+    <span><i className="key key-input"/>Your irrigation</span>
+    <span><i className="key key-calc"/>Water used (calculated)</span>
+    <span><i className="key key-drain"/>Drainage (calculated)</span>
+    <span className="legend-note">Arrow width = millimetres that day (capped at {FLOW_SCALE.capMm} mm). A dashed outline shows demand the dry soil could not meet.</span>
   </div>;
 }

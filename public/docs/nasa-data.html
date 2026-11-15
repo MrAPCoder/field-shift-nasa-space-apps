@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>NASA Data &amp; Sources · Field Shift</title><link rel="icon" type="image/svg+xml" href="../favicon.svg"/><link rel="stylesheet" href="./docs.css"/></head>
+<body><main>
+<a class="back" href="../">← Back to the simulator</a>
+<p class="kicker">Field Shift documentation</p>
+<h1>NASA Data &amp; Sources</h1>
+<p class="lead">The simulator runs on daily weather from NASA POWER, saved with the site. Using the app never contacts NASA. The data was downloaded once, checked, and stored with SHA-256 fingerprints.</p>
+
+<h2>NASA POWER daily weather (the simulator)</h2>
+<p>Source: <a href="https://power.larc.nasa.gov/">NASA Prediction Of Worldwide Energy Resources (POWER)</a>, daily point API, agroclimatology community. Period used by the simulator: <strong>1 January 2021 to 31 December 2025</strong> (1,826 days per farm). The simulator does not use the full 1981–2025 archive.</p>
+<div class="table"><table><thead><tr><th>Variable</th><th>Units</th><th>How it is used</th></tr></thead><tbody>
+<tr><td><code>PRECTOTCORR</code> precipitation</td><td>mm/day</td><td>Water entering the soil, and precipitation on exposed soil</td></tr>
+<tr><td><code>T2M_MAX</code>, <code>T2M_MIN</code> temperature</td><td>°C</td><td>Drying demand (FAO-56 Penman–Monteith); freezing-day flags</td></tr>
+<tr><td><code>RH2M</code> humidity</td><td>%</td><td>Drying demand</td></tr>
+<tr><td><code>ALLSKY_SFC_SW_DWN</code> sunlight</td><td>MJ/m²/day</td><td>Drying demand; sky brightness in the illustration</td></tr>
+<tr><td><code>WS2M</code> wind, <code>PS</code> pressure</td><td>m/s, kPa</td><td>Drying demand</td></tr>
+<tr><td><code>GWETROOT</code> root-zone wetness</td><td>0–1 index</td><td>Not used by the simulator or the score (see below)</td></tr>
+</tbody></table></div>
+<p>Representative points (POWER grid cells, not individual fields): Skagit Valley 48.4396° N, 122.3861° W · Yakima Valley 46.2547° N, 119.7285° W · Palouse 46.7609° N, 117.1857° W.</p>
+<p>The saved files are <code>public/data/&lt;farm&gt;/soil-weather.json</code>, with source URLs and fingerprints in each file. Missing values are never filled in. If a day is missing a required variable, the simulation stops and says so.</p>
+
+<h2>What NASA data is not used for</h2>
+<ul>
+<li><strong>GWETROOT</strong> is a modeled, regional root-zone wetness index. It is not a field sensor reading and is not the simulator's soil water. It neither starts nor checks the calculation.</li>
+<li><strong>SMAP</strong> soil moisture (SPL3SMP v9) is <strong>unavailable</strong>. Access was blocked, so no SMAP data is used. <a href="https://nsidc.org/data/spl3smp/versions/9">Product page</a> · <a href="../data/smap-status.json">access record</a>.</li>
+</ul>
+
+<h2>Other published sources</h2>
+<ul>
+<li><a href="https://www.fao.org/4/x0490e/x0490e07.htm">FAO-56, chapters 2–3</a>: daily Penman–Monteith reference evapotranspiration</li>
+<li><a href="https://www.fao.org/4/x0490e/x0490e0b.htm">FAO-56, table 12</a>: crop coefficients for spring wheat, dry peas and potatoes</li>
+<li><a href="https://www.fao.org/4/x0490e/x0490e0c.htm">FAO-56, table 17</a>: basal coefficients for the residue adjustment</li>
+<li><a href="https://www.fao.org/4/x0490e/x0490e0e.htm">FAO-56, chapter 8</a>: available water, depletion and the water balance</li>
+<li><a href="https://www.fao.org/4/x0490e/x0490e0g.htm">FAO-56, chapter 10</a>: approximate organic-mulch adjustment</li>
+<li><a href="https://www.pubs.ext.vt.edu/BSE/BSE-194/BSE-194.html">Virginia Tech BSE-194P, table 1</a>: generic soil water storage (sand, loam, clay)</li>
+</ul>
+
+<h2>Earlier research tools</h2>
+<p>The earlier 1981–2025 climate profile, historical replay screen, soil profile and rotation evidence are kept in the <a href="../research.html">research archive</a>. Full methods, audits and verification records are in the <a href="https://github.com/MrAPCoder/field-shift-nasa-space-apps">project repository</a> under <code>docs/</code> (start with <code>docs/METHODS.md</code> and <code>docs/NASA_SIMULATION_DATA_AUDIT.md</code>).</p>
+<nav class="docs" aria-label="Documentation"><a href="../">← Back to the simulator</a><a href="./nasa-data.html">NASA Data &amp; Sources</a><a href="./how-it-works.html">How It Works</a><a href="./limitations.html">Scientific Limitations</a></nav>
+</main></body></html>

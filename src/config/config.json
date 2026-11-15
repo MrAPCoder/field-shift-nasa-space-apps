@@ -194,36 +194,42 @@
       "note": "Palouse spring wheat, April–August example season. 40 mm/week is an illustrative net irrigation amount chosen to show storage filling and drainage; it is not an irrigation schedule or recommendation."
     },
     "grading": {
-      "status": "provisional_model_scoring_convention",
-      "note": "Model-based targets for one simulated historical year. 100/100 means every category met its target in the model, not a perfect real farm, measured soil health, yield or erosion outcome.",
-      "categories": {
-        "irrigationEfficiency": {
-          "label": "Irrigation Efficiency",
-          "max": 35,
-          "metric": "Share of applied net irrigation that left the modeled layer as extra drainage (scenario drainage minus the same scenario without irrigation).",
-          "fullAt": 0.1,
-          "zeroAt": 0.6
+      "version": "farm-score-v2",
+      "status": "provisional_educational_model_rating",
+      "note": "A provisional, educational rating of one simulated historical year from a generic daily soil-water model. It is not a validated assessment of a real farm and does not measure soil health, erosion, yield, profit or crop damage. 100/100 means the scenario met every model target.",
+      "groups": {
+        "cropWater": {
+          "label": "Crop water supply",
+          "points": 50,
+          "factors": {
+            "demandMet": { "weight": 25, "fullAt": 0.95, "zeroAt": 0.5, "metric": "Crop-season actual ET / crop water demand (FAO-56 ETo × Kc)." },
+            "worstPeriod": { "weight": 12, "fullAt": 0.8, "zeroAt": 0.3, "windowDays": 14, "metric": "Lowest actual ET / demand in any 14-day crop-season window (shortage severity)." },
+            "timeAboveStress": { "weight": 7, "fullAt": 0.9, "zeroAt": 0.4, "metric": "Share of crop-season days with storage at or above the crop stress line (water availability through the season)." },
+            "longestStress": { "weight": 6, "fullAt": 7, "zeroAt": 45, "metric": "Longest run of consecutive crop-season days below the stress line (stress duration)." }
+          }
         },
-        "cropWaterSupply": {
-          "label": "Crop Water Supply",
-          "max": 35,
-          "metric": "Share of crop-season water demand (FAO-56 reference ET × crop coefficient) the modeled soil supplied.",
-          "fullAt": 0.9,
-          "zeroAt": 0.5
+        "irrigation": {
+          "label": "Irrigation use",
+          "points": 30,
+          "factors": {
+            "cropUse": { "weight": 30, "fullAt": 0.8, "zeroAt": 0.3, "metric": "Extra crop-season actual ET caused by irrigation / irrigation applied (paired zero-irrigation run). Its complement is drainage caused by irrigation plus water left in the soil at harvest; drainage is reported, not scored twice." }
+          }
         },
-        "rainExposure": {
-          "label": "Rain Exposure Protection",
-          "max": 30,
-          "metric": "Share of the year's NASA precipitation that fell on assumed exposed soil. An exposure proxy, not measured erosion.",
-          "fullAt": 0.3,
-          "zeroAt": 0.9
+        "soilCover": {
+          "label": "Rain on exposed soil",
+          "points": 20,
+          "factors": {
+            "exposure": { "weight": 12, "fullAt": 0.3, "zeroAt": 0.9, "metric": "Share of non-freezing NASA precipitation over the year that fell on assumed exposed soil." },
+            "heavyExposure": { "weight": 8, "fullAt": 0.3, "zeroAt": 0.9, "heavyDayMm": 12.7, "metric": "Same share for non-freezing days with at least 12.7 mm (0.5 in) of precipitation. Provisional heavier-day convention; daily totals do not measure rainfall intensity." }
+          }
         }
       },
-      "grades": [[90, "A"], [80, "B"], [70, "C"], [60, "D"], [0, "F"]],
-      "minMeaningfulLoss": 2,
+      "scorableSeason": { "minMonths": 3, "maxFreezingPrecipShare": 0.25, "allowNewYear": false },
+      "startWater": { "fractions": [0, 0.5, 1], "notePoints": 5, "withholdPoints": 15 },
+      "minProblemPoints": 3,
       "minMeaningfulGain": 1,
-      "irrigationOptions": [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80],
-      "plantingShiftMonths": [-1, 1]
+      "irrigationOptions": [0, 5, 10, 15, 20, 25, 30, 35, 40, 50, 60, 80],
+      "coverOptions": ["bare", "residue", "cover"]
     }
   }
 }

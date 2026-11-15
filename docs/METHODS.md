@@ -815,6 +815,8 @@ and the panel marks the day unreliable.
 
 ## M8 farm score, biggest weakness and model-supported improvement
 
+> **Superseded by M9.** The three-category M8 score below is kept as a historical record only.
+
 The `daily-bucket-v1` model is unchanged. M8 adds `src/lib/grade.js`, which scores one
 simulated historical year out of 100. Settings live in `config.soilSimulation.grading`
 (`status: provisional_model_scoring_convention`). The score is a model scoring
@@ -883,3 +885,96 @@ On any day with model drainage (stored water + precipitation + irrigation exceed
 capacity), the scene draws a blue band on the soil surface and gauge, labelled "Soil
 store full · extra water drains". The panel states how many mm came in and drained.
 Nothing is drawn when drainage is zero.
+
+## M9 multi-factor farm score, biggest problem and simplified site
+
+The `daily-bucket-v1` water balance is unchanged. M9 replaces the M8 score with `farm-score-v2`
+in `src/lib/grade.js`, configured in `config.soilSimulation.grading`
+(`status: provisional_educational_model_rating`). **It is a provisional, educational rating of
+one simulated historical season. It is not a validated assessment of a real farm and does not
+measure soil health, erosion, yield, profit or crop damage.**
+
+### Factors, groups and weights
+
+Credit for each factor is linear between a zero point and a target, clamped to 0–1. Group
+points = Σ weight × credit. Total = round(100 × Σ group points ÷ Σ applicable group maxima).
+Weights are deliberately unequal. Correlated crop-water signals share one capped group.
+
+| Group (pts) | Factor (brief no.) | Metric from daily records | Wt | Full | Zero |
+| --- | --- | --- | --- | --- | --- |
+| Crop water supply (50) | Demand met (1) | Σ actual ET ÷ Σ demand, crop-season days | 25 | ≥ 0.95 | ≤ 0.50 |
+| | Shortage severity (3) | lowest Σ actual ET ÷ Σ demand in any 14 consecutive crop days | 12 | ≥ 0.80 | ≤ 0.30 |
+| | Availability through season (6) | share of crop days with storage ≥ stress line | 7 | ≥ 0.90 | ≤ 0.40 |
+| | Stress duration (2) | longest run of consecutive crop days below the stress line | 6 | ≤ 7 d | ≥ 45 d |
+| Irrigation use (30) | Irrigation meeting crop demand (4) | (Σ actual ET − Σ actual ET without irrigation) ÷ irrigation, crop days | 30 | ≥ 0.80 | ≤ 0.30 |
+| | Excess drainage from irrigation (5) | reported, not scored: see below | – | – | – |
+| Rain on exposed soil (20) | Exposure (7) | Σ exposed precipitation ÷ Σ precipitation, non-freezing days, whole year | 12 | ≤ 0.30 | ≥ 0.90 |
+| | Heavier-day exposure (8) | same, non-freezing days with ≥ 12.7 mm | 8 | ≤ 0.30 | ≥ 0.90 |
+
+- **Irrigation decomposition.** The scenario is paired with the identical scenario at 0
+  mm/week, on the same weather. The two runs are identical before planting, so over the crop
+  season irrigation I = ΔET + Δdrainage + Δstorage at the last crop day, exactly. This is
+  tested to 1e-6 mm. Factor 5 (Δdrainage ÷ I) is the main complement of factor 4. It is used
+  to explain the irrigation result ("Excessive irrigation") and is not scored a second time.
+- **No irrigation.** The irrigation group does not apply, so the total is rescaled from 70
+  points. Crop water then carries 50/70 ≈ 71%, so an unirrigated crop with a severe shortage
+  scores low (Palouse 2023 wheat: 14; Yakima potato: 7).
+- **Excessive irrigation** keeps crop water full but loses most of the irrigation group. For
+  example, Yakima at 200 mm/week scores below the best moderate amount, and no excessive
+  case reaches 100. These are tested.
+- **Heavier days.** 12.7 mm (0.5 in) per day is a provisional convention. Daily totals do not
+  measure rainfall intensity. If a year has no heavier non-freezing day, only factor 7 is used.
+- **GWETROOT** is never read by the score (tested by blanking it).
+
+### When the score is withheld ("Not scored")
+
+The score is withheld when any of these holds:
+- the run fails or required NASA data is missing;
+- an irrigated run lacks its valid paired zero-irrigation run;
+- the season crosses New Year (the autumn part is not simulated);
+- the season is shorter than 3 months;
+- more than 25% of crop-season precipitation fell on days with NASA T2M_MIN ≤ 0 °C (snow and
+  frozen ground are not modeled). Palouse March–July seasons are excluded in 4 of 5 years
+  (23–47% of crop-season precipitation on such days);
+- the total would change by ≥ 15 points between 0% and 100% assumed Jan 1 storage.
+
+At ≥ 5 points a note shows the range. Across 3,240 scorable test scenarios the largest
+starting-water effect was 10 points, and 67 showed the note.
+
+### Biggest problem and improvement
+
+- **Biggest problem:** the applicable group with the most points lost on the 100-point basis
+  (≥ 3), worded from that scenario's model results: "Crop water shortage", "Excessive
+  irrigation" (drainage ≥ water left in soil), "Irrigation the crop did not use", or "Rain on
+  exposed soil". It is named even when no improvement is found.
+- **Candidates:** irrigation ∈ {0, 5, …, 40, 50, 60, 80} mm/week × cover ∈ {bare, residue,
+  cover}, including two-setting combinations. Location, year, crop, soil and season never
+  change. Planting dates are not suggested because the project has no sourced local planting
+  windows (`data/crops.json`: "Does not establish local planting/harvest dates").
+- **Choice order:** single-setting changes that reduce the biggest problem's lost points,
+  then combinations that do, then any single change, then any combination. A change must
+  raise the total by at least 1 point. Within each tier: largest gain, then the smallest
+  irrigation change. If the chosen change does not help the named problem, the UI says so.
+- **Robustness:** the gain must hold with 0%, 50% and 100% Jan 1 storage, and under a
+  dry-winter bound: a copy of the archive in which precipitation on days with T2M_MIN ≤ 0 °C
+  is set to 0. This bound is used only for this check and is never displayed.
+- If nothing qualifies, the problem is still shown, with what could be investigated (irrigation
+  timing, local planting dates, local cover practices). No positive result is invented.
+
+### Ground cover is not free
+
+A live cover crop uses off-season water (Kc 1). Across 405 paired test scenarios it lowered
+crop-water points in 51 but never lowered the total, because the model refills the soil
+before planting. That refill depends partly on winter precipitation of unmodeled phase. That
+is why cover suggestions must pass the dry-winter bound, and the extra off-season water use
+is always listed as a tradeoff.
+
+### Site structure
+
+The main page has six parts: the welcome with Try Demo, the six inputs plus a year selector,
+the farm simulation, the score card (score, biggest problem, how to improve), before and
+after, and a footer. The footer links to `public/docs/` (NASA Data & Sources, How It Works,
+Scientific Limitations). The earlier climate dashboard, M5 replay, rotation scoring and
+calendars are unchanged and reachable at `research.html` (`src/research.jsx`). The legacy
+browser suites target that page. The demo opens on planting day and compares 0 vs. an
+illustrative 40 mm/week.

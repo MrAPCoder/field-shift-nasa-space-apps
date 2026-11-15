@@ -17,7 +17,7 @@ const path=require('node:path');
  page.on('request',r=>{if(/power\.larc|usda\.gov|earthdata\.nasa/.test(r.url()))external.push(r.url());});
  const url=process.env.PREVIEW_URL||'http://127.0.0.1:4173/';
  await page.goto(url);const main=page.locator('#visual-simulator'),scene=main.getByTestId('farm-scene'),slider=main.getByRole('slider',{name:'Simulation day'});
- assert.equal(await page.locator('h1').count(),1);assert.equal(await page.locator('#advanced-details').getAttribute('open'),null);
+ assert.equal(await page.locator('h1').count(),1);assert.equal(await page.locator('#advanced-details').count(),0,'no Advanced Details on the main page');
  // Default inputs are the Palouse base scenario; the demo is checked separately below.
  await main.getByRole('button',{name:'Run simulation',exact:true}).click();
  await slider.waitFor();
@@ -42,31 +42,34 @@ const path=require('node:path');
  }
  assert.match(await main.getByTestId('soil-panel').innerText(),/of 120 mm plant-available water/);
  await checkFrame(0);
- // M8 score: every shown number equals an independent Node rerun; try-improvement and undo.
- const {analyzeWeaknesses}=await import(path.join(root,'src/lib/grade.js'));
- const analysis=analyzeWeaknesses(weather('palouse'),base),imp=analysis.biggest.improvement;
- assert.equal(await main.getByTestId('score-total').innerText(),`${analysis.before.score.total}/100`);
- assert.equal(await main.getByTestId('score-grade').innerText(),analysis.before.score.grade);
- assert.match(await main.getByTestId('weakness-name').innerText(),new RegExp(analysis.biggest.label));
+ // M9 score: every shown number equals an independent Node analysis; try-improvement and undo.
+ const {analyzeFarm,gradeScenario}=await import(path.join(root,'src/lib/grade.js'));
+ const analysis=analyzeFarm(weather('palouse'),base),imp=analysis.improvement;
+ await main.getByTestId('score-total').waitFor();
+ assert.equal(await main.getByTestId('score-total').innerText(),`${analysis.score}/100`);
+ assert.equal(await main.getByTestId('problem-title').innerText(),analysis.problem.title);
  assert.match(await main.getByTestId('improve-total').innerText(),new RegExp(`${imp.totalBefore} → ${imp.totalAfter}`));
- assert.equal(await main.locator('details.other').count(),2,'other two categories are collapsed');
+ for(const hidden of ['.score-bar','.grade','details.other'])assert.equal(await main.locator(hidden).count(),0,`no ${hidden} in the simple card`);
  await main.getByTestId('how-to-improve').getByRole('button',{name:'Try this improvement'}).click();
  await main.getByTestId('applied-banner').waitFor();
- assert.equal(await main.getByTestId('score-total').innerText(),`${imp.totalAfter}/100`,'applied score equals the predicted rerun');
+ await page.waitForFunction(t=>document.querySelector('[data-testid=score-total]')?.textContent===t,`${imp.totalAfter}/100`);
  assert.match(await main.getByTestId('applied-banner').innerText(),new RegExp(`${imp.totalBefore} → ${imp.totalAfter}`));
  assert.match(await main.getByTestId('compare-score').innerText(),new RegExp(`${imp.totalBefore}.*→.*${imp.totalAfter}`,'s'));
+ assert.equal(Number(await main.getByLabel('Net irrigation (mm/week)',{exact:true}).inputValue()),imp.scenario.irrigation);
  assert.equal(await main.getByLabel('Ground cover',{exact:true}).inputValue(),imp.scenario.cover);
- await slider.fill('10');assert.equal(await scene.getAttribute('data-cover'),imp.scenario.cover,'farm redrawn for the applied change');
+ const applied=runSoilSimulation(weather('palouse'),imp.scenario);
+ await slider.fill('150');await checkFrame(150,applied,'applied');
  await main.getByTestId('applied-banner').getByRole('button',{name:'Undo'}).click();
- assert.equal(await main.getByTestId('score-total').innerText(),`${analysis.before.score.total}/100`);
+ await page.waitForFunction(t=>document.querySelector('[data-testid=score-total]')?.textContent===t,`${analysis.score}/100`);
  assert.equal(await main.getByTestId('soil-comparison').count(),0,'undo returns to the single baseline run');
  assert.equal(await main.getByLabel('Ground cover',{exact:true}).inputValue(),'bare');
+ assert.equal(await main.getByLabel('Net irrigation (mm/week)',{exact:true}).inputValue(),'0');
  for(const i of [10,50,123,190,200,364]){await slider.fill(String(i));await checkFrame(i);}
  // Known archived days: freezing precipitation is not drawn as liquid infiltration; saturated day drains.
  await slider.fill('10');assert.equal(await scene.locator('.precip-frozen').count(),1);assert.equal(await scene.locator('.precip-liquid').count(),0);
  assert.match(await main.getByTestId('panel-cautions').innerText(),/Snow, snowmelt and frozen ground are not modeled/);
  await slider.fill('50');assert.ok(Number(await scene.locator('.flow-drainage').getAttribute('data-width'))>0);assert.match(await main.getByTestId('panel-explain').innerText(),/drained below/);
- await slider.fill('200');assert.equal(await main.getByTestId('panel-status').innerText(),'Dryness concern: water is below the crop stress line, so crop water use is being limited.');
+ await slider.fill('200');assert.equal(await main.getByTestId('panel-status').innerText(),'Water stress: storage is below the crop stress line, so the crop cannot use water at the full rate.');
  assert.equal(await scene.locator('.flow-demand').count(),1,'demand outline shown when the soil limits water use');
  // Month jump, single-day steps, month-to-date readout summed from daily values.
  const months=monthlyBalance(expected);
@@ -75,8 +78,6 @@ const path=require('node:path');
  assert.equal(await main.getByRole('button',{name:'Jump to July'}).getAttribute('aria-pressed'),'true');
  await main.getByRole('button',{name:'Next day'}).click();await main.getByRole('button',{name:'Next day'}).click();await checkFrame(months[6].first+2);
  await main.getByRole('button',{name:'Previous day'}).click();await checkFrame(months[6].first+1);
- const mtd=expected.days.slice(months[6].first,months[6].first+2).reduce((t,d)=>t+d.actualET,0);
- assert.match(await main.getByTestId('month-readout').innerText(),new RegExp(`water loss −${mtd.toFixed(1)}`));
  await main.getByRole('button',{name:'Jump to February'}).click();await checkFrame(months[1].first);
  await main.getByRole('button',{name:'Jump to December'}).click();await checkFrame(months[11].first);
  // Starting-water band matches the independently computed sensitivity date.
@@ -105,11 +106,14 @@ const path=require('node:path');
  await checkFrame(190,expected,'before');assert.equal(await scene.getAttribute('data-available-percent'),beforeScene,'baseline unchanged');
  await main.getByRole('button',{name:'After (your change)'}).click();await checkFrame(190,expectedIrrigated);
  const cards=await main.getByTestId('soil-comparison').innerText();
- assert.match(cards,/64.5%.*84.3%/s);assert.match(cards,/\+19\.8 pts/);assert.match(cards,/78 days.*36 days/s);assert.match(cards,/−42 days/);
+ const g0=gradeScenario(weather('palouse'),base),g20=gradeScenario(weather('palouse'),{...base,irrigation:20});
+ assert.match(cards,new RegExp(`${Math.round(g0.score.metrics.meanAvailable)}%.*${Math.round(g20.score.metrics.meanAvailable)}%`,'s'));
+ assert.match(cards,new RegExp(`${g0.score.metrics.stressDays} days.*${g20.score.metrics.stressDays} days`,'s'));
+ assert.match(await main.getByTestId('compare-score').innerText(),new RegExp(`${g0.score.total}.*→.*${g20.score.total}`,'s'));
  await main.getByLabel('Ground cover',{exact:true}).selectOption('residue');
  await main.getByRole('button',{name:'Run comparison',exact:true}).click();
  await page.waitForFunction(()=>document.querySelector('.scenario-pair')?.textContent.includes('Crop residue'));
- assert.match(await main.locator('.water-compare').innerText(),/Precipitation on exposed soil: 491.*147.3/s);
+ assert.match(await main.locator('.water-compare').innerText(),/Precipitation on exposed soil: 491 → 147 mm/);
  assert.equal(await scene.locator('.residue').count(),1);
  await main.getByLabel('Soil type',{exact:true}).selectOption('sandy');
  await main.getByRole('button',{name:'Run comparison',exact:true}).click();
@@ -130,6 +134,8 @@ const path=require('node:path');
  await page.waitForFunction(()=>document.querySelector('.scenario-pair')?.textContent.includes('Oct–Jul'));
  await main.getByRole('button',{name:'Jump to January'}).click();
  assert.match(await main.getByTestId('panel-cautions').innerText(),/planted in October 2022\. That autumn is not simulated/);
+ await page.waitForFunction(()=>document.querySelector('[data-testid=score-total]')?.textContent==='Not scored');
+ assert.match(await main.getByTestId('score-reasons').innerText(),/crosses New Year/);
  fs.mkdirSync('work',{recursive:true});
  await page.screenshot({path:'work/soil-desktop.png',fullPage:true});
  for(const width of [390,320,768]){await page.setViewportSize({width,height:844});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`overflow ${width}`);
@@ -150,7 +156,7 @@ const path=require('node:path');
   await slider.fill('150');await checkFrame(150,sim,location);
  }
  // Cross-location one-click demo must survive the location-reset effect.
- await main.getByRole('button',{name:'Try the Palouse demo',exact:true}).click();
+ await main.getByRole('button',{name:'Try Demo',exact:true}).click();
  await slider.waitFor();
  assert.equal(await main.getByLabel('Location',{exact:true}).inputValue(),'palouse');
  assert.match(await main.getByTestId('soil-panel').innerText(),/of 120 mm plant-available/);
@@ -161,22 +167,32 @@ const path=require('node:path');
  await slider.fill(String(overflowDay));await checkFrame(overflowDay,demoIrr,'demo');
  assert.equal(await scene.getByTestId('overflow').count(),1,'storage overflow is drawn when added water exceeds capacity');
  assert.match(await main.getByTestId('panel-overflow').innerText(),/more than the soil could hold/);
- await page.locator('#advanced-details > summary').click();
- assert.equal(await page.locator('#soil-methods .water-chart').count(),2,'yearly graph + NASA wetness context live in Advanced Details');
- assert.equal(await page.getByTestId('month-balance').locator('tbody tr').count(),12);
- assert.match(await page.getByTestId('startup-note').innerText(),/Mar 6, 2023/);
- await page.getByLabel('Historical weather year',{exact:true}).selectOption('2024');
+ // Demo score story, calculated in Node: no irrigation vs. the illustrative amount.
+ const demoA=analyzeFarm(weather('palouse'),{...base,irrigation:40}),demo0=gradeScenario(weather('palouse'),base).score.total;
+ await page.waitForFunction(t=>document.querySelector('[data-testid=score-total]')?.textContent===t,`${demoA.score}/100`);
+ assert.equal(await main.getByTestId('problem-title').innerText(),demoA.problem.title);
+ assert.match(await main.getByTestId('compare-score').innerText(),new RegExp(`${demo0}.*→.*${demoA.score}`,'s'));
+ // The historical-year selector lives in the main experience; leap year works.
+ await main.getByLabel('Historical weather year',{exact:true}).selectOption('2024');
  await main.getByRole('button',{name:'Run simulation',exact:true}).click();
  await slider.waitFor();
  assert.equal(await slider.getAttribute('max'),'365');
  await main.getByRole('button',{name:'Jump to March'}).click();
  assert.equal(await scene.getAttribute('data-date'),'2024-03-01');await main.getByRole('button',{name:'Previous day'}).click();assert.equal(await scene.getAttribute('data-date'),'2024-02-29');
- assert.match(await page.locator('#soil-methods').innerText(),/SMAP SPL3SMP v9: unavailable/);
- await page.getByTestId('rain-value').waitFor();
+ // Keyboard: slider arrows and buttons activate without a mouse.
+ await slider.focus();await page.keyboard.press('ArrowRight');assert.equal(await scene.getAttribute('data-date'),'2024-03-01');
+ await main.getByRole('button',{name:'Jump to June'}).focus();await page.keyboard.press('Enter');assert.equal(await scene.getAttribute('data-date'),'2024-06-01');
+ // Footer documentation links resolve; the research archive still loads the earlier tools.
+ const docs=await page.locator('footer nav a').evaluateAll(as=>as.map(a=>[a.textContent,a.href]));
+ assert.deepEqual(docs.map(d=>d[0]),['NASA Data & Sources','How It Works','Scientific Limitations']);
+ for(const [,href] of docs){const r=await page.request.get(href);assert.equal(r.status(),200,href);assert.match(await r.text(),/Back to the simulator/);}
+ const research=await browser.newPage();await research.goto(new URL('research.html',url).href);
+ await research.locator('#advanced-details > summary').click();await research.getByTestId('rain-value').waitFor();
+ assert.equal(await research.locator('#visual-simulator').count(),0);await research.close();
  assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
  // Without reduced motion, a rainy day animates only while playing.
  const motion=await browser.newPage({viewport:{width:1200,height:900}});
- await motion.goto(url);await motion.getByRole('button',{name:'Try the Palouse demo',exact:true}).click();
+ await motion.goto(url);await motion.getByRole('button',{name:'Try Demo',exact:true}).click();
  const ms=motion.locator('[data-testid=farm-scene]');await motion.getByRole('slider',{name:'Simulation day'}).fill('97');
  assert.equal(await motion.locator('.farm-scene.is-animated').count(),0,'paused frames are static');
  await motion.getByRole('button',{name:'Play simulation'}).click();await motion.waitForTimeout(150);
@@ -184,7 +200,7 @@ const path=require('node:path');
  assert.ok(await ms.getAttribute('data-date'));
  // Missing forcing and failed retrieval never turn into a guessed result; retry works.
  const failed=await browser.newPage();await failed.route('**/palouse/soil-weather.json',r=>r.abort());
- await failed.goto(url);await failed.getByRole('button',{name:'Try the Palouse demo',exact:true}).click();
+ await failed.goto(url);await failed.getByRole('button',{name:'Try Demo',exact:true}).click();
  await failed.locator('#visual-simulator [role=alert]').waitFor();
  assert.equal(await failed.locator('[data-testid=farm-scene]').count(),0);
  await failed.unroute('**/palouse/soil-weather.json');
@@ -192,8 +208,8 @@ const path=require('node:path');
  // Late Palouse response after selecting another farm cannot show Palouse data there.
  const race=await browser.newPage();let release;const gate=new Promise(resolve=>release=resolve);
  await race.route('**/palouse/soil-weather.json',async r=>{await gate;await r.continue();});
- await race.goto(url);await race.getByRole('button',{name:'Try the Palouse demo',exact:true}).click();
+ await race.goto(url);await race.getByRole('button',{name:'Try Demo',exact:true}).click();
  await race.getByLabel('Location',{exact:true}).selectOption('yakima');release();await race.waitForTimeout(500);
  assert.equal(await race.locator('[data-testid=farm-scene]').count(),0);
- await browser.close();console.log('PASS farm scene: every checked frame equals an independent model run (date, water, flows, stress line, arrows, precipitation), month jump/day step/play-pause sync, freezing and drainage days, frozen baseline + before/after toggle, six inputs, wrapped season, leap day, all farms, reduced motion, 320/390/768px and desktop, Advanced graph + monthly balance, error/retry, stale-request cancellation, no live data requests.');
+ await browser.close();console.log('PASS farm scene: every checked frame equals an independent model run (date, water, flows, stress line, arrows, precipitation), month jump/day step/play-pause sync, freezing and drainage days, frozen baseline + before/after toggle, six inputs, wrapped season, leap day, all farms, reduced motion, 320/390/768px and desktop, score/problem/improvement equal Node analysis, apply/undo, Not scored season, demo score story, year selector, keyboard, docs links and research archive, error/retry, stale-request cancellation, no live data requests.');
 })().catch(e=>{console.error(e);process.exit(1)});

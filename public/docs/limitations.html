@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Scientific Limitations · Field Shift</title><link rel="icon" type="image/svg+xml" href="../favicon.svg"/><link rel="stylesheet" href="./docs.css"/></head>
+<body><main>
+<a class="back" href="../">← Back to the simulator</a>
+<p class="kicker">Field Shift documentation</p>
+<h1>Scientific Limitations</h1>
+<p class="lead">Field Shift is an educational simulation. It shows how management choices change a <em>modeled</em> soil-water balance under real historical weather. It does not describe any real field.</p>
+
+<h2>What the model does not do</h2>
+<ul>
+<li>It does not predict yield, crop growth, crop damage, profit, soil health or erosion. The exposure numbers count precipitation landing on assumed exposed soil. They are not measured soil loss.</li>
+<li>The past is not a forecast. Each run replays one year from 2021–2025.</li>
+<li>Soil and crop values are generic published figures, not measurements from your field, and the model has not been calibrated against field data.</li>
+<li>The soil is one 0.6 m store. There are no soil layers, runoff, groundwater, salinity or root growth.</li>
+<li>Irrigation is net water, spread evenly across the crop season. Timing, scheduling and system efficiency are not modeled.</li>
+<li>Crop stages follow your chosen calendar, not simulated growth. The plants and roots in the illustration are schematic.</li>
+</ul>
+
+<h2>Winter, snow and frozen ground</h2>
+<p>Snow, snowmelt and frozen ground are <strong>not modeled</strong>. Precipitation on freezing days (NASA minimum temperature ≤ 0 °C) enters the soil as liquid water immediately. At Palouse, a large share of winter precipitation falls on such days. Winter results are therefore not validated soil conditions. To keep this from distorting the score:</p>
+<ul>
+<li>precipitation on freezing days is left out of the exposure part of the score;</li>
+<li>seasons where more than 25% of crop-season precipitation fell on freezing days are <strong>not scored</strong>;</li>
+<li>the illustration draws freezing-day precipitation grey and dashed, and the panel marks it unreliable.</li>
+</ul>
+
+<h2>Cover crops and winter refill</h2>
+<p>A live cover crop uses water between seasons. In 405 paired test scenarios it lowered crop-water points in 51, but it never lowered the total score, because the model refills the soil before planting. Much of that refill comes from winter precipitation whose phase is not modeled. So Field Shift only suggests a change if it still helps under a "dry winter" bound, where no precipitation on freezing days reaches the soil. The extra off-season water use is always listed as a tradeoff.</p>
+
+<h2>Starting soil water</h2>
+<p>Each year starts on 1 January with the soil assumed to be half full. The timeline shades the days when this assumption still affects the result. Field Shift reruns every score with the soil starting empty and full. It shows a note when the score moves by 5 or more points, and withholds the score at 15 or more. Suggested improvements must help in all three cases.</p>
+
+<h2>NASA data</h2>
+<ul>
+<li>NASA POWER values are gridded estimates for a representative point, not weather-station readings at your farm.</li>
+<li>GWETROOT is a modeled, regional wetness index. It is not a sensor reading and is not used as the simulator's soil water.</li>
+<li>SMAP satellite soil moisture is unavailable and not used.</li>
+</ul>
+
+<h2>The score</h2>
+<p>The 100-point score is a provisional rating built from this model's outputs. Its weights and targets are teaching conventions pending expert review. 100/100 means the scenario met every model target, not that a real farm is perfect. Suggested changes are model comparisons, not agronomic recommendations. Please consult local extension specialists, agronomists and soil testing before making decisions.</p>
+<nav class="docs" aria-label="Documentation"><a href="../">← Back to the simulator</a><a href="./nasa-data.html">NASA Data &amp; Sources</a><a href="./how-it-works.html">How It Works</a><a href="./limitations.html">Scientific Limitations</a></nav>
+</main></body></html>
