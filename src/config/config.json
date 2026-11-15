@@ -44,5 +44,20 @@
       "rootDiversity": 0.2,
       "nonBare": 0.2
     }
+  },
+  "simulation": {
+    "status": "provisional",
+    "dryDayMm": 1.0,
+    "drySpellDays": 21,
+    "hotDayC": 32,
+    "hotDaysPerYear": 5,
+    "frostDayC": 0,
+    "frostShoulderMonths": [4, 5, 6, 9, 10],
+    "frostDaysPerYear": 1,
+    "exposedFraction": 0.25,
+    "concernMinFrequency": 0.20,
+    "minValidRuns": 20,
+    "wetnessBaseline": [1991, 2020],
+    "familyOrder": ["exposed", "dry", "heat", "frost"]
   }
 }
