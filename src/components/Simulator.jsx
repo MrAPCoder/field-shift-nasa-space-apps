@@ -66,7 +66,7 @@ export default function Simulator({ farms, selected, onSelect, management }) {
     } catch (error) {
       if (id !== requestId.current) return;
       setBefore(null); setAfter(null); setLever(null);
-      setLoad({ status: 'error', message: error?.message?.startsWith(REPLAY_LOAD_ERROR) ? error.message.slice(REPLAY_LOAD_ERROR.length + 2) : 'The simulation could not be completed.', retry: () => run(farmId, plan, extra) });
+      setLoad({ status: 'error', farmId, message: error?.message?.startsWith(REPLAY_LOAD_ERROR) ? error.message.slice(REPLAY_LOAD_ERROR.length + 2) : 'The simulation could not be completed.', retry: () => run(farmId, plan, extra) });
     }
   }
   const simulateMine = () => run(selected, usingCalendar
@@ -97,7 +97,7 @@ export default function Simulator({ farms, selected, onSelect, management }) {
       calendarConfirmed={calendarConfirmed} calendarStarted={calendarStarted} useCalendar={useCalendar} onUseCalendar={setUseCalendar}
       windowStart={windowMonths.start} windowEnd={windowMonths.end} onWindow={(start, end) => setWindowMonths({ start, end })}
       usingCalendar={usingCalendar} canSimulate={canSimulate} loading={load.status === 'loading'} onSimulate={simulateMine} onDemo={simulateDemo} runCount={RUN_COUNT}/>
-    {load.status === 'error' && <div className="sim-error" role="alert"><h3>{REPLAY_LOAD_ERROR}</h3><p>{load.message} The climate dashboard below still works.</p><button type="button" onClick={load.retry}>Retry</button></div>}
+    {load.status === 'error' && load.farmId === selected && <div className="sim-error" role="alert"><h3>{REPLAY_LOAD_ERROR}</h3><p>{load.message} The climate dashboard below still works.</p><button type="button" onClick={load.retry}>Retry</button></div>}
     {shown && <div className="sim-results" ref={results} tabIndex="-1" data-testid="sim-results">
       {shown.demo && <p className="sim-demo-banner" data-testid="demo-banner"><strong>HYPOTHETICAL DEMO</strong> {DEMO_BANNER}</p>}
       <section className="sim-step" aria-labelledby="sim-step-2">
