@@ -743,3 +743,72 @@ check EASE-Grid geolocation, units, fill values, acquisition times, retrieval-qu
 snow/frozen-ground flags and spatial representativeness. It would be independent
 regional surface context, not a direct measurement of the user's field or this
 hypothetical 0.6 m layer. This limitation does not block verified POWER calculations.
+
+## M7 farm and soil illustration (no formula changes)
+
+The `daily-bucket-v1` equations, coefficients and published M6 example values are
+unchanged. M7 adds read-only diagnostics and a schematic illustration driven by
+the daily model records.
+
+### Monthly and period balances
+
+`periodBalance(result, first, last)` and `monthlyBalance(result)` aggregate only the
+daily records. Storage is a **state**: start = storage before the first day (the
+assumed initial storage on Jan 1), end = storage after the last day. Precipitation,
+irrigation, actual ET and drainage are **summed**. Residual = start + rain +
+irrigation − actual ET − drainage − end. Across all 15 farm-years and four
+scenario families, every monthly residual is below 1e-9 mm. Months chain exactly,
+February has 29 days in 2024, and the twelve months reproduce the annual totals.
+The panel's month-to-date readout uses the same function.
+
+### Starting-water sensitivity
+
+`startupSensitivity()` re-runs the selected scenario from an empty (0%) and a full
+(100%) store. The first day both trajectories agree within 0.01 mm marks the end of
+the starting assumption's influence; every later day is independent of it. The
+result is a diagnostic only. The model still starts at 50%. Loam, spring wheat,
+Apr–Aug, no irrigation, results by region:
+- Skagit: 2021–2025 converge in January–February.
+- Palouse: converges by February–March.
+- Yakima (semi-arid): stays dependent until late July–August in all five years, so
+  dryland Yakima in-season results are largely set by the assumed Jan 1 storage.
+The illustration shades this period on the timeline, and comparisons warn when it
+overlaps the crop season.
+
+### Seasons crossing New Year
+
+When the planting month is after the harvest month, January through the harvest
+month are crop days of a crop planted in the previous autumn. Its coefficients and
+irrigation follow that assumed calendar, but the autumn itself is not simulated.
+Jan 1 storage is the assumed fraction, not carried over. Results are flagged
+`wrapsYear` and the UI says so.
+
+### Freezing days
+
+Each day is flagged `freezing` when NASA POWER T2M_MIN ≤ 0 °C. Precipitation phase,
+snowpack and frozen ground are not modeled. All precipitation still enters the store
+as liquid, exactly as in M6. At Palouse in 2021–2025, 143–283 mm a year
+(19–38% of precipitation) falls on days with mean temperature ≤ 0 °C. The
+illustration draws such precipitation grey and dashed, never as liquid infiltration,
+and the panel marks the day unreliable.
+
+### How the illustration maps model output to drawing (`src/lib/scene.js`)
+
+- **Soil-water store:** one uniform colour for the whole 0.6 m layer, a linear blend
+  from a dry to a moist tone of the generic texture by that day's plant-available
+  percent. No depth-resolved wetting is drawn because none is computed. The gauge
+  shows the same percent. The crop stress line is drawn at (1 − p) × capacity on
+  crop days only, the threshold the model uses for "below depletion" days.
+- **Flow arrows:** width = 3 drawing units per mm of that day's precipitation,
+  irrigation, actual ET or drainage. Any non-zero flow is drawn at least 3 units wide.
+  Widths are capped at 20 mm, with the true value labelled. Zero flow draws nothing.
+  When demand exceeds actual ET by ≥ 0.05 mm, a dashed outline shows demand around
+  the solid actual-ET arrow.
+- **Precipitation marks:** shown only on days with NASA precipitation, in five classes:
+  0, <1, 1–5, 5–15 and ≥15 mm. They fall only while playing and only when the
+  viewer allows motion. Sky brightness follows NASA solar radiation (0–30 MJ/m²).
+- **Plants:** the selected crop's schematic. Size and colour follow the assumed
+  20/30/30/20% stage calendar, the same schedule that sets Kc, not simulated growth.
+  Roots are a fixed schematic and do not grow. No tubers, yield or damage are drawn.
+- **Ground cover:** residue segments cover the configured 70% of the surface length.
+  Live cover appears only outside the crop season. Bare is drawn fully exposed.

@@ -138,19 +138,60 @@ export function runSoilSimulation(weather,scenario,model=MODEL) {
       availablePercent:100*flux.water/capacity,volumetric:soil.wiltingPoint+flux.water/(1000*a.depthM),
       exposedRain:v.PRECTOTCORR*coefficients.exposedFraction,nasaWetness:v.GWETROOT,
       tMin:v.T2M_MIN,tMax:v.T2M_MAX,rh:v.RH2M,solar:v.ALLSKY_SFC_SW_DWN,wind:v.WS2M,pressure:v.PS,
-      dry:coefficients.active&&flux.water<(1-flux.p)*capacity});
+      dry:coefficients.active&&flux.water<(1-flux.p)*capacity,
+      // Display flag only: precipitation phase, snowpack and frozen ground are NOT modeled.
+      freezing:v.T2M_MIN<=0});
     storage=flux.water;
   }
   const sum=key=>days.reduce((s,d)=>s+d[key],0);
   return {status:'ready',modelVersion:model.version,scenario:{...scenario},weatherFingerprint:weather.fingerprint,
     weatherKey:JSON.stringify([weather.farm.id,weather.start,weather.end,weather.elevation_m,weather.series]),
+    // Planting after harvest month: Jan..harvest crop days belong to a crop planted the previous
+    // autumn, which is not simulated; Jan 1 storage is still the assumed starting fraction.
+    wrapsYear:scenario.planting>scenario.harvest,
     capacity,initialWater,days,summary:{meanAvailablePercent:sum('availablePercent')/n,finalWater:storage,
       rain:sum('rain'),irrigation:sum('irrigation'),et0:sum('et0'),demand:sum('demand'),actualET:sum('actualET'),drainage:sum('drainage'),unmetDemand:sum('unmetDemand'),exposedRain:sum('exposedRain'),
       dryDays:days.filter(d=>d.dry).length,coldDays:days.filter(d=>d.tMin<=0).length,
+      freezingPrecip:days.filter(d=>d.freezing).reduce((s,d)=>s+d.rain,0),
       massBalanceError:initialWater+sum('rain')+sum('irrigation')-sum('actualET')-sum('drainage')-storage}};
 }
 export function compareSoil(before,after) {
   if(before?.status!=='ready'||after?.status!=='ready') throw new Error('Both scenarios need complete weather and supported parameters.');
   if(before.weatherFingerprint!==after.weatherFingerprint || before.weatherKey!==after.weatherKey || before.scenario.year!==after.scenario.year || before.scenario.location!==after.scenario.location || before.modelVersion!==after.modelVersion) throw new Error('Compare scenarios using the same historical weather, year, location and model.');
   return ['meanAvailablePercent','dryDays','exposedRain','irrigation','drainage','actualET'].map(key=>({key,before:before.summary[key],after:after.summary[key],delta:after.summary[key]-before.summary[key]}));
+}
+
+// Water balance over days[first..last] inclusive, from the daily records only. Storage is a state:
+// start = storage before day `first`, end = storage after day `last`; fluxes are summed.
+export function periodBalance(result,first,last) {
+  if(result?.status!=='ready'||!Number.isInteger(first)||!Number.isInteger(last)||first<0||last<first||last>=result.days.length) return null;
+  const days=result.days.slice(first,last+1),sum=k=>days.reduce((s,d)=>s+d[k],0);
+  const start=first===0?result.initialWater:result.days[first-1].water,end=result.days[last].water;
+  const o={first,last,days:days.length,start,end,rain:sum('rain'),irrigation:sum('irrigation'),actualET:sum('actualET'),drainage:sum('drainage'),
+    demand:sum('demand'),exposedRain:sum('exposedRain'),freezingPrecip:days.filter(d=>d.freezing).reduce((s,d)=>s+d.rain,0),
+    dryDays:days.filter(d=>d.dry).length,meanAvailablePercent:sum('availablePercent')/days.length};
+  return {...o,residual:o.start+o.rain+o.irrigation-o.actualET-o.drainage-o.end};
+}
+
+// Calendar-month water balance built only from the daily records. Storage is a state, never summed:
+// start = storage before the month's first day, end = storage after its last day.
+export function monthlyBalance(result) {
+  if(result?.status!=='ready') return [];
+  return Array.from({length:12},(_,m)=>{
+    const prefix=`-${String(m+1).padStart(2,'0')}-`;
+    const first=result.days.findIndex(d=>d.date.slice(4,8)===prefix);
+    let last=first;while(last+1<result.days.length&&result.days[last+1].date.slice(4,8)===prefix) last++;
+    return {month:m+1,...periodBalance(result,first,last)};
+  });
+}
+
+// How long the assumed January 1 starting water still matters. The same year is run from an empty
+// (0%) and a full (100%) store; once both trajectories agree within tolerance, every later day is
+// independent of the starting assumption. null date = the assumption still matters on December 31.
+export function startupSensitivity(weather,scenario,model=MODEL,tolerance=.01) {
+  const bracket=fraction=>{const m=structuredClone(model);m.assumptions.initialAvailableFraction=fraction;return runSoilSimulation(weather,scenario,m);};
+  const empty=bracket(0),full=bracket(1);
+  if(empty.status!=='ready'||full.status!=='ready') return {status:'unavailable',index:null,date:null};
+  const index=empty.days.findIndex((d,i)=>Math.abs(full.days[i].water-d.water)<tolerance);
+  return {status:'ready',tolerance,index:index<0?null:index,date:index<0?null:empty.days[index].date};
 }

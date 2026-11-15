@@ -39,7 +39,7 @@ export default function App() {
     <main>
       <VisualSimulator farms={config.farms} selected={selected} onSelect={setSelected} year={soilYear} onResult={setSoilResult}/>
       <details className="advanced-details" id="advanced-details"><summary>Advanced Details <span>Climate, calendars & research</span></summary>
-      <SoilMethods year={soilYear} onYear={setSoilYear} result={soilResult}/>
+      <SoilMethods year={soilYear} onYear={setSoilYear} result={soilResult?.current} baseline={soilResult?.baseline}/>
       <Simulator farms={config.farms} selected={selected} onSelect={setSelected} management={management}/>
       <section className="location-bar" aria-label="Choose a location"><FarmSelector farms={config.farms} selected={selected} onChange={setSelected}/><div className="location-coordinates"><span>REPRESENTATIVE LOCATION</span><strong>{farm.latitude.toFixed(4)}° N · {Math.abs(farm.longitude).toFixed(4)}° W</strong><span>Regional data may differ from your field.</span></div></section>
       <div className="dashboard-layout"><div id="climate" tabIndex="-1" aria-busy={!data && state.status !== 'error'}>

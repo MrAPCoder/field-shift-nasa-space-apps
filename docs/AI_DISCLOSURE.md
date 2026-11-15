@@ -117,3 +117,17 @@ were preserved. Generic soil values and crop coefficients cite primary FAO and
 extension sources. Initial storage, fixed layer depth, timing fractions and ground
 cover are explicitly hypothetical. SMAP was not retrieved and is unavailable.
 The model does not estimate crop growth, damage, soil health, yield or profit.
+
+## M7 watchable farm and soil simulation
+
+AI-assisted changes on `claude/loving-ride-xv1d5o`, based on `codex/visual-farm-simulator`:
+- Added `src/lib/scene.js`, `src/components/FarmScene.jsx` and `tests/scene.test.js`.
+  Revised `src/components/VisualSimulator.jsx`, `src/App.jsx` and `src/style.css`.
+  Rewrote `tests/visual-browser.cjs`.
+- Added read-only diagnostics to `src/lib/soilWater.js`: `monthlyBalance`,
+  `periodBalance`, `startupSensitivity`, a per-day `freezing` flag, `wrapsYear` and
+  `summary.freezingPrecip`. These add tests to `tests/soil-water.test.js`.
+- Updated METHODS and added M7_VERIFICATION. No formulas, coefficients, data,
+  approvals, citations or dependencies changed.
+- The crop, root, sky and soil artwork is schematic interface illustration of modeled
+  values, not observed fields, predicted growth or soil health.

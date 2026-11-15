@@ -1115,39 +1115,10 @@ footer { margin-top:25px; }
 .run-row p { margin-bottom:0; }
 .pending-change { color:#6c5c26; background:#f5efd8; padding:12px; border-radius:6px; font-size:12px; }
 .water-watch { margin-top:35px; scroll-margin-top:25px; }
-.water-layout { display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:20px; }
-.water-plot-card { background:#fff; border:1px solid #dce3d6; border-radius:12px; overflow:hidden; }
-.plot-title { padding:22px 22px 0; }
-.plot-title h3 { font-size:17px; margin:0 0 6px; }
-.plot-title>span { color:#6d7e69; font-size:10px; }
 .water-chart { display:block; width:100%; height:auto; min-height:180px; }
 .water-chart text { font-family:inherit; font-size:11px; fill:#71806e; }
-.chart-legend { display:flex; flex-wrap:wrap; gap:15px; padding:0 22px 12px; font-size:10px; color:#667761; }
-.chart-legend>span:last-child { margin-left:auto; }
-.before-key::before,.after-key::before { content:''; display:inline-block; width:16px; height:3px; background:#a58c65; margin-right:6px; vertical-align:middle; }
-.after-key::before { background:#376e64; }
 .water-simulator .playback { padding:12px 22px; border-top:1px solid #eef0e9; }
 .playback time { font-size:11px; min-width:110px; }
-.daily-flows { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; background:#f3f5ed; padding:20px; }
-.daily-flows span { font-size:10px; color:#687b62; display:block; line-height:1.5; }
-.daily-flows strong { display:block; font-weight:500; font-size:18px; margin-top:6px; }
-.daily-demand { padding:0 20px; }
-.water-conditions { padding:22px; background:#e9eee1; border-radius:12px; }
-.water-conditions h3 { font:25px Georgia,serif; margin:0 0 10px; }
-.soil-reading { display:flex; gap:18px; margin-top:22px; }
-.soil-column { position:relative; min-width:88px; height:180px; border-radius:8px; overflow:hidden; background:#d7c4a2; border:1px solid #b3a17e; }
-.soil-column-fill { position:absolute; bottom:0; width:100%; background:#70a39b; }
-.soil-column-label { position:absolute; inset:0; padding:15px 5px; text-align:center; color:#173f35; }
-.soil-column-label strong { font-size:28px; display:block; }
-.soil-column-label span { font-size:9px; line-height:1.5; }
-.soil-column-depth { position:absolute; bottom:8px; left:4px; right:4px; text-align:center; font-size:8px; color:#183c32; }
-.soil-reading>div:last-child>strong { font-size:24px; display:block; margin:8px 0; font-weight:500; }
-.soil-reading small,.soil-reading>div:last-child>span { display:block; font-size:10px; line-height:1.5; color:#607456; }
-.soil-reading strong small { display:inline; }
-.soil-reading p { font-size:11px; line-height:1.6; }
-.exposure-reading { border-top:1px solid #c9d5be; margin-top:22px; padding-top:18px; }
-.exposure-reading span,.exposure-reading small { display:block; font-size:10px; color:#5e7355; line-height:1.6; }
-.exposure-reading strong { display:block; font-size:22px; font-weight:500; margin:6px 0; }
 .water-limit { color:#72816c; font-size:11px; line-height:1.7; }
 .water-empty { background:#edf0e5; border:1px dashed #b5c3a7; padding:45px 25px; border-radius:12px; color:#607357; text-align:center; }
 .water-empty p { font-size:13px; margin-bottom:0; }
@@ -1166,15 +1137,12 @@ footer { margin-top:25px; }
 .soil-methods h3 { margin-top:24px; }
 .soil-methods select { max-width:190px; }
 .soil-methods .water-chart { max-width:850px; background:white; border-radius:10px; }
-@media(max-width:900px) { .water-layout { grid-template-columns:1fr; } .water-conditions { display:block; } .soil-reading { max-width:350px; } }
 @media(max-width:620px) {
  .water-simulator { padding:15px 0; } .water-hero { display:block; } .water-hero>.primary { margin-top:12px; }
  .customize { padding:18px; } .soil-inputs { grid-template-columns:1fr 1fr; gap:20px 12px; }
  .soil-inputs label:last-child { grid-column:1/-1; } .soil-inputs select { font-size:12px; }
  .run-row,.water-improve>div { display:block; } .run-row>.primary { margin-top:18px; width:100%; }
  .water-simulator .playback { flex-wrap:wrap; gap:10px; padding:12px; } .playback time { text-align:right; margin-left:auto; }
- .chart-legend { padding:0 12px 12px; } .chart-legend>span:last-child { flex-basis:100%; }
- .daily-flows { grid-template-columns:1fr 1fr; gap:16px; } .daily-demand { font-size:11px; }
  .water-comparison-cards { grid-template-columns:1fr; gap:20px; } .water-compare { padding:20px; }
  .water-comparison-cards strong { margin-top:4px; } .water-chart { min-height:150px; }
 }
@@ -1183,3 +1151,88 @@ footer { margin-top:25px; }
  .soil-inputs .month-pair label { grid-column:auto; }
  .soil-inputs fieldset { grid-column:1/-1; }
 }
+
+/* Farm and soil illustration: every visual parameter comes from lib/scene.js#sceneFrame. */
+.view-toggle { display:inline-flex; gap:4px; padding:4px; background:#e3e9da; border-radius:9px; margin-bottom:14px; }
+.view-toggle button { background:transparent; color:#3d5636; padding:8px 14px; font-size:12px; border-radius:6px; }
+.view-toggle button[aria-pressed=true] { background:#fff; color:#203c30; box-shadow:0 1px 2px rgba(0,0,0,.12); font-weight:600; }
+.farm-layout { display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:20px; align-items:start; }
+.farm-card { background:#fff; border:1px solid #dce3d6; border-radius:12px; overflow:hidden; min-width:0; }
+.weather-strip { display:flex; gap:16px; align-items:baseline; padding:14px 20px; border-bottom:1px solid #eef0e9; flex-wrap:wrap; }
+.weather-date { font:20px Georgia,serif; color:#203c30; min-width:130px; }
+.weather-values { display:flex; flex-wrap:wrap; gap:6px 16px; font-size:11px; color:#5f705b; align-items:center; }
+.weather-values b { color:#203c30; font-weight:600; }
+.weather-values .calc { color:#7a4f1d; }
+.tag { display:inline-block; font-size:9px; letter-spacing:.06em; text-transform:uppercase; font-style:normal; padding:2px 7px; border-radius:20px; font-weight:600; }
+.tag-nasa { background:#dde9f2; color:#2c5a7d; }
+.tag-calc { background:#f6e6d2; color:#7a4f1d; }
+.farm-scene { display:block; width:100%; height:auto; background:#f7f8f3; }
+.farm-scene .soil-store { transition:fill .12s linear; }
+.farm-scene .gauge-fill { transition:y .12s linear, height .12s linear; }
+.farm-scene .scene-label { font:600 17px Inter,system-ui,sans-serif; fill:#1f3a2c; paint-order:stroke; stroke:rgba(255,255,255,.85); stroke-width:4px; }
+.farm-scene .scene-note { font:13px Inter,system-ui,sans-serif; fill:rgba(255,255,255,.92); }
+.farm-scene .gauge-value { font:400 40px Georgia,serif; fill:#203c30; }
+.farm-scene .gauge-caption { font:12px Inter,system-ui,sans-serif; fill:#5d6f59; }
+.farm-scene .halo { paint-order:stroke; stroke:#f7f8f3; stroke-width:4px; font-weight:600; }
+.farm-scene.is-animated .drop { animation:scene-fall .9s linear infinite; }
+@keyframes scene-fall { from { transform:translateY(-14px); opacity:0; } 25% { opacity:1; } to { transform:translateY(26px); opacity:0; } }
+.mobile-readout { display:none; }
+.stage-line { font-size:12px; color:#5f705b; padding:10px 20px 0; }
+.stage-line b { color:#203c30; font-weight:600; }
+.freeze-flag { color:#5e6b77; }
+.water-simulator .playback { padding:12px 20px; gap:10px; border-top:0; }
+.playback .play { background:#244e39; color:#fff; min-width:84px; }
+.playback .step { min-width:40px; padding:9px 0; font-size:18px; line-height:1; }
+.playback .step:disabled { opacity:.4; cursor:default; }
+.scrubber { position:relative; flex:1; min-width:60px; display:flex; align-items:center; }
+.scrubber input { width:100%; position:relative; z-index:1; accent-color:#4b6f3c; margin:0; }
+.startup-band { position:absolute; left:0; top:50%; height:14px; transform:translateY(-50%); background:repeating-linear-gradient(45deg,#ead9b4 0 5px,#f4ead3 5px 10px); border-radius:4px; }
+.month-jump { display:grid; grid-template-columns:repeat(12,1fr); gap:4px; padding:0 20px 12px; }
+.month-jump button { background:#f0f3ea; color:#3d5636; padding:7px 0; font-size:11px; border-radius:5px; }
+.month-jump button[aria-pressed=true] { background:#4b6f3c; color:#fff; }
+.startup-key { font-size:11px; color:#6c5c26; padding:0 20px 10px; }
+.startup-key i { display:inline-block; width:18px; height:10px; margin-right:7px; vertical-align:-1px; border-radius:3px; background:repeating-linear-gradient(45deg,#ead9b4 0 4px,#f4ead3 4px 8px); }
+.flow-legend { display:flex; flex-wrap:wrap; gap:8px 18px; padding:12px 20px 16px; border-top:1px solid #eef0e9; font-size:11px; color:#5f705b; align-items:center; }
+.flow-legend .scale { display:inline-flex; align-items:center; gap:6px; }
+.flow-legend svg { width:150px; height:22px; overflow:visible; }
+.flow-legend svg text { font-size:9px; fill:#5f705b; }
+.key { display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:6px; vertical-align:-1px; }
+.key-nasa { background:#3f78a6; } .key-input { background:#2f8f83; } .key-calc { background:#d28a3d; } .key-drain { background:#1f5f86; }
+.soil-panel { padding:22px; background:#e9eee1; border-radius:12px; }
+.soil-panel h3 { font:25px Georgia,serif; margin:0 0 4px; }
+.panel-big { margin:16px 0 8px; }
+.panel-big strong { font:400 44px/1 Georgia,serif; display:block; }
+.panel-big span { font-size:12px; color:#5d6f59; }
+.panel-compare { font-size:12px; color:#3d5636; margin-bottom:8px; }
+.panel-status { font-size:12px; line-height:1.5; padding:9px 11px; border-radius:7px; margin:10px 0 14px; }
+.status-ok { background:#dfeadb; color:#2b5b33; } .status-dry { background:#f6dfd5; color:#8a3219; } .status-off { background:#eceee6; color:#5d6f59; }
+.today-flows { margin:0; display:grid; gap:6px; }
+.today-flows div { display:flex; justify-content:space-between; gap:10px; font-size:12px; }
+.today-flows dt { color:#4f6249; } .today-flows dd { margin:0; font-weight:600; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.today-flows .net { border-top:1px solid #c9d5be; padding-top:6px; margin-top:2px; }
+.panel-explain { font-size:13px; line-height:1.55; margin:14px 0; color:#203c30; }
+.panel-exposure { border-top:1px solid #c9d5be; padding-top:12px; }
+.panel-exposure span,.panel-exposure small { display:block; font-size:11px; color:#5e7355; line-height:1.55; }
+.panel-exposure strong { display:block; font-size:18px; font-weight:500; margin:3px 0; }
+.panel-cautions { margin:12px 0 0; padding:10px 12px 10px 26px; background:#f5efd8; border-radius:7px; font-size:11px; line-height:1.55; color:#5e5023; }
+.month-readout { border-top:1px solid #c9d5be; margin-top:14px; padding-top:12px; }
+.month-readout span,.month-readout small { display:block; font-size:10px; color:#5e7355; line-height:1.55; }
+.month-readout p { font-size:11px; line-height:1.6; margin:4px 0; }
+.water-comparison-cards .delta { display:block; font-style:normal; font-size:13px; color:#3d5636; margin-top:4px; font-weight:600; }
+.compare-caution { color:#6c5c26; margin-bottom:10px; }
+.table-scroll { overflow-x:auto; max-width:950px; }
+.month-balance { border-collapse:collapse; font-size:12px; width:100%; background:#fff; border-radius:8px; }
+.month-balance th,.month-balance td { padding:6px 9px; text-align:right; border-bottom:1px solid #eef0e9; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.month-balance th:first-child { text-align:left; }
+@media(max-width:1000px) { .farm-layout { grid-template-columns:1fr; } }
+@media(max-width:620px) {
+ .weather-strip { padding:12px; gap:6px; } .weather-date { font-size:17px; }
+ .farm-scene .scene-label,.farm-scene .scene-note,.farm-scene .gauge-caption { display:none; }
+ .mobile-readout { display:flex; flex-wrap:wrap; gap:4px 12px; padding:10px 12px 0; font-size:12px; color:#4f6249; font-variant-numeric:tabular-nums; } .mobile-readout b { color:#203c30; }
+ .stage-line { padding:10px 12px 0; } .startup-key { padding:0 12px 10px; }
+ .month-jump { grid-template-columns:repeat(6,1fr); padding:0 12px 12px; }
+ .water-simulator .playback { flex-wrap:wrap; padding:12px; } .scrubber { order:5; flex-basis:100%; } .playback time { margin-left:auto; }
+ .flow-legend { padding:12px; }
+ .soil-panel { padding:18px; }
+}
+@media(prefers-reduced-motion:reduce) { .farm-scene .drop { animation:none!important; } .farm-scene .soil-store,.farm-scene .gauge-fill { transition:none; } }

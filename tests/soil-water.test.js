@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {MODEL,validateSoilWeather,referenceET,runSoilSimulation,compareSoil,bucketStep,dailyCoefficients,seasonProgress} from '../src/lib/soilWater.js';
+import {MODEL,validateSoilWeather,referenceET,runSoilSimulation,compareSoil,bucketStep,dailyCoefficients,seasonProgress,monthlyBalance,periodBalance,startupSensitivity} from '../src/lib/soilWater.js';
 const load=id=>JSON.parse(readFileSync(new URL(`../public/data/${id}/soil-weather.json`,import.meta.url)));
 const scenario={location:'palouse',year:2023,crop:'spring_wheat',soil:'loamy',irrigation:0,planting:4,harvest:8,cover:'bare'};
 const real=load('palouse');
@@ -102,4 +102,88 @@ test('season boundaries, year wrap and leap day are deterministic',()=>{
 test('invalid user inputs and incompatible weather schemas cannot silently produce results',()=>{
  for(const s of [{irrigation:''},{irrigation:-1},{irrigation:Infinity},{soil:'unknown'},{planting:0},{harvest:13},{cover:'unknown'},{year:2020}])assert.equal(run(s).status,'unavailable');
  for(const edit of [d=>d.units.WS2M='km/h',d=>d.series.RH2M[0]=101,d=>d.farm.latitude=0,d=>d.series.PS.pop(),d=>d.sources=[]]){const d=structuredClone(real);edit(d);assert.throws(()=>validateSoilWeather(d,real.farm));}
+});
+
+// ---- M7 audit: calendar indexing, monthly conservation, boundaries and assumptions ----
+const FARMS=['palouse','skagit','yakima'],YEARS=[2021,2022,2023,2024,2025];
+const DATA=Object.fromEntries(FARMS.map(id=>[id,load(id)]));
+test('every daily record reads the NASA value for its own calendar date, with no gaps across years',()=>{
+ for(const id of FARMS){const w=DATA[id];let k=0;
+  for(const year of YEARS){const r=run({location:id,year},w);
+   assert.equal(r.days[0].date,`${year}-01-01`);assert.equal(r.days.at(-1).date,`${year}-12-31`);
+   r.days.forEach((d,i)=>{
+    assert.equal(Date.parse(d.date),Date.parse(w.start)+k*86400000,`${id} ${d.date} index`);
+    assert.equal(d.rain,w.series.PRECTOTCORR[k]);assert.equal(d.tMax,w.series.T2M_MAX[k]);assert.equal(d.tMin,w.series.T2M_MIN[k]);
+    assert.equal(d.rh,w.series.RH2M[k]);assert.equal(d.solar,w.series.ALLSKY_SFC_SW_DWN[k]);assert.equal(d.wind,w.series.WS2M[k]);
+    assert.equal(d.pressure,w.series.PS[k]);assert.equal(d.nasaWetness,w.series.GWETROOT[k]);k++;
+    if(i) assert.equal(Date.parse(d.date)-Date.parse(r.days[i-1].date),86400000);
+   });
+  }
+  assert.equal(k,w.days,'all 1,826 archived days are used exactly once across the five years');
+ }
+});
+test('monthly balances close for all 15 farm-years × 12 months; storage is a state, not summed',()=>{
+ const feb={2021:28,2022:28,2023:28,2024:29,2025:28};
+ for(const id of FARMS) for(const year of YEARS) for(const s of [{},{irrigation:30,crop:'potato',planting:5,harvest:9},{cover:'cover',soil:'sandy'},{planting:10,harvest:7,cover:'residue',soil:'clay'}]){
+  const r=run({location:id,year,...s},DATA[id]),months=monthlyBalance(r);
+  assert.equal(months.length,12);assert.equal(months[1].days,feb[year]);
+  assert.equal(months.reduce((n,m)=>n+m.days,0),r.days.length);
+  near(months[0].start,r.initialWater);near(months[11].end,r.summary.finalWater);
+  months.forEach((m,i)=>{
+   near(m.residual,0,1e-9);
+   if(i) assert.equal(m.start,months[i-1].end); // Dec 31 → Jan 1 carry is within a year only; months chain exactly.
+   assert.equal(r.days[m.first].date.slice(5),`${String(i+1).padStart(2,'0')}-01`);
+   near(m.rain,r.days.slice(m.first,m.last+1).reduce((t,d)=>t+d.rain,0));
+  });
+  for(const k of ['rain','irrigation','actualET','drainage']) near(months.reduce((t,m)=>t+m[k],0),r.summary[k],1e-7);
+ }
+});
+test('month-to-date balance used by the panel closes on every day and rejects invalid ranges',()=>{
+ const r=run({irrigation:20}),months=monthlyBalance(r);
+ for(let i=0;i<r.days.length;i++){const m=months[Number(r.days[i].date.slice(5,7))-1],p=periodBalance(r,m.first,i);
+  near(p.residual,0,1e-9);assert.equal(p.end,r.days[i].water);}
+ for(const [a,b] of [[-1,3],[5,2],[0,365],[0.5,3]]) assert.equal(periodBalance(r,a,b),null);
+ assert.equal(periodBalance({status:'unavailable'},0,1),null);
+});
+test('surface pressure and every ET forcing changes reference ET; pressure is a real model input',()=>{
+ const w={tMin:12,tMax:28,rh:45,solar:24,wind:3,pressure:100,latitude:46.76,elevation:800,date:'2023-07-06'};
+ assert.notEqual(referenceET({...w,pressure:85}),referenceET(w));
+ const base=run();
+ for(const [key,value] of [['PS',80],['ALLSKY_SFC_SW_DWN',5],['WS2M',8],['RH2M',95]]){
+  const r=run({},synthetic({[key]:value}));assert.equal(r.status,'ready',key);assert.notEqual(r.summary.et0,base.summary.et0,key);}
+ // SYNTHETIC: real temperatures shifted +4 °C (keeps Tmin ≤ Tmax on every day).
+ const warm=structuredClone(real);for(const k of ['T2M_MAX','T2M_MIN']) warm.series[k]=warm.series[k].map(v=>v+4);
+ assert.ok(run({},warm).summary.et0>base.summary.et0);
+});
+test('seasons crossing New Year: previous-autumn crop days are flagged, irrigated and never carried over',()=>{
+ const wrap=run({planting:10,harvest:7,irrigation:14}),normal=run({irrigation:14});
+ assert.equal(wrap.wrapsYear,true);assert.equal(normal.wrapsYear,false);
+ const jan1=wrap.days[0];assert.equal(jan1.active,true);
+ // Jan 1 2023 position is measured from Oct 1 2022 → end of Jul 2023, exactly as the coefficient schedule assumes.
+ near(seasonProgress('2023-01-01',10,7),(Date.UTC(2023,0,1)-Date.UTC(2022,9,1))/(Date.UTC(2023,7,1)-Date.UTC(2022,9,1)-86400000));
+ near(jan1.irrigation,2);near(wrap.initialWater,wrap.capacity*MODEL.assumptions.initialAvailableFraction);
+ for(const d of wrap.days){const m=Number(d.date.slice(5,7));assert.equal(d.active,m<=7||m>=10,d.date);assert.equal(d.irrigation>0,d.active);}
+ // Dec 31 storage is not fed into the next year's Jan 1: every year restarts from the stated assumption.
+ for(const year of [2022,2023,2024]) near(run({planting:10,harvest:7,year}).initialWater,wrap.initialWater);
+});
+test('starting-water sensitivity: after the reported date, 0% and 100% starts are identical; dry climates remember longer',()=>{
+ const m0=structuredClone(MODEL),m1=structuredClone(MODEL);m0.assumptions.initialAvailableFraction=0;m1.assumptions.initialAvailableFraction=1;
+ const dates={};
+ for(const id of FARMS){const s={location:id,year:2023},st=startupSensitivity(DATA[id],{...scenario,...s});
+  assert.equal(st.status,'ready');assert.ok(st.index>0);
+  const a=run(s,DATA[id],m0),b=run(s,DATA[id],m1);
+  for(let i=st.index;i<a.days.length;i++) assert.ok(Math.abs(a.days[i].water-b.days[i].water)<st.tolerance,`${id} ${a.days[i].date}`);
+  assert.ok(Math.abs(a.days[st.index-1].water-b.days[st.index-1].water)>=st.tolerance);
+  dates[id]=st.date;
+ }
+ // Archived result, Palouse 2023 loam: memory ends 2023-03-06. Semi-arid Yakima keeps it into summer.
+ assert.equal(dates.palouse,'2023-03-06');assert.ok(dates.yakima>'2023-07-01',dates.yakima);assert.ok(dates.skagit<dates.palouse);
+ assert.equal(startupSensitivity(real,{...scenario,soil:'unknown'}).status,'unavailable');
+});
+test('freezing days are flagged from NASA minimum temperature; their precipitation is still counted, not hidden',()=>{
+ for(const id of FARMS){const r=run({location:id},DATA[id]);
+  for(const d of r.days) assert.equal(d.freezing,d.tMin<=0);
+  near(r.summary.freezingPrecip,r.days.filter(d=>d.tMin<=0).reduce((t,d)=>t+d.rain,0));
+  assert.equal(r.summary.coldDays,r.days.filter(d=>d.freezing).length);}
+ assert.ok(run().summary.freezingPrecip>100,'Palouse 2023: >100 mm falls on freezing days, a material limitation');
 });
