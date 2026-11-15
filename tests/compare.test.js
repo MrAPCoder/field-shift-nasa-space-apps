@@ -123,12 +123,16 @@ test('demo calendars are rejected as farmer management and can never produce a r
   }
 });
 
-test('simulator modules never import the scoring engine or write farmer management state', () => {
+test('simulator modules never import the scoring engine, write farmer management state, or make their own requests', () => {
+  assert.match(readFileSync(new URL('../src/lib/replay.js', import.meta.url), 'utf8'), /data\/\$\{farm\.id\}\/replay\.json/);
   const required = ['replay.js', 'simulate.js', 'concerns.js', 'compare.js'].map(name => `../src/lib/${name}`);
   const components = readdirSync(new URL('../src/components/', import.meta.url)).filter(name => /^(Sim|ConcernCard)/.test(name)).map(name => `../src/components/${name}`);
+  assert.deepEqual(components.map(path => path.split('/').pop()).sort(), ['ConcernCard.jsx', 'SimComparison.jsx', 'SimSetup.jsx', 'SimulationReport.jsx', 'Simulator.jsx']);
   for (const path of [...required, ...components]) {
     const source = readFileSync(new URL(path, import.meta.url), 'utf8');
-    assert.doesNotMatch(source, /score\.js|scoreRotation|scoreErosion|onManagementChange|setManagement|power\.larc\.nasa\.gov|sdmdataaccess/, path);
+    assert.doesNotMatch(source, /score\.js|scoreRotation|scoreErosion|onManagementChange|setManagement/, path);
+    // The only network access is replay.js loading the app's own static file.
+    if (!path.endsWith('/replay.js')) assert.doesNotMatch(source, /\bfetch\s*\(|XMLHttpRequest|sendBeacon|WebSocket/, path);
   }
 });
 

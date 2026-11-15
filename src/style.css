@@ -959,3 +959,35 @@ footer p {
 .compare-table th, .compare-table td { padding: 12px 10px; text-align: left; vertical-align: top; line-height: 1.55; }
 .compare-table td:nth-child(2), .compare-table td:nth-child(3) { white-space: nowrap; font-size: 17px; font-weight: 650; color: #976225; }
 @media (max-width: 540px) { .lever-apply, .lever-tab { width: 100%; } .sim-compare { padding: 18px 14px; } }
+.sim-print { font-size: 16px; font-weight: 700; padding: 14px 22px; border-radius: 10px; background: #fff; color: #244e39; border: 2px solid #244e39; }
+.sim-report { margin: 2rem 0; padding: 2rem; border: 2px solid #9bad96; border-radius: 10px; background: #fff; overflow-wrap: anywhere; }
+.sim-report h2 { font-size: 1.8rem; letter-spacing: -.5px; margin: 6px 0; }
+.sim-report h3 { margin: 1.4rem 0 .6rem; font-size: 1.15rem; }
+.sim-report header h3 { margin-top: .2rem; font-weight: 550; }
+.sim-report h4 { font-size: 1rem; margin: 1rem 0 .3rem; }
+.sim-report p, .sim-report li { font-size: .9rem; line-height: 1.6; margin-top: .35rem; }
+.sim-report ul { padding-left: 1.1rem; margin: .5rem 0 0; }
+.sim-report .sim-other { padding-left: 0; }
+.sim-report .plan-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 1rem; }
+.report-demo { background: #976225; color: #fff; border-radius: 8px; padding: 10px 12px; }
+.report-calendar { min-width: 760px; font-size: 11px; } .report-calendar th, .report-calendar td { padding: 6px 5px; text-align: left; white-space: nowrap; }
+.report-thresholds th, .report-thresholds td { text-align: left; vertical-align: top; font-size: .85rem; }
+.report-concern { border-top: 1px solid #e0e5dc; padding-top: .4rem; margin-top: .8rem; }
+.sim-report .plan-disclaimer { display: block; margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid #bbb; }
+@media (max-width: 540px) { .sim-report { padding: 1rem; } .sim-print { width: 100%; } }
+@media print {
+  /* While the simulation report is open it is the only thing printed. */
+  body.sim-report-open main > .simulator { display: block !important; margin: 0; }
+  body.sim-report-open main > .rotation-section, body.sim-report-open .simulator > :not(.sim-report) { display: none !important; }
+  .sim-report { margin: 0; padding: 0; border: 0; border-radius: 0; }
+  .sim-report p, .sim-report li, .sim-report td, .sim-report th, .sim-report dd, .sim-report dt { font-size: 9.5pt; line-height: 1.4; }
+  .sim-report h2 { font-size: 18pt; } .sim-report h3 { font-size: 13pt; break-after: avoid; } .sim-report h4 { font-size: 11pt; break-after: avoid; }
+  .sim-report .table-scroll { overflow: visible; }
+  .sim-report .report-calendar, .sim-report .compare-table { min-width: 0; }
+  .sim-report .report-calendar th, .sim-report .report-calendar td { font-size: 7.5pt; padding: 3px 2px; white-space: normal; }
+  .sim-report .compare-table td:nth-child(2), .sim-report .compare-table td:nth-child(3) { font-size: 10pt; color: black; }
+  .report-concern, .report-plan, .sim-report tr, .sim-report .sim-other li { break-inside: avoid; }
+  .prov-chip, .report-demo { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .sim-report .sim-other li { background: none; padding: 2px 0; }
+}
+.sim-results .sim-step, .sim-report { scroll-margin-top: 72px; } /* keep headings clear of the sticky demo banner */

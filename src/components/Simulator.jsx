@@ -10,6 +10,7 @@ import { compare } from '../lib/compare.js';
 import SimSetup from './SimSetup.jsx';
 import ConcernCard, { Chip } from './ConcernCard.jsx';
 import SimComparison from './SimComparison.jsx';
+import SimulationReport from './SimulationReport.jsx';
 
 const palouseRotations = rotationData.rotations.filter(rotation => rotation.farm_id === 'palouse');
 const RUN_COUNT = Number(config.period.end.slice(0, 4)) - Number(config.period.start.slice(0, 4)) - 1;
@@ -28,6 +29,7 @@ export default function Simulator({ farms, selected, onSelect, management }) {
   const [after, setAfter] = useState(null);
   const [lever, setLever] = useState(null);
   const [leverError, setLeverError] = useState(null);
+  const [reportOpen, setReportOpen] = useState(false);
   const [scrollTick, setScrollTick] = useState(0);
   const results = useRef(null);
   const improve = useRef(null);
@@ -58,7 +60,7 @@ export default function Simulator({ farms, selected, onSelect, management }) {
       if (id !== requestId.current) return;
       const simulation = simulate(replay, plan, config.simulation);
       setBefore({ farmId, replay, simulation, concerns: evaluateConcerns(simulation), demo: false, calendarRef: null, ...extra });
-      setAfter(null); setLever(null); setLeverError(null);
+      setAfter(null); setLever(null); setLeverError(null); setReportOpen(false);
       setLoad({ status: 'idle' });
       setScrollTick(tick => tick + 1);
     } catch (error) {
@@ -117,8 +119,10 @@ export default function Simulator({ farms, selected, onSelect, management }) {
         <SimComparison key={shown.simulation.replayHash + shown.simulation.plan.label} before={shown} after={after} lever={lever} onLever={openLever} onApply={applyImprovement}
           rotations={palouseRotations} management={management} error={leverError}
           defaultWindow={shown.simulation.plan.window ? { start: String(shown.simulation.plan.window.start), end: String(shown.simulation.plan.window.end) } : windowMonths}/>
+        <div className="sim-actions"><button type="button" className="sim-print" onClick={() => setReportOpen(true)}>Print simulation report</button><p className="sim-fine">Opens a print view of this simulation{after ? ' and its before/after comparison' : ''}, with thresholds, provenance and limitations.</p></div>
       </section>
     </div>}
+    {shown && reportOpen && <SimulationReport farm={farm} before={shown} after={after} onClose={() => setReportOpen(false)}/>}
     <div className="sim-details-divider"><span aria-hidden="true">▼</span><div><strong>Explore the details</strong><p>The climate dashboard, soil context, rotation comparison, field calendars and printable plans continue below, unchanged.</p></div></div>
   </section>;
 }
