@@ -16,6 +16,7 @@ const fs = require('node:fs');
   });
   fs.mkdirSync('work', { recursive: true });
   await page.goto(process.env.PREVIEW_URL || 'http://127.0.0.1:4173/');
+ await page.locator('#advanced-details > summary').click();
   await page.getByTestId('rain-value').waitFor();
   const sim = page.locator('.simulator');
   const simulateButton = sim.getByRole('button', { name: 'Simulate My Farm' });

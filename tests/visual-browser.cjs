@@ -1,0 +1,56 @@
+const {chromium} = require('playwright');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+(async () => {
+ const browser = await chromium.launch({executablePath:process.env.CHROMIUM_PATH || '/usr/bin/chromium',args:['--no-sandbox']});
+ const page = await browser.newPage({viewport:{width:1440,height:1000},reducedMotion:'reduce'});
+ const errors=[], external=[];
+ page.on('pageerror',e=>errors.push(e.message));
+ page.on('request',r=>{if(/power\.larc\.nasa\.gov|usda\.gov/.test(r.url())) external.push(r.url());});
+ await page.goto(process.env.PREVIEW_URL || 'http://127.0.0.1:4173');
+ const main=page.locator('#visual-simulator');
+ assert.equal(await page.locator('h1').count(),1);
+ assert.equal(await page.locator('#advanced-details').getAttribute('open'),null);
+ await main.getByRole('button',{name:/Try the Palouse demo/}).click();
+ await main.getByRole('button',{name:'Add cover crops'}).waitFor();
+ await page.waitForFunction(()=>!document.querySelector('.improve-action button').disabled);
+ await main.getByRole('button',{name:'Add cover crops'}).click();
+ assert.match(await main.locator('.simple-comparison').innerText(),/After · cover crops/);
+ await main.getByRole('slider',{name:'Simulation month'}).fill('8');
+ assert.match(await main.locator('.scene-caption').innerText(),/Sep 1981/);
+ await main.getByRole('button',{name:'Play simulation',exact:true}).click();
+ await page.waitForTimeout(1100);
+ await main.getByRole('button',{name:'Pause simulation',exact:true}).click();
+ assert.equal(await main.getByRole('slider').inputValue(),'9');
+ fs.mkdirSync('work',{recursive:true});
+ await page.screenshot({path:'work/visual-desktop.png',fullPage:true});
+ for(const width of [390,320]) {
+  await page.setViewportSize({width,height:844});
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth),`overflow at ${width}`);
+  await page.screenshot({path:`work/visual-mobile-${width}.png`,fullPage:true});
+ }
+ await main.getByRole('button',{name:/Yakima/}).click();
+ await main.getByRole('button',{name:/Watch simulation/}).click();
+ await page.waitForFunction(()=>!document.querySelector('.improvement .primary').disabled);
+ assert.match(await main.locator('.soil-status').innerText(),/Unavailable/);
+ await main.getByRole('button',{name:'Compare growing seasons'}).click();
+ assert.match(await main.locator('.season-comparison').innerText(),/historical replays/);
+ await main.getByRole('button',{name:/Skagit/}).click();
+ await page.waitForFunction(()=>!document.querySelector('.improvement .primary').disabled);
+ await page.locator('#advanced-details > summary').click();
+ await page.getByTestId('rain-value').waitFor();
+ assert.ok(await page.locator('#farm').isVisible());
+ await page.setViewportSize({width:1440,height:1000});
+ assert.deepEqual(errors,[]); assert.deepEqual(external,[]);
+ // Failed cache retrieval stays unavailable and can be retried.
+ const failure = await browser.newPage();
+ await failure.route('**/palouse/replay.json',r=>r.abort());
+ await failure.goto(process.env.PREVIEW_URL || 'http://127.0.0.1:4173');
+ await failure.getByRole('button',{name:/Try the Palouse demo/}).click();
+ await failure.locator('#visual-simulator [role=alert]').waitFor();
+ assert.equal(await failure.locator('#visual-simulator').getByRole('button',{name:'Play simulation',exact:true}).isDisabled(),true);
+ await failure.unroute('**/palouse/replay.json');
+ await failure.getByRole('button',{name:'Retry',exact:true}).click();
+ await failure.waitForFunction(()=>!document.querySelector('.improve-action button').disabled);
+ await browser.close(); console.log('Visual browser checks passed: desktop, 390/320px, all farms, playback, comparisons, advanced tools, error/retry, no live NASA requests.');
+})().catch(e=>{console.error(e);process.exit(1)});

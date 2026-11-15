@@ -101,7 +101,7 @@ export default function Simulator({ farms, selected, onSelect, management }) {
     {shown && <div className="sim-results" ref={results} tabIndex="-1" data-testid="sim-results">
       {shown.demo && <p className="sim-demo-banner" data-testid="demo-banner"><strong>HYPOTHETICAL DEMO</strong> {DEMO_BANNER}</p>}
       <section className="sim-step" aria-labelledby="sim-step-2">
-        <h3 id="sim-step-2"><span className="sim-step-number">2</span>Top concerns</h3>
+        <h3 id="sim-step-2"><span className="sim-step-number">2</span>Historical screening results</h3>
         <p className="sim-summary" data-testid="sim-summary"><strong>{farm.name}</strong> · {plan.label} <Chip label={plan.chip}/> · {shown.simulation.startYears.length} replays, {shown.simulation.startYears[0]}–{shown.simulation.startYears[0] + 2} to {shown.simulation.startYears.at(-1)}–{shown.simulation.startYears.at(-1) + 2}</p>
         {stale && <p className="sim-hint">Your field calendar changed after this simulation. Select Simulate My Farm again to use the current calendar.</p>}
         {shown.concerns.concerns.length > 0
@@ -112,7 +112,7 @@ export default function Simulator({ farms, selected, onSelect, management }) {
           {shown.concerns.belowBar.map(item => <li key={item.family}><strong>Screened, below the bar:</strong> {item.title} — {item.howOften}. {item.rule}. <Chip label="Simulated indicator"/> Not evidence of low risk.</li>)}
           {shown.concerns.notEvaluated.map(item => <li key={item.family} data-testid="not-evaluated"><strong>Not evaluated:</strong> {item.title} — {item.reason}{item.family === 'exposed' && selected === 'palouse' && <> <a href="#rotation-title">Go to the field calendars ↓</a></>}</li>)}
         </ul>
-        <p className="sim-fine">{PROVISIONAL_NOTE} A concern is listed when its screen was met in at least {Math.round(config.simulation.concernMinFrequency * 100)}% of valid replays; order is by frequency, then a fixed planning convention, not a measure of harm. {NOT_A_FORECAST}</p>
+        <p className="sim-fine">These are overlapping three-year windows, not independent seasons or probabilities of damage. A 43 of 43 result means the provisional screen occurred in every window; it does not mean every crop was harmed. Weather screens include cash-crop months only, not cover-crop months. {PROVISIONAL_NOTE} A concern is listed when its screen was met in at least {Math.round(config.simulation.concernMinFrequency * 100)}% of valid replays; order is by frequency, then a fixed planning convention, not a measure of harm. {NOT_A_FORECAST}</p>
       </section>
       <section className="sim-step" aria-labelledby="sim-step-3" ref={improve}>
         <h3 id="sim-step-3"><span className="sim-step-number">3</span>Try an improvement · before / after</h3>

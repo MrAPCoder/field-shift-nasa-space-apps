@@ -9,6 +9,7 @@ const fs=require('node:fs');
  page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
  page.on('request',r=>{if(/power\.larc|sdmdataaccess/.test(r.url()))external.push(r.url());});
  await page.goto(process.env.PREVIEW_URL||'http://127.0.0.1:4173/');
+ await page.locator('#advanced-details > summary').click();
  for(const farm of ['skagit','yakima','palouse']){
   await page.locator('#farm').selectOption(farm);
   const soil=page.getByRole('region',{name:'USDA soil survey context'});
@@ -19,7 +20,7 @@ const fs=require('node:fs');
   await soil.getByText('Soil source and retrieval details',{exact:true}).click();
  }
  await page.locator('#farm').selectOption('skagit');
- await page.getByRole('button',{name:'Start Palouse demonstration'}).click();
+ await page.getByRole('button',{name:/Try the Palouse demo/}).click();
  await page.waitForFunction(()=>document.querySelector('#current-rotation')?.value==='palouse-current');
  assert.equal(await page.locator('.comparison-summary tbody tr').count(),3);
  const card=page.getByTestId('rotation-card').first();

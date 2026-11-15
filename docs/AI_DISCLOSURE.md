@@ -90,3 +90,12 @@ flag, NASA archive, climate cache or scoring coefficient was created or changed.
 Unit-test weather and calendars are labeled SYNTHETIC and are confined to tests.
 The team remains responsible for approving thresholds and demo values, reviewing
 wording and claims, and for submission and deployment decisions.
+
+## M5 visual simplification
+
+AI-assisted changes on `codex/visual-farm-simulator`, based on `fable/m5-simulator`:
+- Added `src/components/VisualSimulator.jsx` and `src/lib/visual.js`; revised `src/App.jsx` and `src/style.css` for the four-step main flow and optional Advanced Details.
+- Revised `src/lib/simulate.js` to exclude cover-only months from cash-crop weather exposure; revised `src/components/Simulator.jsx` to clarify saturated, overlapping historical screens.
+- Added visual unit/browser checks; updated simulation/comparison expectations for the corrected crop scope and legacy browser checks to open Advanced Details.
+- Updated METHODS, verification notes, AGENTS and CLAUDE. No dependencies, raw data, climate files, thresholds, demo values, approvals or crop citations changed.
+- Illustrated crop symbols and colors are interface artwork, not plant growth, measured soil health or crop damage outputs. No new agricultural evidence was generated.

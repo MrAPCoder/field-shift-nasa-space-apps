@@ -5,6 +5,7 @@ import PrioritySliders from './components/PrioritySliders.jsx';
 import SoilProfile from './components/SoilProfile.jsx';
 import RotationComparison from './components/RotationComparison.jsx';
 import Simulator from './components/Simulator.jsx';
+import VisualSimulator from './components/VisualSimulator.jsx';
 const ClimateCharts = lazy(() => import('./components/ClimateCharts.jsx'));
 import { formatValue, loadClimate } from './lib/climate.js';
 
@@ -12,7 +13,7 @@ function Metric({ label, value, unit, detail, tone, id }) {
   return <article className={`metric ${tone ?? ''}`}><p className="metric-label">{label}</p><div className="metric-value" data-testid={id}>{formatValue(value)}<span>{Number.isFinite(value) ? unit : ''}</span></div><p>{detail}</p></article>;
 }
 export default function App() {
-  const [selected, setSelected] = useState(config.farms[0].id);
+  const [selected, setSelected] = useState('palouse');
   const [priorities, setPriorities] = useState({ water: 5, soil: 5, income: 5, erosion: 5 });
   const [state, setState] = useState({ status: 'loading' });
   const [attempt, setAttempt] = useState(0);
@@ -31,12 +32,12 @@ export default function App() {
   // Hide the previous location's data immediately, before the new effect runs.
   const data = state.status === 'ready' && state.data.farm.id === selected ? state.data : null;
   return <>
-    <a className="skip-link" href="#climate">Skip to climate profile</a>
+    <a className="skip-link" href="#visual-simulator">Skip to simulator</a>
     <header className="topbar"><div className="topbar-inner"><a className="brand" href="./" aria-label="Field Shift home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 25V7h22M5 14h18M5 21h13"/><path d="M21 27c0-8 3-11 7-12-1 6-3 10-7 12Z"/></svg>Field Shift<span className="brand-dot">.</span></a><span className="topbar-label">NASA SPACE APPS <span>2026</span></span></div></header>
     <main>
+      <VisualSimulator farms={config.farms} selected={selected} onSelect={setSelected}/>
+      <details className="advanced-details" id="advanced-details"><summary>Advanced Details <span>Climate, calendars & research</span></summary>
       <Simulator farms={config.farms} selected={selected} onSelect={setSelected} management={management}/>
-      <section className="intro"><div><div className="section-kicker">WASHINGTON FARM PLANNING</div><h1>Know your climate.<br/><span>Plan with perspective.</span></h1><p>Explore the seasons behind your farm decisions,<br className="desktop-break"/> with 45 years of NASA climate data.</p></div><div className="intro-stamp"><span className="status-dot"/>NASA POWER DATA<span className="stamp-years">1981 — 2025</span><span>Historical patterns, not a forecast</span></div></section>
-      <button type="button" onClick={()=>setSelected('palouse')}>Start Palouse demonstration</button>
       <section className="location-bar" aria-label="Choose a location"><FarmSelector farms={config.farms} selected={selected} onChange={setSelected}/><div className="location-coordinates"><span>REPRESENTATIVE LOCATION</span><strong>{farm.latitude.toFixed(4)}° N · {Math.abs(farm.longitude).toFixed(4)}° W</strong><span>Regional data may differ from your field.</span></div></section>
       <div className="dashboard-layout"><div id="climate" tabIndex="-1" aria-busy={!data && state.status !== 'error'}>
         <div className="profile-heading"><div><div className="section-kicker">YOUR CLIMATE PROFILE</div><h2>{farm.name}</h2></div><span className="period-label">1981–2025 averages</span></div>
@@ -56,6 +57,7 @@ export default function App() {
       </div><aside className="sidebar"><PrioritySliders values={priorities} onChange={(id, value) => setPriorities(previous => ({ ...previous, [id]: value }))}/><div className="next-note"><span>REVIEW BEFORE SCORING</span><h3>Evidence comes first.</h3><p>Explore rotation candidates below. Missing or unapproved agricultural inputs remain unscored.</p></div></aside></div>
       <SoilProfile farm={farm}/>
       {data && <RotationComparison key={farm.id} climate={data} priorities={priorities} management={management} onManagementChange={(id, value) => setManagement(previous => ({ ...previous, [id]: value }))}/>}
+      </details>
       <footer><div className="footer-title">Field Shift <span>· NASA Space Apps 2026</span></div><p>This tool uses NASA climate data and documented agricultural information to support farm planning. It does not replace local agronomists, agricultural extension specialists, soil testing, or the farmer's own experience. Results may not represent individual field conditions.</p><span className="footer-credit">Built for Washington growers · Data: NASA POWER</span></footer>
     </main>
   </>;

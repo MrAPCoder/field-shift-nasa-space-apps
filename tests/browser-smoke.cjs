@@ -12,6 +12,7 @@ const fs = require('node:fs');
  page.on('request', r => {if(r.url().includes('power.larc.nasa.gov'))nasa.push(r.url())});
  fs.mkdirSync('work', {recursive:true});
  await page.goto(process.env.PREVIEW_URL || 'http://127.0.0.1:4173/');
+ await page.locator('#advanced-details > summary').click();
  await page.getByTestId('rain-value').waitFor();
  for(const [farm, rain, frost, hot] of [['skagit','1,323.3','247.4','0.6'],['yakima','321.5','195.8','37.9'],['palouse','731.7','152.2','14.0']]) {
    await page.locator('#farm').selectOption(farm);

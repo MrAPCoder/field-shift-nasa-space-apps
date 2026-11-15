@@ -38,8 +38,8 @@ test('same replay, same start years: frequency change, paired medians and allowe
   assert.equal(exposed.chip, CHIPS.simulated);
   assert.deepEqual(result.disappeared.map(item => item.family), ['exposed']);
   assert.deepEqual(result.appeared, []);
-  // The bare plan had no crop months: climate screens go from not evaluated to evaluated.
-  assert.equal(result.families.find(row => row.family === 'dry').frequencyText, 'not evaluated → 0 of 43 replays');
+  // Neither bare nor cover-only plans supply cash-crop months.
+  assert.equal(result.families.find(row => row.family === 'dry').frequencyText, 'not evaluated in either plan');
   assert.deepEqual(result.families.map(row => row.family), simConfig.familyOrder);
   clean(comparisonText(result));
   assert.match(result.note, /Same weather, same start years/);

@@ -8,13 +8,13 @@ import { dateAt, monthSpan, replayHash, replayYears } from './replay.js';
 export const FAMILIES = ['exposed', 'dry', 'heat', 'frost'];
 export const PLAN_MONTHS = 36;
 export const PLAN_SOURCES = ['illustrative_demo', 'farmer_confirmed', 'farmer_whatif', 'growing_window'];
-const IN_CROP = new Set(['cash', 'cover']);
+const IN_CROP = new Set(['cash']);
 const STATUSES = new Set(['cash', 'cover', 'bare', 'unknown']);
 const isMonth = value => Number.isInteger(value) && value >= 1 && value <= 12;
 const finite = (value, min = -Infinity, max = Infinity) => typeof value === 'number' && Number.isFinite(value) && value >= min && value <= max;
 
 export const REASONS = {
-  noCrop: 'The plan has no crop months (cash or cover), so in-crop weather screens cannot run.',
+  noCrop: 'The plan has no cash-crop months, so in-crop weather screens cannot run.',
   climateOnly: 'Climate-only plan: exposed-soil precipitation needs a complete field calendar. Enter or confirm a field calendar below.',
   incomplete: 'The calendar has unknown months or missing exposure values, and unknown is never treated as bare soil. Enter or confirm a field calendar below.',
 };
@@ -34,7 +34,7 @@ export function validateSimulationConfig(c) {
 
 /**
  * Normalize a 36-month calendar ({year 1–3, month 1–12, status, exposed_percent}).
- * In-crop = cash or cover. Bare is exactly 100% exposed. Unknown stays unknown.
+ * In-crop weather exposure = cash crop only; cover contributes to soil cover only. Bare is exactly 100% exposed. Unknown stays unknown.
  */
 export function planFromCalendar(rows, { source, label = '', rotationId = null } = {}) {
   if (!['illustrative_demo', 'farmer_confirmed', 'farmer_whatif'].includes(source)) throw new Error('A calendar plan needs an explicit source.');

@@ -8,6 +8,7 @@ const fs=require('node:fs');
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
  page.on('request',r=>{if(r.url().includes('power.larc.nasa.gov'))nasa.push(r.url())});
  await page.goto(process.env.PREVIEW_URL||'http://127.0.0.1:4173/');
+ await page.locator('#advanced-details > summary').click();
  for(const farm of ['skagit','yakima','palouse']){
   await page.locator('#farm').selectOption(farm);
   await page.waitForFunction(f=>document.querySelector('#current-rotation')?.value===`${f}-current`,farm);

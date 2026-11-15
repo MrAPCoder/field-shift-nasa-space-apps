@@ -43,9 +43,9 @@ test('a growing window may wrap the year (Oct→Jul) and repeats every plan year
   for (const bad of [[0, 5], [3, 13], [null, 4], [2.5, 4]]) assert.throws(() => planFromWindow(...bad));
 });
 
-test('calendar plans: in-crop is cash or cover, bare is exactly 100, unknown is never bare', () => {
+test('calendar plans: weather in-crop is cash only, bare is exactly 100, unknown is never bare', () => {
   const plan = calendar('cash', 40, { 0: { status: 'bare', exposed_percent: 100 }, 1: { status: 'cover', exposed_percent: 0 }, 2: { status: 'unknown', exposed_percent: null }, 3: { status: 'bare', exposed_percent: 40 } });
-  assert.deepEqual(plan.months.slice(0, 5).map(m => [m.status, m.inCrop, m.exposedPercent]), [['bare', false, 100], ['cover', true, 0], ['unknown', false, null], ['bare', false, null], ['cash', true, 40]]);
+  assert.deepEqual(plan.months.slice(0, 5).map(m => [m.status, m.inCrop, m.exposedPercent]), [['bare', false, 100], ['cover', false, 0], ['unknown', false, null], ['bare', false, null], ['cash', true, 40]]);
   assert.equal(plan.calendarComplete, false);
   assert.equal(calendar('cash', 40).calendarComplete, true);
   assert.equal(calendar('cash', null).calendarComplete, false, 'a planted crop has no default exposure');
@@ -274,4 +274,22 @@ test('structural check on the real Palouse archive (values are not asserted or d
     assert.equal(result.families[family].validRuns, 43, 'core variables have no missing days');
   }
   assert.equal(result.families.exposed.status, 'unavailable');
+});
+
+test('cover crops change soil exposure without changing cash-crop weather screens (real archived demo)', () => {
+  const demo = read('../data/demo-scenarios.json');
+  const replay = read('../public/data/palouse/replay.json');
+  const config = read('../src/config/config.json');
+  const results = ['baseline', 'improved'].map(id => simulate(replay, planFromCalendar(demo.scenarios[id].months, {source:'illustrative_demo'}), config.simulation));
+  for (const family of ['dry','heat','frost']) {
+    assert.deepEqual(results[0].families[family], results[1].families[family]);
+    assert.deepEqual(results[0].runs.map(r => r[family]), results[1].runs.map(r => r[family]));
+  }
+  assert.ok(results[1].runs.every((r,i) => r.exposed.exposedMm < results[0].runs[i].exposed.exposedMm));
+});
+
+test('cover-only calendar cannot produce cash-crop heat, frost or dry-spell exposure', () => {
+  const result = simulate(fixture(), calendar('cover',30), simConfig);
+  for (const family of ['dry','heat','frost']) assert.equal(result.families[family].status, 'unavailable');
+  assert.equal(result.families.exposed.status,'evaluated');
 });

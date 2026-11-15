@@ -387,9 +387,11 @@ of plan year 1 to July of plan year 2 are contiguous calendar months, so a
 winter crop's fall weather comes from the correct preceding year. Overlapping
 runs share years and are **not independent trials**.
 
-**In-crop day:** a day in a month whose status is cash or cover. Because the
-existing calendar convention lets cash/cover status include retained residue
-after harvest, such months also count as crop months here.
+**In-crop weather day:** a day in a month whose status is cash. Cover-crop
+months contribute to the soil-exposure calculation but do not extend cash-crop
+heat, frost or dry-spell exposure. Cash status may include retained residue in
+legacy calendars; users must review these assumed crop months. Growth stage,
+damage and cover-crop-specific weather tolerance are not modeled.
 
 **Climate-only mode** (Skagit, Yakima, or Palouse without a confirmed calendar):
 in-crop months are the farmer-chosen growing window, first month → last month,
@@ -505,8 +507,8 @@ so changing a plan can never change the weather. Per family it reports flagged
 runs before → after, the paired per-run metric (median before → after and the
 number of runs in which it went down or up), and which families newly meet or no
 longer meet the bar. For the exposed family the paired metric is `E_mm_run`.
-Months changed to a crop or cover status become in-crop months, so dry, heat and
-frost counts can rise after such a change; the comparison says so. A family that
+Only months changed to cash status become in-crop weather months. Changing
+bare months to cover leaves cash-crop dry, heat and frost exposure unchanged. A family that
 is no longer evaluated is reported as such, not as an improvement.
 
 Allowed wording: “less precipitation on assumed-exposed soil”, “fewer in-crop
@@ -541,3 +543,29 @@ shoulder-month frost, five hot days). A screen met in 43 of 43 replays does not
 separate plans; in that case the paired per-run metric in the comparison is the
 informative number. Choosing less saturated thresholds is a team decision and
 was not made here.
+
+
+## Visual simulator (M5 simplification)
+
+The main scene replays one user-selected three-year historical window month by
+month. Crop symbols show calendar presence only. Rain streaks indicate a month
+with nonzero precipitation, not continuous rainfall; the sun emphasizes heat
+when the monthly mean daily maximum reaches the existing hot-day threshold.
+Neither visual is a damage model. Reduced-motion preference disables animation.
+
+Monthly precipitation is the sum of archived PRECTOTCORR; mean daily high is
+the mean of archived T2M_MAX. Any missing daily input makes its monthly value
+unavailable. Assumed protection is `100 - exposed_percent`; monthly exposure is
+`monthly precipitation * exposed_percent / 100`. Unknown cover stays unavailable.
+The soil color indicates assumed cover only, never water content or health.
+
+The compact demo comparison shows the arithmetic mean across valid runs of
+`100 * exposedMm / totalMm` (each run covers three years). It is a continuous
+precipitation-weighted exposure indicator, distinct from the existing worst-year
+threshold frequency. With the unchanged archived Palouse demonstration calendars,
+it rounds to 60% before and 25% with cover crops. Detailed screen counts remain
+43/43 → 42/43 exposed, 42/43 → 42/43 dry, 43/43 → 43/43 heat and frost.
+Saturated frequencies are valid outputs of the existing provisional screens,
+not crop-damage probabilities. No thresholds or calendar values were tuned.
+Sources remain NASA POWER archives, their provenance manifests, existing crop
+citations and illustrative demo assumptions; no new agronomic inputs were added.

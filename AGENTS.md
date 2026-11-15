@@ -72,3 +72,7 @@ These are core requirements of the project, not style preferences:
 ## Deployment
 
 Static hosting on Vercel (Vite preset, build `npm run build`, output `dist`). Milestone work targets preview deployments, never production. Do not change deployment protection without approval.
+
+## Visual simulator
+
+`VisualSimulator.jsx` is the four-step main experience; the original M5 setup, reports, climate dashboard, calendars and research live in the collapsed Advanced Details section. `lib/visual.js` aggregates complete months only and preserves unknowns. Cash-crop weather screens exclude cover-only months; cover still contributes to soil exposure. See `docs/M5_VISUAL_VERIFICATION.md` and the visual simulator section in `docs/METHODS.md`.
