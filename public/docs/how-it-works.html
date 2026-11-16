@@ -4,58 +4,74 @@
 <a class="back" href="../">← Back to the simulator</a>
 <p class="kicker">Field Shift documentation</p>
 <h1>How It Works</h1>
-<p class="lead">Field Shift runs one historical year of daily NASA weather through a simple soil-water model, one day at a time. Every number on the farm, and in the score, comes from that calculation.</p>
+<p class="lead">Field Shift runs one historical year of daily NASA weather through a simple soil-water model, one day at a time. Everything on the farm and in the score comes from that calculation.</p>
 
 <h2>1. The daily soil-water model</h2>
 <ul>
-<li>The soil is one well-mixed store, 0.6 m deep. Its capacity is the plant-available water of a generic sandy, loamy or clay soil (42, 120 or 72 mm).</li>
-<li>Each day, NASA precipitation and your irrigation are added. Irrigation is spread evenly over the days of your crop season.</li>
-<li>Drying demand (reference evapotranspiration) comes from NASA temperature, humidity, sunlight, wind and pressure, using the FAO-56 Penman–Monteith method. It is multiplied by a published crop coefficient for the stage of your season.</li>
-<li>When the soil drops below the crop stress line (the FAO-56 depletion threshold), the crop can no longer use water at the full rate.</li>
-<li>Water above capacity drains below the modeled layer that day. Water in − water used − drainage = change in storage. This balance closes every day and every month.</li>
-<li>Each year starts on 1 January with the soil half full (an assumption). Ground cover changes how much soil is exposed and how much water is used between crops.</li>
+<li>The soil is one well-mixed store, 0.6 m deep. Its capacity is the plant-available water of a generic sandy, loamy or clay soil (42, 120 or 72 mm). These are textbook values, not a survey of your field.</li>
+<li>Each day, NASA precipitation and your irrigation are added. Irrigation is spread evenly over the crop season.</li>
+<li>Drying demand (reference evapotranspiration, ET) comes from NASA temperature, humidity, sunlight, wind and pressure, using the FAO-56 Penman–Monteith method. It is multiplied by a published crop coefficient for the stage of your season.</li>
+<li>Below the crop stress line (the FAO-56 depletion threshold), the crop can no longer use water at the full rate. Those are the "stress days".</li>
+<li>Water above capacity leaves the bottom of the 0.6 m store that day. This is <em>modeled drainage</em>, a bookkeeping quantity, not a measurement of real deep drainage.</li>
+<li>Water in − water used − drainage = change in storage, closing every day and every month. Each year starts on 1 January with the soil half full (an assumption).</li>
 </ul>
 
 <h2>2. The farm score</h2>
-<p>The score is a <strong>provisional, educational rating</strong> of one simulated season. It is not a validated assessment of a real farm, and it does not measure soil health, erosion, yield, profit or crop damage. It considers eight factors in three groups. Seven are scored. The eighth, drainage caused by irrigation, is the mirror image of irrigation use, so it explains the irrigation result instead of being counted twice. Factors that describe the same underlying water shortage share one capped group, so a single problem cannot be counted many times.</p>
-<div class="table"><table><thead><tr><th>Group (points)</th><th>Factor</th><th>Weight</th><th>Full credit</th><th>Zero credit</th></tr></thead><tbody>
-<tr><td rowspan="4">Crop water supply (50)</td><td>Crop demand met: crop-season water used ÷ demand</td><td>25</td><td>≥ 95%</td><td>≤ 50%</td></tr>
-<tr><td>Shortage severity: worst 14 consecutive crop days, water used ÷ demand</td><td>12</td><td>≥ 80%</td><td>≤ 30%</td></tr>
-<tr><td>Water availability: share of crop days at or above the stress line</td><td>7</td><td>≥ 90%</td><td>≤ 40%</td></tr>
-<tr><td>Stress duration: longest run of crop days below the stress line</td><td>6</td><td>≤ 7 days</td><td>≥ 45 days</td></tr>
-<tr><td>Irrigation use (30)</td><td>Irrigation used by the crop: extra crop water use caused by irrigation ÷ irrigation applied</td><td>30</td><td>≥ 80%</td><td>≤ 30%</td></tr>
-<tr><td rowspan="2">Rain on exposed soil (20)</td><td>Share of non-freezing precipitation on exposed soil over the year</td><td>12</td><td>≤ 30%</td><td>≥ 90%</td></tr>
-<tr><td>Same share on heavier days (≥ 12.7 mm, non-freezing)</td><td>8</td><td>≤ 30%</td><td>≥ 90%</td></tr>
+<p>The score is a <strong>provisional, educational rating</strong> of one simulated season, out of 100. It is not an assessment of a real farm and does not measure soil health, erosion, yield, profit or crop damage. Every scenario uses the same fixed scale and weights.</p>
+<div class="table"><table><thead><tr><th>Group (points)</th><th>Scored measure</th><th>Weight</th><th>Full</th><th>Zero</th></tr></thead><tbody>
+<tr><td rowspan="4">Crop water supply (50)</td><td>Crop demand met: crop-season water use ÷ demand</td><td>25</td><td>≥ 95%</td><td>≤ 50%</td></tr>
+<tr><td>Worst two weeks: lowest water use ÷ demand in any 14 crop days</td><td>12</td><td>≥ 80%</td><td>≤ 30%</td></tr>
+<tr><td>Share of crop days at or above the stress line</td><td>7</td><td>≥ 90%</td><td>≤ 40%</td></tr>
+<tr><td>Longest run of stress days</td><td>6</td><td>≤ 7 days</td><td>≥ 45 days</td></tr>
+<tr><td>Irrigation efficiency, modeled (30)</td><td>Added crop-season ET ÷ irrigation applied</td><td>30</td><td>≥ 80%</td><td>≤ 30%</td></tr>
+<tr><td rowspan="2">Rain on exposed soil (20)</td><td>Share of non-freezing precipitation on exposed soil, whole year</td><td>12</td><td>≤ 30%</td><td>≥ 90%</td></tr>
+<tr><td>Same share on heavier days (12.7 mm or more)</td><td>8</td><td>≤ 30%</td><td>≥ 90%</td></tr>
 </tbody></table></div>
 <ul>
-<li>Credit is linear between the zero point and the target. Weights and targets are provisional conventions chosen for teaching, not field-validated thresholds.</li>
-<li><strong>Irrigation is measured against the same year with no irrigation.</strong> Every millimetre irrigated ends up as extra crop water use, extra drainage, or water left in the soil at harvest. Only the crop-use share is scored. Drainage caused by irrigation is shown as the explanation, not counted twice.</li>
-<li><strong>No irrigation:</strong> the irrigation group does not apply, and the score is rescaled from the other 70 points. Crop water supply then carries about 71% of the score, so a dry, unirrigated crop scores low.</li>
-<li><strong>Too much irrigation</strong> keeps the crop supplied, but most of the water drains or is left unused, so it cannot reach 100.</li>
-<li><strong>No heavier days:</strong> the exposure group uses the overall share only.</li>
-<li><strong>Not scored</strong> is shown, rather than a number, when:
-  <ul><li>the season crosses New Year (the autumn part is not simulated);</li>
-  <li>the season is shorter than 3 months;</li>
-  <li>more than 25% of the season's precipitation fell on freezing days (snow is not modeled);</li>
-  <li>required NASA data is missing;</li>
-  <li>or the score would change by 15 or more points between an empty and a full starting soil.</li></ul></li>
-<li>A note appears when the starting-water assumption moves the score by 5 points or more. Across 3,240 scorable test scenarios the largest effect was 10 points, and 67 showed the note.</li>
+<li><strong>Seven measures are scored.</strong> Credit is linear between the zero point and the target. The weights and targets are teaching conventions, not field-validated thresholds.</li>
+<li><strong>Irrigation efficiency is a water-balance attribution.</strong> The same season is rerun with no irrigation. The irrigated run's extra crop-season ET, extra modeled drainage and extra storage at harvest add up exactly to the irrigation applied. Only the ET share is scored. This shows how much crop water use rose when water was added; it does not trace irrigation water into the plant. The drainage share explains the result and is not counted twice.</li>
+<li><strong>No irrigation</strong> means nothing could be lost, so irrigation efficiency gets full credit. The scale stays the same, so a dry, unirrigated crop still loses up to 50 points on crop water supply.</li>
+<li><strong>Too much irrigation</strong> keeps the crop supplied but loses most of the 30 efficiency points, so it cannot reach 100.</li>
+<li><strong>"Not scored"</strong> is shown instead of a number when:
+<ul><li>the season crosses New Year, or is shorter than 3 months;</li>
+<li>more than 25% of the season's precipitation fell on freezing days (snow is not modeled);</li>
+<li>NASA data is missing;</li>
+<li>or the score would move by 15 or more points between an empty and a full starting soil. A note appears at 5 or more.</li></ul></li>
 </ul>
 
-<h2>3. Your biggest problem and how to improve</h2>
+<h2>3. Biggest problem, options and priorities</h2>
 <ul>
-<li>The <strong>biggest problem</strong> is the group losing the most points (at least 3), explained with that scenario's NASA-driven results. It is shown even when no fix is found.</li>
-<li><strong>Improvements are found by rerunning the simulation</strong> for irrigation amounts from 0 to 80 mm/week, crossed with bare, residue and cover-crop ground cover. Each rerun uses the same NASA weather, location, year, soil, crop and season.</li>
-<li>The suggestion that fixes the biggest problem with one setting change comes first. Combinations are used only if no single change helps. If nothing fixes the problem, the best change found is offered and labelled that way.</li>
-<li>A change is suggested only if it raises the score whether the soil started the year empty, half full or full, and also under a "dry winter" bound where no precipitation on freezing days reaches the soil. The tradeoffs are listed, such as more stress days, more water used or more drainage.</li>
-<li>Planting dates are never suggested. The project has no sourced local planting windows. Soil type is never suggested either, because it is not a management choice.</li>
-<li>If no tested change raises the score, the tool says so and suggests what could be investigated. It does not invent a gain.</li>
+<li>The <strong>biggest problem</strong> is the group losing the most points (at least 3), explained with that season's results.</li>
+<li><strong>Options are full reruns.</strong> Field Shift tests irrigation from 0 to 80 mm/week crossed with bare, residue and cover-crop ground cover, on the same weather, location, year, soil, crop and season. Planting dates are never suggested, because the project has no sourced local planting windows. Soil type is never suggested either, since it is not a management choice.</li>
+<li><strong>Your priority decides which tested option is shown:</strong>
+<ul><li><em>Balanced</em> takes the largest score gain that does not materially worsen crop water shortage.</li>
+<li><em>Avoid crop water shortage</em> only allows options with no extra stress days and no drop in demand met.</li>
+<li><em>Save irrigation water</em> shows the largest irrigation cut that does not lower the score. If that cut worsens shortage, it is labelled as a tradeoff, not as an improvement.</li></ul>
+All options appear side by side in one table.</li>
+<li><strong>Guardrail.</strong> A change that adds 7 or more stress days, cuts crop demand met by 5 percentage points or more, or lowers the worst-two-weeks supply by 10 points or more is a material worsening. It is never the balanced suggestion, however many points it gains.</li>
+<li><strong>Robustness.</strong> Every suggested gain must hold whether the soil started the year empty, half full or full, and in a "dry winter" where no freezing-day precipitation reaches the soil. If no option qualifies, the problem is still named, and the card lists what could be investigated.</li>
 </ul>
 
 <h2>4. The demo</h2>
-<p>Try Demo compares Palouse spring wheat on loamy soil, April–August, with <strong>no irrigation</strong> against <strong>40 mm/week</strong>. The 40 mm/week is an illustrative amount, chosen to show the soil filling and draining. It is not a recommendation.</p>
+<p>Try Demo compares Palouse spring wheat on loamy soil, April–August, with no irrigation against an illustrative 40 mm/week. The 40 mm/week is chosen to show the soil filling and draining, not as a recommendation. The five-step summary, the score, the problem and the tested alternative are all calculated live.</p>
+
+<h2>5. What the NASA challenge asks, and what Field Shift covers</h2>
+<div class="table"><table><thead><tr><th>Challenge element</th><th>Status</th><th>In Field Shift</th></tr></thead><tbody>
+<tr><td>NASA Earth-observation data</td><td><span class="yes">Covered</span></td><td>Daily NASA POWER precipitation, temperature, humidity, solar radiation, wind and pressure, 2021–2025, drive every calculation. GWETROOT is shown only as regional context.</td></tr>
+<tr><td>Farmer priorities</td><td><span class="yes">Covered</span></td><td>Balanced / avoid crop water shortage / save irrigation water, applied to tested options with tradeoffs shown.</td></tr>
+<tr><td>Crop characteristics</td><td><span class="part">Partial</span></td><td>Published FAO-56 water-use coefficients for spring wheat, dry pea and potato only.</td></tr>
+<tr><td>Local soil information</td><td><span class="part">Partial</span></td><td>Generic sand, loam and clay storage values. Retrieval of local USDA soil-survey data was blocked (HTTP 403) and is recorded as unavailable. No local soil measurements are used.</td></tr>
+<tr><td>Crop rotations</td><td><span class="no">Not in the simulator</span></td><td>See below. The rotation evidence and the earlier rotation screen are preserved in the <a href="../research.html">research archive</a>.</td></tr>
+</tbody></table></div>
+<p><strong>Why there is no rotation comparison in the simulator.</strong> The only approved rotations are Palouse spring pea → winter wheat → spring wheat, plus two alternatives with winter pea and spring barley. A defensible multi-year water comparison would need three things the project doesn't have:</p>
+<ul>
+<li>sourced water-use parameters for winter wheat, winter pea and spring barley (only spring wheat, dry pea and potato are sourced);</li>
+<li>a way to represent the winter phases, which grow through the snow and frozen-ground season this model does not simulate;</li>
+<li>sourced local planting and harvest dates (the crop records say they "do not establish local planting/harvest dates").</li>
+</ul>
+<p>Chaining single-year runs would only relabel independent simulations, so we did not ship it. Rotation outcomes, nitrogen benefits, soil-health changes and yield effects are not estimated anywhere in Field Shift.</p>
 
 <h2>Full methods</h2>
-<p>Formulas, audits and verification records are in the <a href="https://github.com/MrAPCoder/field-shift-nasa-space-apps">project repository</a>: <code>docs/METHODS.md</code> (sections M6–M9), <code>docs/M9_VERIFICATION.md</code>, and the rubric in <code>src/config/config.json</code> → <code>soilSimulation.grading</code>.</p>
+<p>Formulas, audits and verification records are in the <a href="https://github.com/MrAPCoder/field-shift-nasa-space-apps">project repository</a>: <code>docs/METHODS.md</code> (sections M6–M10), <code>docs/M10_VERIFICATION.md</code>, and the rubric in <code>src/config/config.json</code> → <code>soilSimulation.grading</code>.</p>
 <nav class="docs" aria-label="Documentation"><a href="../">← Back to the simulator</a><a href="./nasa-data.html">NASA Data &amp; Sources</a><a href="./how-it-works.html">How It Works</a><a href="./limitations.html">Scientific Limitations</a></nav>
 </main></body></html>

@@ -6,7 +6,7 @@ import { MODEL, seasonProgress } from './soilWater.js';
 // Flow arrows: width is linear in millimetres of water on that day, in SVG viewBox units.
 // Any non-zero flow is drawn at least minPx wide so it stays visible; flows above capMm are
 // drawn at the cap and labelled with their real value. Zero flow draws nothing.
-export const FLOW_SCALE = Object.freeze({ pxPerMm: 3, minPx: 3, capMm: 20 });
+export const FLOW_SCALE = Object.freeze({ pxPerMm: 1.8, minPx: 2.5, capMm: 20 });
 export function flowWidth(mm) {
   if (typeof mm !== 'number' || !Number.isFinite(mm) || mm <= 0) return 0;
   return Math.max(FLOW_SCALE.minPx, Math.min(mm, FLOW_SCALE.capMm) * FLOW_SCALE.pxPerMm);

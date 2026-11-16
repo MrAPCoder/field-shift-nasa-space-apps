@@ -81,24 +81,27 @@ Static hosting on Vercel (Vite preset, build `npm run build`, output `dist`). Mi
 
 `VisualSimulator.jsx` now presents six inputs and the daily water balance in `lib/soilWater.js`; M5 and legacy tools are on `research.html`. All numeric soil/crop assumptions and primary citations are in `config.soilSimulation`. Do not imply local validation of generic parameters or present plant-available percentage as volumetric moisture or soil health. The new weather period is 2021–2025. `python scripts/build_soil_weather.py --check` verifies derived files offline; `--fetch` acquires only missing supplemental wind/pressure archives, never overwriting original raw data. Missing required weather fails closed. GWETROOT is separate regional model context; SMAP is explicitly unavailable. Run `tests/soil-water.test.js`, `tests/visual-browser.cjs` and Python provenance tests in addition to legacy checks. See M6 sections in METHODS and M6_VERIFICATION.
 
-## M9 simplified site and farm score v2
+## Main simulator (M9–M10)
 
-The main page (`App.jsx`) renders only `VisualSimulator` plus a footer linking
-`public/docs/{nasa-data,how-it-works,limitations}.html`. The earlier dashboard, M5
-simulator, rotations and calendars live unchanged on `research.html` (`src/research.jsx`,
-built via `vite.config.js`). The legacy browser suites target it.
+The main page (`App.jsx` → `VisualSimulator`) is simulation-first. It auto-runs the default
+farm. The settings panel sits beside the farm, and below it are the score card, options and
+before/after. Styles are in `src/sim.css`, scoped under `.fs`. Docs links point to
+`public/docs/*`. The earlier tools are unchanged on `research.html` (`src/research.jsx`,
+`vite.config.js`), and the legacy browser suites target that page.
 
-`lib/grade.js` (`farm-score-v2`, rubric in `config.soilSimulation.grading`) scores one
-simulated season:
-- **Groups:** crop water 50, irrigation use 30, rain on exposed soil 20. Irrigation is
-  measured against a paired zero-irrigation run, and drainage is its reported complement,
-  not scored twice.
+`lib/grade.js` (`farm-score-v2`, rubric in `config.soilSimulation.grading`):
+- **Fixed 100-point scale:** crop water 50, irrigation efficiency (modeled) 30, rain on
+  exposed soil 20. With no irrigation, the efficiency group gets full credit.
+- **Irrigation efficiency** is added crop-season ET ÷ irrigation from a paired
+  zero-irrigation run. Drainage is reported, not scored. Seven measures are scored.
 - **Not scored:** New-Year or under-3-month seasons, more than 25% of crop-season
   precipitation on freezing days, missing data, or a starting-water spread of 15+ points.
-- **`analyzeFarm`:** names the biggest problem and the best rerun improvement (irrigation ×
-  cover only, robust to 0/50/100% start and a dry-winter bound). It never suggests planting
-  dates or soil.
+- **`analyzeFarm`** returns the biggest problem plus tested options per priority (balanced,
+  shortage, water). They are irrigation × cover reruns only, robust to 0/50/100% start and a
+  dry-winter bound.
+- **Guardrail** (`grading.guardrail`): balanced options never add 7+ stress days or cut
+  demand met by 5+ points. The save-water option is labelled when it worsens shortage.
 
-`ScorePanel` shows only the score, problem and improvement, with apply/undo. Do not change
-weights, targets, thresholds or the demo amount without team approval. See METHODS "M9",
-`docs/M9_VERIFICATION.md` and `tests/grade.test.js`.
+Do not change weights, targets, thresholds, the guardrail or the demo amount without team
+approval. A rotation comparison was evaluated and deliberately not built (METHODS M10). See
+METHODS M9–M10, `docs/M10_VERIFICATION.md` and `tests/grade.test.js`.

@@ -888,6 +888,8 @@ Nothing is drawn when drainage is zero.
 
 ## M9 multi-factor farm score, biggest problem and simplified site
 
+> **Partly superseded by M10:** the scale is now fixed for every scenario, a crop-water guardrail and farmer priorities were added, and the wording is corrected. See below.
+
 The `daily-bucket-v1` water balance is unchanged. M9 replaces the M8 score with `farm-score-v2`
 in `src/lib/grade.js`, configured in `config.soilSimulation.grading`
 (`status: provisional_educational_model_rating`). **It is a provisional, educational rating of
@@ -978,3 +980,73 @@ Scientific Limitations). The earlier climate dashboard, M5 replay, rotation scor
 calendars are unchanged and reachable at `research.html` (`src/research.jsx`). The legacy
 browser suites target that page. The demo opens on planting day and compares 0 vs. an
 illustrative 40 mm/week.
+
+## M10 design overhaul, scoring corrections and farmer priorities
+
+The water balance and the seven scored measures are unchanged. M10 fixes problems found on
+review and redesigns the main page.
+
+### Scoring corrections
+
+- **One fixed scale.** M9 rescaled zero-irrigation scenarios to 70 points, which gave crop
+  water an effective 71% weight against 50% when irrigated. The rescaling also rewarded
+  "Stop irrigating" suggestions that added up to 60 stress days (Skagit potato, 2024). Since
+  M10, irrigation efficiency gets full credit when no irrigation is applied (nothing can be
+  lost), and every total is the plain sum out of 100. A dry, unirrigated crop can still lose
+  all 50 crop-water points (Palouse 2023 wheat: 40; Yakima potato: 35).
+- **Crop-water guardrail** (`grading.guardrail`). A change that adds ≥ 7 stress days, lowers
+  crop demand met by ≥ 0.05, or lowers the worst 14-day supply by ≥ 0.10 is a material
+  worsening. Such a change is never the balanced suggestion. Before M10, 298 suggestions in a
+  720-scenario sample added ≥ 7 stress days, including the reported 0 → 24 case. After M10
+  there are none, and a test checks every option in a 72-scenario grid against reruns.
+- **Wording.** The group is now "Irrigation efficiency (modeled)", and the measure is
+  "added crop-season ET ÷ irrigation". This is a paired-run water-balance attribution, not
+  tracing irrigation water into transpiration. Drainage is "modeled drainage below the 0.6 m
+  layer", never real drainage.
+- **Factor count.** Seven measures are scored. Drainage caused by irrigation is reported as
+  the complement of irrigation efficiency and is not a scored factor. "Eight factors" claims
+  were removed.
+
+### Farmer priorities and tested options
+
+`analyzeFarm` now returns one tested option per priority. All options are full reruns, and
+all are robust to 0/50/100% starting water and the dry-winter bound.
+- **Balanced:** the largest robust gain that passes the guardrail. Within 2 points of that
+  gain, it prefers a change that fixes the biggest problem, then fewer settings changed.
+- **Avoid crop water shortage:** no extra stress days, demand met not lower by more than
+  0.01, and worst 14 days not lower by more than 0.01. Ranked by least stress, then most
+  demand met, then score.
+- **Save irrigation water:** the largest irrigation cut whose score is not lower. If it
+  worsens shortage, it is shown with an explicit tradeoff warning.
+
+The UI shows the selected option and a table of all distinct options: score, stress days,
+demand met, irrigation and modeled drainage. The score itself never depends on the priority.
+
+### Crop rotations: evaluated, not shipped
+
+The approved Palouse rotations need water parameters for winter wheat, winter pea and spring
+barley, which the project does not have from a cited source. They also need winter phases
+(snow and frozen ground are not modeled) and local planting and harvest dates (the crop
+records disclaim them). A multi-year comparison would therefore only relabel independent
+single-year runs, so it was not built. The rotation evidence remains on `research.html`. The
+challenge-coverage table is in `public/docs/how-it-works.html`.
+
+### Interface
+
+- **Layout:** simulation first. A compact intro with Try Demo, then the farm with a settings
+  panel beside it (below it on phones), timeline and month jumps under the scene, and a daily
+  readout. The default scenario runs on load and opens on planting day.
+- **Styling:** in `src/sim.css`, scoped under `.fs`. Warm paper, forest ink, blue only for
+  water and NASA data, brown for soil, amber only for warnings. Serif headings, monospace
+  data labels. Obsolete simulator CSS was removed from `style.css`, and shared rules kept for
+  the research page.
+- **Scene:** numbers moved out of the scene into the readout, with matching colour keys.
+  Arrows are slimmer: `FLOW_SCALE` is now 1.8 units per mm, at least 2.5 units, still capped
+  at 20 mm and still linear. There is one status chip (water stress, store full, using water
+  freely, between crops), refined plant silhouettes with uniform 2-unit strokes, and uniform
+  soil stipple patterns. No layers or wetting front are drawn because none are computed.
+- **Demo:** a five-step summary (farm, soil, problem, alternative tested, benefits and
+  tradeoffs). Every number comes from the two runs and the analysis.
+- **Details:** trace precipitation shows as "<0.1 mm". Values that round to zero show as
+  "±0.0", never "−0.0". The freezing-day caution is no longer repeated. The month buttons
+  shade the crop season. Settings changes keep the last run on screen with a pending note.

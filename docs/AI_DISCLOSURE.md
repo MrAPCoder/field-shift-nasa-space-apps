@@ -160,3 +160,16 @@ AI-assisted changes on `claude/farm-score`:
   teaching conventions, not sourced agronomic thresholds. No NASA data, model formulas,
   coefficients, approvals, citations or dependencies changed. Legacy components and data are
   preserved.
+
+## M10 design overhaul, scoring corrections and farmer priorities
+
+AI-assisted changes on `claude/farm-score`:
+- Revised `src/lib/grade.js` (fixed scale, guardrail, priority options),
+  `src/lib/scene.js` (`FLOW_SCALE` 1.8/2.5/20), `FarmScene.jsx`, `VisualSimulator.jsx`,
+  `ScorePanel.jsx`, `App.jsx` and `main.jsx`.
+- Added `src/sim.css` and `src/components/archive/SoilMethods.jsx` (moved, unchanged).
+- Removed obsolete simulator CSS from `style.css`; the research page styles are unchanged.
+- Added `grading.guardrail` and renamed the irrigation group in config. Updated
+  `public/docs/*`, METHODS M10 and `M10_VERIFICATION`, plus the tests.
+- No NASA data, model equations, crop or soil coefficients, approvals, citations or
+  dependencies changed. No rotation feature was built.

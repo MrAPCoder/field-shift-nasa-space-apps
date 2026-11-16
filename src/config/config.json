@@ -209,10 +209,10 @@
           }
         },
         "irrigation": {
-          "label": "Irrigation use",
+          "label": "Irrigation efficiency (modeled)",
           "points": 30,
           "factors": {
-            "cropUse": { "weight": 30, "fullAt": 0.8, "zeroAt": 0.3, "metric": "Extra crop-season actual ET caused by irrigation / irrigation applied (paired zero-irrigation run). Its complement is drainage caused by irrigation plus water left in the soil at harvest; drainage is reported, not scored twice." }
+            "cropUse": { "weight": 30, "fullAt": 0.8, "zeroAt": 0.3, "metric": "Added crop-season evapotranspiration (scenario minus the same scenario with no irrigation) / irrigation applied. This is a whole-bucket water-balance attribution, not tracing irrigation water into the plant. The remainder is added modeled drainage plus added storage at harvest; drainage is reported, not scored twice. No irrigation: full credit, so every scenario uses the same 100-point scale." }
           }
         },
         "soilCover": {
@@ -226,6 +226,7 @@
       },
       "scorableSeason": { "minMonths": 3, "maxFreezingPrecipShare": 0.25, "allowNewYear": false },
       "startWater": { "fractions": [0, 0.5, 1], "notePoints": 5, "withholdPoints": 15 },
+      "guardrail": { "maxExtraStressDays": 7, "maxDemandMetDrop": 0.05, "maxWorstPeriodDrop": 0.1, "strictDemandMetDrop": 0.01, "note": "A suggested change that adds this many crop water-stress days, or lowers crop demand met or the worst two-week supply by these fractions, is a material worsening of modeled shortage. It is never the balanced suggestion and is labelled as a tradeoff wherever shown." },
       "minProblemPoints": 3,
       "minMeaningfulGain": 1,
       "irrigationOptions": [0, 5, 10, 15, 20, 25, 30, 35, 40, 50, 60, 80],

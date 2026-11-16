@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { MODEL, runSoilSimulation, monthlyBalance } from '../src/lib/soilWater.js';
-import { GROUP_IDS, credit, seasonIssues, metrics, scoreResult, gradeScenario, startWaterRange, candidateScenarios, analyzeFarm, dryWinterWeather } from '../src/lib/grade.js';
+import { GROUP_IDS, credit, seasonIssues, metrics, scoreResult, gradeScenario, startWaterRange, candidateScenarios, analyzeFarm, dryWinterWeather, shortageChange } from '../src/lib/grade.js';
 
 const load = id => JSON.parse(readFileSync(new URL(`../public/data/${id}/soil-weather.json`, import.meta.url)));
 const W = { palouse: load('palouse'), yakima: load('yakima'), skagit: load('skagit') };
@@ -12,7 +12,7 @@ const near = (a, b, tol = 1e-9) => assert.ok(Math.abs(a - b) < tol, `${a} ≠ ${
 // SYNTHETIC: altered copies of real archives, used only inside these tests.
 const synthetic = (id, edit) => { const w = structuredClone(W[id]); edit(w.series); return w; };
 
-test('rubric: eight factors in three groups, group weights add up, total is 100, not equal weights', () => {
+test('rubric: seven scored factors in three groups (drainage reported, not scored), weights add up to 100, not equal', () => {
   assert.deepEqual(Object.keys(G.groups), GROUP_IDS);
   const factors = GROUP_IDS.flatMap(id => Object.keys(G.groups[id].factors));
   assert.equal(factors.length, 7, 'seven scored factors; drainage (factor 5) is the reported complement of irrigation use');
@@ -37,12 +37,12 @@ test('all farms × years × crops × soils × irrigation × cover: valid scores 
       if (score.status !== 'SCORED') { assert.equal(score.total, null); assert.ok(score.reasons.length); continue; }
       scored++;
       assert.ok(Number.isInteger(score.total) && score.total >= 0 && score.total <= 100);
-      let sum = 0, possible = 0;
+      let sum = 0;
       for (const id of GROUP_IDS) { const gr = score.groups[id];
-        if (!gr.applicable) { assert.equal(gr.points, null); continue; }
-        assert.ok(gr.points >= -1e-9 && gr.points <= gr.max + 1e-9); sum += gr.points; possible += gr.max; }
-      near(score.exact, 100 * sum / possible, 1e-9);
-      assert.equal(score.groups.irrigation.applicable, irrigation > 0);
+        assert.ok(gr.points >= -1e-9 && gr.points <= gr.max + 1e-9); sum += gr.points; }
+      near(score.exact, sum, 1e-9, 'one fixed 100-point scale: total is the plain sum, never rescaled');
+      assert.equal(score.groups.irrigation.noIrrigation, irrigation === 0);
+      if (irrigation === 0) assert.equal(score.groups.irrigation.points, 30, 'no irrigation: nothing lost, full credit');
     }
   assert.ok(scored > 1000, `${scored} scored`);
 });
@@ -56,7 +56,7 @@ test('no double counting: irrigation splits exactly into crop use + drainage + w
   }
   // A single severe shortage can cost at most the capped crop-water group.
   const dry = gradeScenario(W.yakima, { ...base, location: 'yakima', crop: 'potato', planting: 5, harvest: 9 }).score;
-  assert.ok(dry.groups.cropWater.lost <= 100 * 50 / 70 + 1e-9);
+  assert.ok(dry.groups.cropWater.lost <= 50 + 1e-9);
 });
 
 test('metrics come from the daily records; freezing-day precipitation is excluded from exposure; GWETROOT is never used', () => {
@@ -70,12 +70,34 @@ test('metrics come from the daily records; freezing-day precipitation is exclude
   assert.deepEqual(gradeScenario(noWet, base).score.total, gradeScenario(W.palouse, base).score.total);
 });
 
-test('loophole: zero irrigation with a severe shortage scores low, not high', () => {
+test('fair scale: zero irrigation with a severe shortage scores low, and below a sensible irrigated option', () => {
   for (const [id, s] of [['palouse', base], ['yakima', { ...base, location: 'yakima', crop: 'potato', planting: 5, harvest: 9 }]]) {
-    const sc = gradeScenario(W[id], s).score;
-    assert.equal(sc.groups.irrigation.applicable, false);
-    assert.ok(sc.metrics.demandMet < .6 && sc.total < 30, `${id}: ${sc.total}`);
+    const sc = gradeScenario(W[id], s).score, a = analyzeFarm(W[id], s);
+    assert.ok(sc.metrics.demandMet < .6 && sc.total <= 50, `${id}: ${sc.total}`);
+    assert.ok(a.improvement.totalAfter > sc.total && a.improvement.scenario.irrigation > 0);
   }
+});
+
+test('guardrail: no balanced suggestion materially worsens crop water shortage; worsening options are labelled', () => {
+  let checked = 0;
+  for (const location of Object.keys(W)) for (const year of [2021, 2024]) for (const crop of ['spring_wheat', 'potato']) for (const irrigation of [0, 20, 40]) for (const cover of ['bare', 'residue']) {
+    const s = { ...base, location, year, crop, irrigation, cover, planting: crop === 'potato' ? 5 : 4, harvest: crop === 'potato' ? 9 : 8 };
+    const a = analyzeFarm(W[location], s); if (a.status !== 'SCORED') continue;
+    for (const [k, o] of Object.entries(a.options)) { if (!o) continue; checked++;
+      const after = gradeScenario(W[location], o.scenario).score.metrics, sh = shortageChange(a.before.score.metrics, after);
+      assert.deepEqual(o.shortage, sh, 'reported shortage change equals a rerun');
+      if (k === 'balanced') assert.equal(sh.material, false, `${JSON.stringify(s)} → ${o.action}`);
+      if (k === 'shortage') assert.ok(sh.none, 'avoid-shortage option never worsens shortage');
+      if (sh.stress > 0) assert.ok(o.tradeoffs.some(t => /more day/.test(t)), 'extra stress days are always listed');
+      if (k === 'water') assert.ok(o.scenario.irrigation < s.irrigation && o.gain >= 0);
+    }
+  }
+  assert.ok(checked > 40, `${checked}`);
+  // The reported case: stopping irrigation with 0 → 60 stress days is no longer an unqualified improvement.
+  const sk = { ...base, location: 'skagit', crop: 'potato', year: 2024, planting: 5, harvest: 9, irrigation: 30 };
+  const a = analyzeFarm(W.skagit, sk);
+  assert.notEqual(a.improvement.scenario.irrigation, 0);
+  if (a.options.water) assert.equal(a.options.water.shortage.material, true);
 });
 
 test('loophole: excessive irrigation never reaches 100 and scores below a moderate amount', () => {
@@ -130,9 +152,9 @@ test('biggest problem: largest points lost, explained with NASA-driven model res
   const a = analyzeFarm(W.palouse, base), sc = a.before.score;
   const live = GROUP_IDS.filter(id => sc.groups[id].applicable), worst = live.reduce((x, id) => sc.groups[id].lost > sc.groups[x].lost ? id : x);
   assert.equal(a.problem.id, worst); assert.equal(a.problem.title, 'Crop water shortage');
-  assert.match(a.problem.text, /NASA weather created 487 mm of crop water demand/);
+  assert.match(a.problem.text, /the weather called for 487 mm of crop water/);
   const d = analyzeFarm(W.palouse, { ...base, irrigation: 40 });
-  assert.equal(d.problem.title, 'Excessive irrigation'); assert.match(d.problem.text, /drained below the 0\.6 m modeled soil layer/);
+  assert.equal(d.problem.title, 'Excessive irrigation'); assert.match(d.problem.text, /extra drainage below the 0\.6 m model layer/);
   // Deterministic.
   assert.deepEqual(JSON.parse(JSON.stringify(analyzeFarm(W.palouse, base).improvement)), JSON.parse(JSON.stringify(a.improvement)));
 });
@@ -141,7 +163,7 @@ test('problem is still named when no tested change helps; nothing positive is in
   const none = structuredClone(MODEL); none.grading.irrigationOptions = [0]; none.grading.coverOptions = ['bare'];
   const a = analyzeFarm(W.palouse, base, none);
   assert.equal(a.problem.title, 'Crop water shortage'); assert.equal(a.improvement, null);
-  assert.match(a.investigate, /could investigate/);
+  assert.match(a.investigate, /Worth investigating/);
 });
 
 test('recommendations are real reruns on identical weather, location, soil, crop, year and season; never planting dates or soil', () => {
@@ -163,12 +185,15 @@ test('recommendations are real reruns on identical weather, location, soil, crop
   }
 });
 
-test('recommendations prefer fixing the biggest problem with one setting; tradeoffs are listed', () => {
+test('balanced suggestion: largest safe gain, prefers fixing the problem; priorities give distinct, labelled options', () => {
   const a = analyzeFarm(W.palouse, base);
-  assert.equal(a.improvement.helpsProblem, true); assert.match(a.improvement.action, /^Increase irrigation from 0 to \d+ mm\/week$/);
+  assert.equal(a.improvement.helpsProblem, true); assert.match(a.improvement.action, /^Increase irrigation from 0 to \d+ mm\/week/);
   assert.ok(a.improvement.tradeoffs.some(t => /more irrigation water/.test(t)));
+  assert.equal(a.options.water, null, 'nothing to save without irrigation');
   const d = analyzeFarm(W.palouse, { ...base, irrigation: 40 });
-  assert.match(d.improvement.action, /^Reduce irrigation from 40 to/); assert.ok(d.improvement.tradeoffs.some(t => /more crop-season days below the stress line/.test(t)));
+  assert.match(d.improvement.action, /^Reduce irrigation from 40 to/);
+  for (const o of Object.values(d.options).filter(Boolean)) assert.ok(o.totalAfter >= d.score);
+  assert.ok(d.options.water.scenario.irrigation < d.improvement.scenario.irrigation, 'save-water option cuts more irrigation');
   // When the best change does not fix the named problem, it is labelled as such.
   const o = analyzeFarm(W.palouse, { ...base, irrigation: 20, cover: 'residue' });
   assert.equal(o.problem.title, 'Excessive irrigation'); assert.equal(o.improvement.helpsProblem, false);

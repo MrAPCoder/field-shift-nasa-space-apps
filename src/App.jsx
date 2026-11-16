@@ -10,18 +10,18 @@ export function Brand() {
 export function Footer() {
   return <footer className="site-footer">
     <nav aria-label="Documentation"><a href="./docs/nasa-data.html">NASA Data &amp; Sources</a><a href="./docs/how-it-works.html">How It Works</a><a href="./docs/limitations.html">Scientific Limitations</a></nav>
-    <p>Field Shift · NASA Space Apps 2026. An educational simulation driven by NASA POWER data. It does not replace local agronomists, extension specialists, soil testing or a farmer’s experience.</p>
+    <p>Field Shift · NASA Space Apps 2026. An educational simulation built on NASA POWER data. It does not replace local agronomists, soil testing or a farmer’s experience.</p>
   </footer>;
 }
 export default function App() {
   const [selected, setSelected] = useState('palouse');
   const [year, setYear] = useState(2023);
-  return <>
+  return <div className="fs">
     <a className="skip-link" href="#visual-simulator">Skip to simulator</a>
     <Brand/>
     <main>
       <VisualSimulator farms={config.farms} selected={selected} onSelect={setSelected} year={year} onYear={setYear}/>
       <Footer/>
     </main>
-  </>;
+  </div>;
 }

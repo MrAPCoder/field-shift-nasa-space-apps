@@ -98,19 +98,20 @@ export function scoreResult(result, dry, model = MODEL) {
     const factors = {};
     let earned = 0, possible = 0;
     for (const [fid, f] of Object.entries(G[id].factors)) {
-      const c = credit(m[fid], f);
-      factors[fid] = { value: m[fid], credit: c, weight: f.weight };
+      // No irrigation applied: nothing could be lost, so irrigation efficiency gets full credit.
+      // Every scenario is therefore scored on the same fixed 100-point scale with the same weights.
+      const c = id === 'irrigation' && !(m.irrigation > 0) ? 1 : credit(m[fid], f);
+      factors[fid] = { value: m[fid] ?? null, credit: c, weight: f.weight };
       if (c !== null) { earned += f.weight * c; possible += f.weight; }
     }
-    // Irrigation does not apply without irrigation; heavy-day exposure does not apply without heavy days.
-    const applicable = id === 'irrigation' ? m.irrigation > 0 : possible > 0;
-    groups[id] = { id, label: G[id].label, applicable, max: G[id].points, factors,
-      points: applicable ? G[id].points * earned / possible : null };
+    // Heavy-day exposure has no value in a year without heavy non-freezing days; the group keeps its
+    // points and uses the remaining factor.
+    groups[id] = { id, label: G[id].label, max: G[id].points, factors,
+      points: possible > 0 ? G[id].points * earned / possible : null, noIrrigation: id === 'irrigation' && !(m.irrigation > 0) };
   }
-  if (!groups.cropWater.applicable || !groups.soilCover.applicable) return { status: 'NOT_SCORED', total: null, reasons: ['Crop-season demand or non-freezing precipitation could not be calculated.'] };
-  const live = GROUP_IDS.filter(id => groups[id].applicable), scale = 100 / live.reduce((t, id) => t + groups[id].max, 0);
-  for (const id of live) groups[id].lost = (groups[id].max - groups[id].points) * scale; // on the 100-point basis
-  const exact = live.reduce((t, id) => t + groups[id].points, 0) * scale;
+  if (GROUP_IDS.some(id => groups[id].points === null)) return { status: 'NOT_SCORED', total: null, reasons: ['Crop-season demand or non-freezing precipitation could not be calculated.'], metrics: m };
+  for (const id of GROUP_IDS) { groups[id].applicable = true; groups[id].lost = groups[id].max - groups[id].points; }
+  const exact = GROUP_IDS.reduce((t, id) => t + groups[id].points, 0);
   return { status: 'SCORED', total: Math.round(exact), exact, groups, metrics: m, reasons: [] };
 }
 
@@ -153,56 +154,65 @@ function describeProblem(id, m, s) {
   const season = `${MONTHS[s.planting - 1]}–${MONTHS[s.harvest - 1]}`;
   if (id === 'cropWater') return {
     id, title: 'Crop water shortage',
-    text: `From ${season}, NASA weather created ${fmt(m.demand)} mm of crop water demand, but the modeled soil supplied ${fmt(m.supplied)} mm (${pct(m.demandMet)}). The crop was below the stress line on ${m.stressDays} of ${m.cropDays} days${m.longestStress >= 3 ? `, including a ${m.longestStress}-day dry spell` : ''}.`,
-    evidence: [`Crop demand from FAO-56 reference ET (${fmt(m.seasonET0)} mm) driven by NASA temperature, humidity, sunlight, wind and pressure`,
+    text: `From ${season}, the weather called for ${fmt(m.demand)} mm of crop water, but the modeled soil supplied ${fmt(m.supplied)} mm (${pct(m.demandMet)}). The crop was under water stress on ${m.stressDays} of ${m.cropDays} days${m.longestStress >= 3 ? `, including a ${m.longestStress}-day stretch` : ''}.`,
+    evidence: [`Crop water demand comes from FAO-56 reference evapotranspiration (${fmt(m.seasonET0)} mm this season), calculated from NASA temperature, humidity, sunlight, wind and pressure`,
       `Water in during the season: ${fmt(m.seasonRain)} mm NASA precipitation + ${fmt(m.irrigation)} mm irrigation`,
-      m.worstPeriod !== null ? `Worst 14 days: the soil met ${pct(m.worstPeriod)} of demand, starting ${m.worstPeriodStart}` : null].filter(Boolean),
+      m.worstPeriod !== null ? `Worst two weeks: the soil met ${pct(m.worstPeriod)} of demand, from ${m.worstPeriodStart}` : null].filter(Boolean),
   };
   if (id === 'irrigation') {
     const draining = m.irrExtraDrainage >= m.irrLeftInSoil;
     return {
-      id, title: draining ? 'Excessive irrigation' : 'Irrigation the crop did not use',
+      id, title: draining ? 'Excessive irrigation' : 'Irrigation left in the soil',
       text: draining
-        ? `${fmt(m.irrExtraDrainage)} of the ${fmt(m.irrigation)} mm you irrigated (${pct(m.drainShare)}) drained below the 0.6 m modeled soil layer. Irrigation often arrived when the soil was already full.`
-        : `Only ${pct(m.cropUse)} of the ${fmt(m.irrigation)} mm you irrigated was used by the crop. ${fmt(m.irrLeftInSoil)} mm was still in the soil at harvest and ${fmt(m.irrExtraDrainage)} mm drained away.`,
-      evidence: [`Irrigation used by the crop: ${fmt(m.irrExtraET)} mm · drained: ${fmt(m.irrExtraDrainage)} mm · left in soil at harvest: ${fmt(m.irrLeftInSoil)} mm`,
-        `Compared with the same year and weather with no irrigation`],
+        ? `Compared with no irrigation, ${fmt(m.irrExtraDrainage)} of the ${fmt(m.irrigation)} mm irrigated (${pct(m.drainShare)}) ended up as extra drainage below the 0.6 m model layer. Much of it was added when the soil was already full.`
+        : `Compared with no irrigation, only ${pct(m.cropUse)} of the ${fmt(m.irrigation)} mm irrigated shows up as added crop-season water use. ${fmt(m.irrLeftInSoil)} mm was still stored at harvest and ${fmt(m.irrExtraDrainage)} mm drained.`,
+      evidence: [`Of the irrigation: ${fmt(m.irrExtraET)} mm added crop-season evapotranspiration, ${fmt(m.irrExtraDrainage)} mm added modeled drainage, ${fmt(m.irrLeftInSoil)} mm added storage at harvest`,
+        'Found by rerunning the same year and weather with no irrigation; drainage is a model quantity, not a field measurement'],
     };
   }
   return {
     id, title: 'Rain on exposed soil',
-    text: `${fmt(m.liquidExposed)} of ${fmt(m.liquidRain)} mm of non-freezing NASA precipitation (${pct(m.exposure)}) fell on exposed soil, ${fmt(m.offSeasonLiquidExposed)} mm of it outside the crop season with ${COVER_TEXT[m.cover]}.${m.heavyDays ? ` That includes ${m.heavyDays} heavier day${m.heavyDays > 1 ? 's' : ''} (12.7 mm or more).` : ''}`,
-    evidence: ['Assumed cover fractions. An exposure indicator, not measured erosion or soil health',
-      `${fmt(m.freezingPrecip)} mm fell on freezing days and is left out because snow is not modeled`],
+    text: `${fmt(m.liquidExposed)} of ${fmt(m.liquidRain)} mm of rain (${pct(m.exposure)}) fell on exposed soil, ${fmt(m.offSeasonLiquidExposed)} mm of it between crops with ${COVER_TEXT[m.cover]}.${m.heavyDays ? ` That includes ${m.heavyDays} heavier day${m.heavyDays > 1 ? 's' : ''} of 12.7 mm or more.` : ''}`,
+    evidence: ['Exposure uses assumed cover fractions. It is an indicator, not measured erosion or soil health',
+      `${fmt(m.freezingPrecip)} mm fell on freezing days and is left out, because snow is not modeled`],
   };
 }
 
 const INVESTIGATE = {
-  cropWater: 'Things you could investigate: irrigation timing (this model spreads irrigation evenly), local planting dates with an extension agronomist, or a crop with lower water demand.',
-  irrigation: 'Things you could investigate: irrigation scheduling based on soil moisture. This model spreads irrigation evenly across the season, so it cannot test timing.',
-  soilCover: 'Things you could investigate: local residue and cover-crop practices. The cover fractions here are generic assumptions.',
+  cropWater: 'Worth investigating: irrigation timing (this model spreads irrigation evenly), local planting dates with an extension agronomist, or a crop with lower water demand.',
+  irrigation: 'Worth investigating: scheduling irrigation by soil moisture. This model spreads irrigation evenly, so it cannot test timing.',
+  soilCover: 'Worth investigating: local residue and cover-crop practices. The cover fractions here are generic assumptions.',
 };
 
-function tradeoffs(before, after) {
-  const b = before.score.metrics, a = after.score.metrics, list = [];
-  if (a.stressDays > b.stressDays) list.push(`${a.stressDays - b.stressDays} more crop-season days below the stress line (${b.stressDays} → ${a.stressDays}).`);
+/** How a change affects modeled crop-water shortage, and whether that worsening is material. */
+export function shortageChange(b, a, model = MODEL) {
+  const rule = model.grading.guardrail;
+  const stress = a.stressDays - b.stressDays, met = a.demandMet - b.demandMet, worst = (a.worstPeriod ?? 0) - (b.worstPeriod ?? 0);
+  return { stress, met, worst, material: stress >= rule.maxExtraStressDays || -met >= rule.maxDemandMetDrop || -worst >= rule.maxWorstPeriodDrop,
+    none: stress <= 0 && -met <= rule.strictDemandMetDrop && -worst <= rule.strictDemandMetDrop };
+}
+
+function tradeoffs(before, after, model) {
+  const b = before.score.metrics, a = after.score.metrics, list = [], sh = shortageChange(b, a, model);
+  if (sh.stress > 0) list.push(`${sh.stress} more day${sh.stress > 1 ? 's' : ''} of crop water stress (${b.stressDays} → ${a.stressDays}).`);
+  if (sh.met < -.005) list.push(`Crop demand met falls from ${pct(b.demandMet)} to ${pct(a.demandMet)}.`);
   if (a.irrigation > b.irrigation) list.push(`Uses ${fmt(a.irrigation - b.irrigation)} mm more irrigation water.`);
-  if (a.drainage > b.drainage + .5) list.push(`${fmt(a.drainage - b.drainage)} mm more water drains below the modeled layer over the year.`);
-  if (a.exposure > b.exposure + .005) list.push(`More rain falls on exposed soil (${pct(b.exposure)} → ${pct(a.exposure)}).`);
+  if (a.drainage > b.drainage + .5) list.push(`${fmt(a.drainage - b.drainage)} mm more modeled drainage over the year.`);
+  if (a.exposure > b.exposure + .005) list.push(`More rain on exposed soil (${pct(b.exposure)} → ${pct(a.exposure)}).`);
   const off = r => r.days.reduce((t, d) => d.active ? t : t + d.actualET, 0);
-  if (after.result.scenario.cover === 'cover' && off(after.result) > off(before.result) + .5) list.push(`The cover crop uses ${fmt(off(after.result) - off(before.result))} mm more off-season water.`);
+  if (after.result.scenario.cover === 'cover' && off(after.result) > off(before.result) + .5) list.push(`The cover crop uses ${fmt(off(after.result) - off(before.result))} mm more water between seasons.`);
   return list;
 }
 
 function describeChange(from, to) {
   const parts = [], why = [];
   if (to.irrigation !== from.irrigation) {
-    parts.push(to.irrigation === 0 ? `Stop irrigating (currently ${from.irrigation} mm/week)` : `${to.irrigation < from.irrigation ? 'Reduce' : 'Increase'} irrigation from ${from.irrigation} to ${to.irrigation} mm/week`);
-    why.push(to.irrigation < from.irrigation ? 'less water drains away when NASA precipitation has already filled the soil' : 'more water reaches the crop during dry periods');
+    parts.push(to.irrigation === 0 ? `Stop irrigating (now ${from.irrigation} mm/week)` : `${to.irrigation < from.irrigation ? 'Reduce' : 'Increase'} irrigation from ${from.irrigation} to ${to.irrigation} mm/week`);
+    why.push(to.irrigation < from.irrigation ? 'less water drains away when rain has already filled the soil' : 'more water reaches the crop in dry spells');
   }
   if (to.cover !== from.cover) {
-    parts.push(`switch ground cover between crops to ${COVER_TEXT[to.cover]}`);
-    why.push(to.cover === 'bare' ? 'bare ground uses less off-season water' : 'more of the soil surface is protected from off-season rain');
+    parts.push(`${parts.length ? 'switch' : 'Switch'} ground cover between crops to ${COVER_TEXT[to.cover]}`);
+    why.push(to.cover === 'bare' ? 'bare ground uses less water between seasons' : to.cover === 'residue' ? 'residue shields the soil and cuts evaporation' : 'a cover crop shields the soil between seasons');
   }
   const text = parts.join(' and ');
   return { action: text.charAt(0).toUpperCase() + text.slice(1), why: why.join(', and ').replace(/^./, c => c.toUpperCase()) };
@@ -218,9 +228,16 @@ export function candidateScenarios(scenario, model = MODEL) {
   return list;
 }
 
+export const PRIORITIES = {
+  balanced: 'Balanced',
+  shortage: 'Avoid crop water shortage',
+  water: 'Save irrigation water',
+};
+
 /**
- * Full analysis for the scenario on screen: score, start-water sensitivity, biggest problem and the
- * best improvement actually found by reruns. Problem and improvement are reported separately.
+ * Score, start-water sensitivity, biggest problem, and one tested option per farmer priority.
+ * Options are full reruns on identical weather. The balanced option may never materially worsen
+ * modeled crop-water shortage (config guardrail); a water-saving option that does is labelled.
  */
 export function analyzeFarm(weather, scenario, model = MODEL) {
   const g = model.grading, before = gradeScenario(weather, scenario, model);
@@ -228,40 +245,47 @@ export function analyzeFarm(weather, scenario, model = MODEL) {
   const range = startWaterRange(weather, scenario, model);
   if (range && range.spread >= g.startWater.withholdPoints) return { status: 'NOT_SCORED', before, range,
     reasons: [`The score would range from ${range.min} to ${range.max} depending on the assumed January 1 soil water, so it is withheld.`] };
-  const sc = before.score, live = GROUP_IDS.filter(id => sc.groups[id].applicable);
-  const worst = live.reduce((a, id) => sc.groups[id].lost > sc.groups[a].lost ? id : a, live[0]);
-  const problem = sc.groups[worst].lost >= g.minProblemPoints ? { ...describeProblem(worst, sc.metrics, scenario), pointsLost: sc.groups[worst].lost } : null;
+  const sc = before.score, bm = sc.metrics;
+  const worst = GROUP_IDS.reduce((a, id) => sc.groups[id].lost > sc.groups[a].lost ? id : a, GROUP_IDS[0]);
+  const problem = sc.groups[worst].lost >= g.minProblemPoints ? { ...describeProblem(worst, bm, scenario), pointsLost: sc.groups[worst].lost } : null;
   // Rerun every candidate on identical weather.
   const tried = candidateScenarios(scenario, model).map(s => {
     const after = gradeScenario(weather, s, model);
     if (after.score.status !== 'SCORED') return null;
     const changes = (s.irrigation !== scenario.irrigation) + (s.cover !== scenario.cover);
-    const lostAfter = problem && after.score.groups[problem.id].applicable ? after.score.groups[problem.id].lost : 0;
-    return { scenario: s, after, changes, gain: after.score.total - sc.total, helpsProblem: problem ? sc.groups[problem.id].lost - lostAfter >= 1 : false };
-  }).filter(t => t && t.gain >= g.minMeaningfulGain);
-  // Fix the biggest problem first, with one setting where possible; combinations only if no single
-  // change helps. Within a pool: largest gain, then the smallest irrigation change.
-  const order = (a, b) => b.gain - a.gain || Math.abs(a.scenario.irrigation - scenario.irrigation) - Math.abs(b.scenario.irrigation - scenario.irrigation);
-  const pick = pool => [...pool].sort(order);
-  // Robust: the gain must hold with 0%, 50% and 100% assumed starting water, and under a dry-winter
-  // bound in which no precipitation on freezing days reaches the soil (snow is not modeled).
+    return { scenario: s, after, changes, gain: after.score.total - sc.total, shortage: shortageChange(bm, after.score.metrics, model),
+      helpsProblem: problem ? sc.groups[problem.id].lost - after.score.groups[problem.id].lost >= 1 : false };
+  }).filter(Boolean);
+  // Robust: the claimed score change must hold with 0%, 50% and 100% starting water and under a
+  // dry-winter bound in which no precipitation on freezing days reaches the soil (snow is not modeled).
   const dryWinter = dryWinterWeather(weather), winterBase = gradeScenario(dryWinter, scenario, model).score.total;
-  const robust = t => (!range || g.startWater.fractions.every((f, k) => {
-    const m2 = cloneWithStart(model, f), a = gradeScenario(weather, t.scenario, m2).score.total;
-    return a !== null && a > range.totals[k];
-  })) && (winterBase === null || (gradeScenario(dryWinter, t.scenario, model).score.total ?? -1) > winterBase);
-  let chosen = null;
-  const pools = [t => t.helpsProblem && t.changes === 1, t => t.helpsProblem, t => t.changes === 1, () => true];
-  for (const pool of pools.map(f => tried.filter(f))) {
-    for (const t of pick(pool).slice(0, 6)) if (robust(t)) { chosen = t; break; }
-    if (chosen) break;
-  }
-  const improvement = chosen && { ...describeChange(scenario, chosen.scenario), scenario: chosen.scenario,
-    totalBefore: sc.total, totalAfter: chosen.after.score.total, gain: chosen.gain,
-    helpsProblem: chosen.helpsProblem, tradeoffs: tradeoffs(before, chosen.after) };
+  const robust = (t, minGain) => (!range || g.startWater.fractions.every((f, k) => {
+    const a = gradeScenario(weather, t.scenario, cloneWithStart(model, f)).score.total;
+    return a !== null && a - range.totals[k] >= minGain;
+  })) && (winterBase === null || (gradeScenario(dryWinter, t.scenario, model).score.total ?? -1e9) - winterBase >= minGain);
+  const dIrr = t => Math.abs(t.scenario.irrigation - scenario.irrigation);
+  const first = (list, minGain) => list.find(t => robust(t, minGain)) ?? null;
+  // Balanced: the largest robust gain that never materially worsens shortage. Within 2 points of that
+  // gain, prefer a change that fixes the biggest problem, then fewer settings changed.
+  const ok = tried.filter(t => t.gain >= g.minMeaningfulGain && !t.shortage.material).sort((a, b) => b.gain - a.gain || dIrr(a) - dIrr(b));
+  const top = first(ok.slice(0, 8), g.minMeaningfulGain);
+  const near = top ? ok.filter(t => t.gain >= top.gain - 2).sort((a, b) => b.helpsProblem - a.helpsProblem || a.changes - b.changes || b.gain - a.gain || dIrr(a) - dIrr(b)) : [];
+  const balanced = top ? first(near.slice(0, 8), g.minMeaningfulGain) ?? top : null;
+  // Avoid shortage: no worsening at all; least stress, then most demand met, then score.
+  const strict = tried.filter(t => t.shortage.none && (t.shortage.stress < 0 || t.shortage.met > .005 || t.gain >= g.minMeaningfulGain) && t.gain >= 0);
+  const shortage = first(strict.sort((a, b) => a.after.score.metrics.stressDays - b.after.score.metrics.stressDays
+    || b.after.score.metrics.demandMet - a.after.score.metrics.demandMet || b.gain - a.gain || dIrr(a) - dIrr(b)).slice(0, 6), 0);
+  // Save water: the largest irrigation cut that does not lower the score; shortage effects are labelled.
+  const water = scenario.irrigation > 0 ? first(tried.filter(t => t.scenario.irrigation < scenario.irrigation && t.gain >= 0)
+    .sort((a, b) => a.scenario.irrigation - b.scenario.irrigation || b.gain - a.gain || a.changes - b.changes).slice(0, 6), 0) : null;
+  const pack = t => t && { ...describeChange(scenario, t.scenario), scenario: t.scenario, totalBefore: sc.total, totalAfter: t.after.score.total,
+    gain: t.gain, helpsProblem: t.helpsProblem, shortage: t.shortage, tradeoffs: tradeoffs(before, t.after, model),
+    metrics: { stressDays: t.after.score.metrics.stressDays, demandMet: t.after.score.metrics.demandMet, irrigation: t.after.score.metrics.irrigation, drainage: t.after.score.metrics.drainage } };
+  const options = { balanced: pack(balanced), shortage: pack(shortage), water: pack(water) };
   return {
     status: 'SCORED', before, score: sc.total, range, startWaterNote: range && range.spread >= g.startWater.notePoints,
-    problem, improvement, candidatesTested: candidateScenarios(scenario, model).length,
-    investigate: !improvement && problem ? INVESTIGATE[problem.id] : null,
+    current: { stressDays: bm.stressDays, demandMet: bm.demandMet, irrigation: bm.irrigation, drainage: bm.drainage },
+    problem, improvement: options.balanced, options, candidatesTested: candidateScenarios(scenario, model).length,
+    investigate: problem ? INVESTIGATE[problem.id] : null,
   };
 }
