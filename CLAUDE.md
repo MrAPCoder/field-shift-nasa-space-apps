@@ -85,7 +85,7 @@ Static hosting on Vercel (Vite preset, build `npm run build`, output `dist`). Mi
 
 The main page (`App.jsx` → `VisualSimulator`) is simulation-first. It auto-runs the default
 farm. The settings panel sits beside the farm, and below it are the score card, options and
-before/after. Styles are in `src/sim.css`, scoped under `.fs`. Docs links point to
+before/after. Styles are in `src/sim.css`, scoped under `.fs` (olive/cream palette, M11). Docs links point to
 `public/docs/*`. The earlier tools are unchanged on `research.html` (`src/research.jsx`,
 `vite.config.js`), and the legacy browser suites target that page.
 

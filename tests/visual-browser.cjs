@@ -41,7 +41,7 @@ const path=require('node:path');
   assert.equal(await scene.locator('.flow-irrigation').count(),d.irrigation>0?1:0);
   assert.equal(await scene.locator('.precip').count(),d.rain>0?1:0,'precipitation marks only on days with NASA precipitation');
  }
- assert.match(await main.getByTestId('soil-panel').innerText(),/of 120 mm plant-available water/);
+ assert.match(await main.getByTestId('soil-panel').innerText(),/ \/ 120 mm/);
  await checkFrame(0);
  // M9 score: every shown number equals an independent Node analysis; try-improvement and undo.
  const {analyzeFarm,gradeScenario}=await import(path.join(root,'src/lib/grade.js'));
@@ -53,7 +53,7 @@ const path=require('node:path');
  for(const hidden of ['.score-bar','.grade','details.other'])assert.equal(await main.locator(hidden).count(),0,`no ${hidden} in the simple card`);
  assert.equal(await main.getByRole('radio',{name:'Balanced'}).getAttribute('aria-checked'),'true');
  assert.equal(await main.getByTestId('options-table').locator('tbody tr').count(),1+new Set(Object.values(analysis.options).filter(Boolean).map(o=>JSON.stringify(o.scenario))).size);
- await main.getByTestId('how-to-improve').getByRole('button',{name:'Try this change'}).click();
+ await main.getByTestId('how-to-improve').getByRole('button',{name:'Try This Improvement'}).click();
  await main.getByTestId('applied-banner').waitFor();
  await page.waitForFunction(t=>document.querySelector('[data-testid=score-total]')?.textContent===t,`${imp.totalAfter}/100`);
  assert.match(await main.getByTestId('applied-banner').innerText(),new RegExp(`${imp.totalBefore} → ${imp.totalAfter}`));
@@ -72,7 +72,7 @@ const path=require('node:path');
  await slider.fill('10');assert.equal(await scene.locator('.precip-frozen').count(),1);assert.equal(await scene.locator('.precip-liquid').count(),0);
  assert.match(await main.getByTestId('panel-explain').innerText(),/may have been snow.*frozen ground are not modeled/s);
  await slider.fill('50');assert.ok(Number(await scene.locator('.flow-drainage').getAttribute('data-width'))>0);assert.match(await main.getByTestId('panel-explain').innerText(),/drained below/);
- await slider.fill('200');assert.equal(await main.getByTestId('panel-status').innerText(),'Water stress: the soil is below the crop stress line, so the crop cannot use water at the full rate.');
+ await slider.fill('200');assert.equal(await main.getByTestId('panel-status').textContent(),'Water stress');
  assert.equal(await scene.locator('.flow-demand').count(),1,'demand outline shown when the soil limits water use');
  // Month jump, single-day steps, month-to-date readout summed from daily values.
  const months=monthlyBalance(expected);
@@ -104,13 +104,13 @@ const path=require('node:path');
  await main.getByTestId('soil-comparison').waitFor();
  await slider.fill('190');await checkFrame(190,expectedIrrigated);
  assert.equal(await main.getByTestId('ghost-level').count(),1,'baseline level on the same date is shown');
- assert.match(await main.getByTestId('soil-panel').innerText(),new RegExp(`Before: ${Math.round(expected.days[190].availablePercent)}% on this date`));
+ assert.match(await main.getByTestId('soil-panel').innerText(),new RegExp(`Before: ${Math.round(expected.days[190].availablePercent)}%`));
  await main.getByRole('button',{name:'Before',exact:true}).click();
  await checkFrame(190,expected,'before');assert.equal(await scene.getAttribute('data-available-percent'),beforeScene,'baseline unchanged');
  await main.getByRole('button',{name:'After',exact:true}).click();await checkFrame(190,expectedIrrigated);
  const cards=await main.getByTestId('soil-comparison').innerText();
  const g0=gradeScenario(weather('palouse'),base),g20=gradeScenario(weather('palouse'),{...base,irrigation:20});
- assert.match(cards,new RegExp(`${Math.round(g0.score.metrics.meanAvailable)}%.*${Math.round(g20.score.metrics.meanAvailable)}%`,'s'));
+ assert.match(cards,new RegExp(`${Math.round(100*g0.score.metrics.demandMet)}%\\s+${Math.round(100*g20.score.metrics.demandMet)}%`));
  assert.match(cards,new RegExp(`${g0.score.metrics.stressDays} days.*${g20.score.metrics.stressDays} days`,'s'));
  assert.match(await main.getByTestId('compare-score').innerText(),new RegExp(`${g0.score.total}\\s+${g20.score.total}`));
  await main.getByLabel('Ground cover',{exact:true}).selectOption('residue');
@@ -121,7 +121,7 @@ const path=require('node:path');
  assert.equal(await scene.locator('.residue').count(),1);
  await main.getByLabel('Soil type',{exact:true}).selectOption('sandy');
  await main.getByRole('button',{name:'Compare this change',exact:true}).click();
- await page.waitForFunction(()=>document.querySelector('[data-testid=soil-panel]')?.textContent.includes('of 42 mm plant-available'));
+ await page.waitForFunction(()=>document.querySelector('[data-testid=soil-panel]')?.textContent.includes(' / 42 mm'));
  await main.getByLabel('Crop type',{exact:true}).selectOption('potato');
  await main.getByLabel('Planting month',{exact:true}).selectOption('5');
  await main.getByLabel('Harvest month',{exact:true}).selectOption('9');
@@ -130,7 +130,7 @@ const path=require('node:path');
  // May–Sep season: Aug 1 is 60% through the assumed calendar → mid-season (50–80%).
  await main.getByRole('button',{name:'Jump to August'}).click();
  assert.equal(await scene.locator('.plant.potato').count(),6);assert.equal(await scene.getAttribute('data-stage'),'mid');
- assert.match(await main.getByTestId('stage-line').innerText(),/Potato: mid-season · stage from your season dates, not simulated growth/);
+ assert.match(await main.getByTestId('stage-line').innerText(),/potato · mid-season/i);
  // Season crossing New Year is labelled, not silently carried over.
  await main.getByLabel('Planting month',{exact:true}).selectOption('10');await main.getByLabel('Harvest month',{exact:true}).selectOption('7');
  assert.match(await main.locator('.field-note').innerText(),/not simulated/);
@@ -162,24 +162,24 @@ const path=require('node:path');
  await main.getByRole('button',{name:'Try Demo',exact:true}).click();
  await slider.waitFor();
  assert.equal(await main.getByLabel('Location',{exact:true}).inputValue(),'palouse');
- assert.match(await main.getByTestId('soil-panel').innerText(),/of 120 mm plant-available/);
+ assert.match(await main.getByTestId('soil-panel').innerText(),/ \/ 120 mm/);
  // Demo: no irrigation vs. a labelled illustrative amount, on identical weather, Apr–Aug season.
- assert.match(await main.getByTestId('demo-story').innerText(),/The farm\..*The soil\..*illustrative 40 mm\/week.*The problem\..*An alternative we tested\..*Benefits and tradeoffs\./s);
- assert.match(await page.locator('#visual-simulator .compare').innerText(),/No irrigation: Spring wheat, loamy soil, 0 mm\/week, Apr–Aug.*Illustrative: Spring wheat, loamy soil, 40 mm\/week, Apr–Aug/s);
+ assert.match(await main.getByTestId('demo-story').innerText(),/farm.*no irrigation.*40 mm\/week \(illustrative\).*problem.*tested fix/si);
+ assert.match(await page.locator('#visual-simulator .compare').innerText(),/No irrigation\s*Spring wheat, loamy soil, 0 mm\/week, Apr–Aug.*Illustrative\s*Spring wheat, loamy soil, 40 mm\/week, Apr–Aug/si);
  const demoIrr=runSoilSimulation(weather('palouse'),{...base,irrigation:40}),overflowDay=demoIrr.days.findIndex(d=>d.irrigation>0&&d.drainage>0);
  await slider.fill(String(overflowDay));await checkFrame(overflowDay,demoIrr,'demo');
  assert.equal(await scene.getByTestId('overflow').count(),1,'storage overflow is drawn when added water exceeds capacity');
- assert.match(await main.getByTestId('panel-overflow').innerText(),/more than the soil could hold/);
+ assert.match(await main.getByTestId('panel-overflow').innerText(),/soil full · [\d.]+ mm drained/i);
  // Demo score story, calculated in Node: no irrigation vs. the illustrative amount.
  const demoA=analyzeFarm(weather('palouse'),{...base,irrigation:40}),demo0=gradeScenario(weather('palouse'),base).score.total;
  await page.waitForFunction(t=>document.querySelector('[data-testid=score-total]')?.textContent===t,`${demoA.score}/100`);
  assert.equal(await main.getByTestId('problem-title').innerText(),demoA.problem.title);
  assert.match(await main.getByTestId('compare-score').innerText(),new RegExp(`${demo0}\\s+${demoA.score}`));
- await page.waitForFunction(t=>document.querySelector('[data-testid=demo-story]')?.textContent.includes(t),`Score ${demoA.options.balanced.totalBefore} → ${demoA.options.balanced.totalAfter}`);
+ await page.waitForFunction(t=>document.querySelector('[data-testid=demo-story]')?.textContent.includes(t),`score ${demoA.options.balanced.totalBefore} → ${demoA.options.balanced.totalAfter}`);
  // Save-water priority: a labelled tradeoff option, never presented as an unqualified improvement.
  await main.getByRole('radio',{name:'Save irrigation water'}).click();
  assert.match(await main.getByTestId('improve-action').innerText(),new RegExp(demoA.options.water.action.replace(/[()]/g,'.')));
- if(demoA.options.water.shortage.material)assert.match(await main.getByTestId('shortage-warning').innerText(),/not an unqualified improvement/);
+ if(demoA.options.water.shortage.material)assert.match(await main.getByTestId('shortage-warning').innerText(),/not an unqualified improvement/i);
  await main.getByRole('radio',{name:'Balanced'}).click();
  // The historical-year selector lives in the main experience; leap year works.
  await main.getByLabel('Historical weather year',{exact:true}).selectOption('2024');

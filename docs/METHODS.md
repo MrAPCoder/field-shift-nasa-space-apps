@@ -1050,3 +1050,19 @@ challenge-coverage table is in `public/docs/how-it-works.html`.
 - **Details:** trace precipitation shows as "<0.1 mm". Values that round to zero show as
   "±0.0", never "−0.0". The freezing-day caution is no longer repeated. The month buttons
   shade the crop season. Settings changes keep the last run on screen with a pending note.
+
+## M11 visual redesign (no model or scoring changes)
+
+This round is presentation only. The water balance, scoring rubric, guardrail, priorities and
+tested options are unchanged.
+- **Palette:** olive `#596B3D`, dark olive `#303D28`, cream `#F6F3E9`, white and sage
+  `#A7B69A`. Blue is used only for water, and a muted amber only for warnings.
+- **Header:** the main page header is "Field Shift" with "Powered by NASA Earth data", plus Try
+  Demo.
+- **Score card:** the score, one sentence, the biggest problem (a one-line `problem.short`
+  derived from the same metrics) and the selected tested option with its score change and
+  tradeoffs. The options table is in a collapsed "Compare options".
+- **Unchanged and still visible:** the "Not scored" reasons, the starting-water note, the
+  save-water shortage warning, the freezing-day and New-Year cautions, and tradeoff lists.
+  Detailed explanations live in `public/docs`.
+- **Suggestion wording:** shortened (for example "grow a cover crop between seasons").

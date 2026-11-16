@@ -8,7 +8,7 @@ import { FLOW_SCALE } from '../lib/scene.js';
 const W = 960, H = 520, SURFACE = 196, LAYER_TOP = 200, LAYER_BOTTOM = 440, FIELD = 800;
 const LAYER = LAYER_BOTTOM - LAYER_TOP;
 const PLANTS = [80, 205, 330, 455, 580, 705];
-export const FLOW_COLORS = { rain: '#2f6f9f', irrigation: '#5aa3cf', et: '#8a8455', drainage: '#1d4766', stress: '#b7791f' };
+export const FLOW_COLORS = { rain: '#3A78A8', irrigation: '#7DB3D6', et: '#8E9A6A', drainage: '#24496A', stress: '#B07A22' };
 const mix = (a, b, t) => {
   const p = c => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16));
   return `rgb(${p(a).map((v, i) => Math.round(v + (p(b)[i] - v) * t)).join(',')})`;
@@ -64,8 +64,8 @@ function statusOf(frame) {
   const d = frame.day;
   if (d.drainage > 0) return { id: 'full', text: 'Soil store full · excess drains', color: FLOW_COLORS.drainage };
   if (d.active && d.dry) return { id: 'stress', text: 'Crop water stress', color: FLOW_COLORS.stress };
-  if (d.active) return { id: 'ok', text: 'Crop using water freely', color: '#2f5a43' };
-  return { id: 'off', text: 'Between crops', color: '#6f776d' };
+  if (d.active) return { id: 'ok', text: 'No water stress', color: '#596B3D' };
+  return { id: 'off', text: 'Between crops', color: '#A7B69A' };
 }
 
 export default function FarmScene({ frame, ghostPercent = null, ghostLabel = 'Before', animate = false }) {
@@ -123,18 +123,18 @@ export default function FarmScene({ frame, ghostPercent = null, ghostLabel = 'Be
       <rect x="852" y={LAYER_TOP - 3} width="56" height="6" rx="2" fill={FLOW_COLORS.drainage}/>
     </g>}
     <g className="scene-status" transform="translate(14,14)">
-      <rect width={status.text.length * 7.4 + 30} height="26" rx="13" fill="rgba(251,249,244,.92)" stroke="rgba(31,42,36,.18)"/>
+      <rect width={status.text.length * 7.4 + 30} height="26" rx="13" fill="rgba(255,255,255,.92)" stroke="rgba(89,107,61,.35)"/>
       <circle cx="14" cy="13" r="4.5" fill={status.color}/>
       <text x="25" y="17.5" className="scene-status-text">{status.text}</text>
     </g>
     {/* Gauge: the same store as a percentage of plant-available capacity. */}
     <g className="gauge">
-      <rect x={FIELD} y="0" width={W - FIELD} height={H} fill="#f8f6f0"/>
-      <line x1={FIELD} x2={FIELD} y1="0" y2={H} stroke="#ddd7c9"/>
+      <rect x={FIELD} y="0" width={W - FIELD} height={H} fill="#FFFFFF"/>
+      <line x1={FIELD} x2={FIELD} y1="0" y2={H} stroke="#DCE3D3"/>
       <text className="gauge-value" x={(FIELD + W) / 2} y="70" textAnchor="middle">{Math.round(frame.percent)}%</text>
       <text className="gauge-caption" x={(FIELD + W) / 2} y="94" textAnchor="middle">plant-available</text>
       <text className="gauge-caption" x={(FIELD + W) / 2} y="112" textAnchor="middle">{n1(frame.water)} / {n1(frame.capacity)} mm</text>
-      <rect x="856" y={LAYER_TOP} width="48" height={LAYER} rx="3" fill="#ebe6da" stroke="#c9c1ae"/>
+      <rect x="856" y={LAYER_TOP} width="48" height={LAYER} rx="3" fill="#F6F3E9" stroke="#A7B69A"/>
       <rect x="856" y={gaugeY(frame.percent)} width="48" height={LAYER * frame.percent / 100} rx="2" fill={FLOW_COLORS.rain} opacity=".85" className="gauge-fill"/>
       {frame.thresholdPercent !== null && <g data-testid="stress-line"><line x1="848" x2="912" y1={gaugeY(frame.thresholdPercent)} y2={gaugeY(frame.thresholdPercent)} stroke={FLOW_COLORS.stress} strokeWidth="2.5"/>
         <text className="gauge-caption halo" x="880" y={gaugeY(frame.thresholdPercent) - 7} textAnchor="middle" style={{ fill: '#8a5a12' }}>stress line</text></g>}

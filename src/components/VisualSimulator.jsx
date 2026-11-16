@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { MODEL, loadSoilWeather, runSoilSimulation, compareSoil, startupSensitivity, monthlyBalance } from '../lib/soilWater.js';
 import { sceneFrame, mm } from '../lib/scene.js';
 import { analyzeFarm, gradeScenario } from '../lib/grade.js';
-import FarmScene, { FlowLegend, FLOW_COLORS } from './FarmScene.jsx';
+import FarmScene, { FLOW_COLORS } from './FarmScene.jsx';
 import ScorePanel from './ScorePanel.jsx';
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -29,23 +29,24 @@ function Readout({ frame, result, compareDay, compareLabel, startup }) {
   const { day } = frame, s = result.scenario;
   const notes = [];
   // Freezing-day precipitation is already explained in the day's sentence; only frost needs a note.
-  if (day.freezing && !(day.rain>0)) notes.push('Freezing day. Frozen ground is not modeled.');
-  if (frame.startupActive) notes.push(`Early in the year, results still depend on the assumed Jan 1 soil water${startup.date?` (until ${dateLabel(startup.date)})`:''}.`);
+  // Only warnings that make today's result unreliable are shown here.
+  // Freezing-day precipitation is already flagged in the day's sentence; frost alone gets a note.
+  if (day.freezing && !(day.rain>0)) notes.push('Freezing day: frozen ground is not modeled.');
   if (result.wrapsYear && day.active && Number(day.date.slice(5,7))<=s.harvest) notes.push(`Planted in ${MONTH_NAMES[s.planting-1]} ${s.year-1}. That autumn is not simulated.`);
   return <div className="readout" data-testid="soil-panel">
     <div className="readout-main">
-      <p className="label">Soil water</p>
-      <p className="readout-value"><strong data-testid="panel-percent">{number(day.availablePercent,0)}%</strong> <span>{fixed(day.water)} of {number(result.capacity)} mm plant-available water</span></p>
-      {compareDay&&<p className="readout-compare">{compareLabel}: {number(compareDay.availablePercent,0)}% on this date</p>}
-      <p className="readout-status" data-testid="panel-status">{!day.active?'Between crops. No crop stress applies.':day.dry?'Water stress: the soil is below the crop stress line, so the crop cannot use water at the full rate.':'The crop can use water at the full rate.'}</p>
-      {day.drainage>0&&<p className="readout-status full" data-testid="panel-overflow">Soil store full: {mm(day.rain+day.irrigation)} mm came in, more than the soil could hold, so {mm(day.drainage)} mm drained below the model layer.</p>}
+      <p className="micro">Soil water</p>
+      <p className="readout-value"><strong data-testid="panel-percent">{number(day.availablePercent,0)}%</strong> <span>{fixed(day.water)} / {number(result.capacity)} mm</span></p>
+      {compareDay&&<p className="readout-compare">{compareLabel}: {number(compareDay.availablePercent,0)}%</p>}
+      <p className={`pill pill-${!day.active?'off':day.dry?'stress':'ok'}`} data-testid="panel-status">{!day.active?'Between crops':day.dry?'Water stress':'No stress'}</p>
+      {day.drainage>0&&<p className="pill pill-water" data-testid="panel-overflow">Soil full · {mm(day.drainage)} mm drained</p>}
     </div>
     <dl className="readout-flows" data-testid="today-flows">
-      <div><dt><i style={{background:FLOW_COLORS.rain}}/>NASA precipitation</dt><dd>+{mm(day.rain)} mm</dd></div>
+      <div><dt><i style={{background:FLOW_COLORS.rain}}/>Rain (NASA)</dt><dd>+{mm(day.rain)} mm</dd></div>
       <div><dt><i style={{background:FLOW_COLORS.irrigation}}/>Irrigation</dt><dd>+{mm(day.irrigation)} mm</dd></div>
-      <div><dt><i style={{background:FLOW_COLORS.et}}/>Water use (ET)</dt><dd>−{mm(day.actualET)} mm{frame.waterLimited&&<small> of {mm(day.demand)}</small>}</dd></div>
+      <div><dt><i style={{background:FLOW_COLORS.et}}/>Water use</dt><dd>−{mm(day.actualET)} mm{frame.waterLimited&&<small> of {mm(day.demand)}</small>}</dd></div>
       <div><dt><i style={{background:FLOW_COLORS.drainage}}/>Drainage</dt><dd>−{mm(day.drainage)} mm</dd></div>
-      <div className="net"><dt>Change in storage</dt><dd>{signed(frame.change)} mm</dd></div>
+      <div className="net"><dt>Net change</dt><dd>{signed(frame.change)} mm</dd></div>
     </dl>
     <p className="readout-explain" data-testid="panel-explain">{frame.explanation}</p>
     {notes.length>0&&<ul className="readout-notes" data-testid="panel-cautions">{notes.map(c=><li key={c}>{c}</li>)}</ul>}
@@ -55,13 +56,14 @@ function Readout({ frame, result, compareDay, compareLabel, startup }) {
 // Five calculated steps that tell the demo story; every number comes from the two runs and the analysis.
 function DemoStory({ base, irrigated, analysis, year }) {
   const b=base.score.metrics, a=irrigated.score.metrics, opt=analysis?.status==='SCORED'?analysis.options.balanced:null;
-  return <ol className="demo-story" data-testid="demo-story">
-    <li><b>The farm.</b> Palouse spring wheat on loamy soil, April–August {year}. NASA recorded {number(b.seasonRain,0)} mm of precipitation in the season, against {number(b.seasonET0,0)} mm of drying demand.</li>
-    <li><b>The soil.</b> Without irrigation the soil met {pct(b.demandMet)} of crop demand, with {b.stressDays} stress days. An illustrative {DEMO.illustrativeIrrigation} mm/week removes the stress ({a.stressDays} days) but raises modeled drainage from {number(base.result.summary.drainage,0)} to {number(irrigated.result.summary.drainage,0)} mm.</li>
-    <li><b>The problem.</b> {analysis?.problem?`${analysis.problem.title}: ${Math.round(100*a.drainShare)}% of the irrigation ended up as extra drainage.`:'Calculating…'}</li>
-    <li><b>An alternative we tested.</b> {opt?`${opt.action}.`:analysis?'No tested change improved the score without worsening crop water.':'Calculating…'}</li>
-    <li><b>Benefits and tradeoffs.</b> {opt?<>Score {opt.totalBefore} → {opt.totalAfter}; stress days {a.stressDays} → {opt.metrics.stressDays}; irrigation {number(a.irrigation,0)} → {number(opt.metrics.irrigation,0)} mm; drainage {number(a.drainage,0)} → {number(opt.metrics.drainage,0)} mm.</>:'—'}</li>
-  </ol>;
+  const steps=[
+    ['Farm',`Palouse wheat · Apr–Aug ${year} · ${number(b.seasonRain,0)} mm rain`],
+    ['No irrigation',`${pct(b.demandMet)} of demand met · ${b.stressDays} stress days`],
+    [`${DEMO.illustrativeIrrigation} mm/week (illustrative)`,`${a.stressDays} stress days · ${number(irrigated.result.summary.drainage,0)} mm drained`],
+    ['Problem',analysis?.problem?.title??'…'],
+    ['Tested fix',opt?`${opt.action} · score ${opt.totalBefore} → ${opt.totalAfter}`:analysis?'None found':'…'],
+  ];
+  return <ol className="demo-story" data-testid="demo-story" aria-label="Demo walkthrough">{steps.map(([k,v])=><li key={k}><b>{k}</b><span>{v}</span></li>)}</ol>;
 }
 
 export default function VisualSimulator({farms,selected,onSelect,year,onYear}) {
@@ -158,12 +160,8 @@ export default function VisualSimulator({farms,selected,onSelect,year,onYear}) {
   const busy=load==='loading';
   return <section id="visual-simulator" className="fs-sim">
     <header className="fs-intro">
-      <div>
-        <p className="kicker">NASA POWER weather · daily soil-water model · Washington farms</p>
-        <h1>Watch a real season of NASA weather move through your soil.</h1>
-        <p className="lede">Set up a farm, replay a historical year, and see when the crop runs short of water, when water drains away, and which change helps.</p>
-      </div>
-      <div className="intro-actions"><button className="btn btn-primary" onClick={demo} disabled={busy}>Try Demo</button><a className="text-link only-narrow" href="#settings">Farm settings ↓</a><a className="text-link" href="./docs/how-it-works.html">How it works</a></div>
+      <div className="brandmark"><h1>Field Shift</h1><p>Powered by NASA Earth data</p></div>
+      <div className="intro-actions"><a className="text-link only-narrow" href="#settings">Settings</a><button className="btn btn-primary" onClick={demo} disabled={busy}>Try Demo</button></div>
     </header>
 
     {demoMode&&graded&&<DemoStory base={graded[0]} irrigated={graded[1]} analysis={shownAnalysis} year={year}/>}
@@ -174,17 +172,18 @@ export default function VisualSimulator({farms,selected,onSelect,year,onYear}) {
           <h2 id="farm-title" className="sr-only">Farm simulation</h2>
           {frame?<>
             <time className="farm-date" dateTime={frame.date}>{dateLabel(frame.date)}</time>
-            <div className="weather-strip" data-testid="weather-strip"><span className="tag">NASA POWER</span>
-              <span>Precipitation <b>{mm(frame.day.rain)} mm</b></span>
-              <span>Drying demand <b>{fixed(frame.day.et0)} mm</b> <i className="calc">calculated</i></span>
+            <div className="weather-strip" data-testid="weather-strip"><span className="tag">NASA</span>
+              <span>Rain <b>{mm(frame.day.rain)} mm</b></span>
+              <span>ET demand <b>{fixed(frame.day.et0)} mm</b></span>
               <details className="weather-more"><summary>All inputs</summary><p>High / low <b>{fixed(frame.day.tMax)} / {fixed(frame.day.tMin)} °C</b> · Humidity <b>{number(frame.day.rh,0)}%</b> · Sunlight <b>{fixed(frame.day.solar)} MJ/m²</b> · Wind <b>{fixed(frame.day.wind)} m/s</b> · Pressure <b>{fixed(frame.day.pressure)} kPa</b></p></details>
             </div>
-          </>:<p className="farm-date muted">{farmName} · {year}</p>}
+          </>:null}
+          <span className="farm-where">{farmName} · {year}</span>
         </div>
         {compared&&<div className="view-toggle" role="group" aria-label="Scenario shown on the farm">{views.map(([id,label])=><button key={id} aria-pressed={view===id} onClick={()=>setView(id)}>{label}</button>)}</div>}
         {!frame?<div className={`farm-empty ${load==='error'?'is-error':''}`} role={load==='error'?undefined:'status'}>{load==='error'?<p>The simulation could not run.</p>:<p>Loading {year} NASA weather for {farmName}…</p>}</div>:<>
           <FarmScene frame={frame} ghostPercent={other?other.days[i].availablePercent:null} ghostLabel={ghost} animate={animate}/>
-          <p className="stage-line" data-testid="stage-line">{frame.stage?<><b>{MODEL.crops[viewing.scenario.crop].label}: {frame.stage.label.toLowerCase()}</b> · stage from your season dates, not simulated growth</>:<b>{OFF_SEASON[viewing.scenario.cover]}</b>}{frame.freezingPrecip&&<span className="freeze-flag"> · grey marks: freezing-day precipitation</span>}</p>
+          <p className="stage-line" data-testid="stage-line">{frame.stage?<>{MODEL.crops[viewing.scenario.crop].label} · {frame.stage.label.toLowerCase()}</>:OFF_SEASON[viewing.scenario.cover]}</p>
           <div className="timeline" data-testid="playback">
             <button className="btn btn-play" aria-label={playing?'Pause simulation':'Play simulation'} onClick={()=>{if(i>=last)setIndex(0);setPlaying(!playing);}}>{playing?'Pause':'Play'}</button>
             <button className="btn-step" aria-label="Previous day" onClick={()=>go(i-1)} disabled={i===0}>‹</button>
@@ -194,9 +193,8 @@ export default function VisualSimulator({farms,selected,onSelect,year,onYear}) {
             <time dateTime={frame.date} data-testid="playback-date">{dateLabel(frame.date)}</time>
           </div>
           <div className="month-jump" role="group" aria-label="Jump to month">{MONTHS.map((m,k)=><button key={m} aria-label={`Jump to ${MONTH_NAMES[k]}`} aria-pressed={currentMonth===k+1} className={viewing.scenario.planting<=viewing.scenario.harvest&&k+1>=viewing.scenario.planting&&k+1<=viewing.scenario.harvest?'in-season':undefined} onClick={()=>go(monthFirst[k])}>{m}</button>)}</div>
-          {startupEnd>0&&<p className="startup-key"><i aria-hidden="true"/>Hatched: still depends on the assumed Jan 1 soil water{startup.date?` (until ${dateLabel(startup.date)})`:' (all year)'}.</p>}
+          {startupEnd>0&&<p className="startup-key"><i aria-hidden="true"/>Depends on assumed starting water{startup.date?` until ${dateLabel(startup.date)}`:' all year'}</p>}
           <Readout frame={frame} result={viewing} compareDay={other?.days[i]} compareLabel={compareLabel} startup={startup}/>
-          <FlowLegend/>
         </>}
       </section>
 
@@ -208,34 +206,33 @@ export default function VisualSimulator({farms,selected,onSelect,year,onYear}) {
           <label>Crop<select aria-label="Crop type" value={draft.crop} onChange={e=>edit('crop',e.target.value)}>{Object.entries(MODEL.crops).map(([id,c])=><option key={id} value={id}>{c.label}</option>)}</select></label>
           <label>Soil<select aria-label="Soil type" value={draft.soil} onChange={e=>edit('soil',e.target.value)}>{Object.entries(MODEL.soils).map(([id,s])=><option key={id} value={id}>{s.label}</option>)}</select></label>
           <fieldset><legend>Season</legend><div className="month-pair">{[['planting','Planting month'],['harvest','Harvest month']].map(([key,label])=><label key={key}><span className="sr-only">{label}</span><select aria-label={label} value={draft[key]} onChange={e=>edit(key,Number(e.target.value))}>{MONTHS.map((m,k)=><option key={m} value={k+1}>{m}</option>)}</select></label>)}</div>{draft.planting>draft.harvest&&<small className="field-note">Crosses New Year. The autumn before is not simulated.</small>}</fieldset>
-          <label>Irrigation (mm/week)<input aria-label="Net irrigation (mm/week)" type="number" inputMode="numeric" min="0" max="200" step="1" value={draft.irrigation} onChange={e=>edit('irrigation',e.target.value===''?'':Number(e.target.value))}/></label>
-          <label className="wide">Ground cover between crops<select aria-label="Ground cover" value={draft.cover} onChange={e=>edit('cover',e.target.value)}>{Object.entries(COVER).map(([id,label])=><option key={id} value={id}>{label}</option>)}</select></label>
+          <label>Irrigation, mm/week<input aria-label="Net irrigation (mm/week)" type="number" inputMode="numeric" min="0" max="200" step="1" value={draft.irrigation} onChange={e=>edit('irrigation',e.target.value===''?'':Number(e.target.value))}/></label>
+          <label className="wide">Cover between crops<select aria-label="Ground cover" value={draft.cover} onChange={e=>edit('cover',e.target.value)}>{Object.entries(COVER).map(([id,label])=><option key={id} value={id}>{label}</option>)}</select></label>
         </div>
         <button className="btn btn-primary btn-block" onClick={()=>run({mode:shown?'compare':'baseline'})} disabled={busy||(shown&&!changed)}>{busy?'Simulating…':!shown?'Run simulation':changed?'Compare this change':'Up to date'}</button>
-        {changed&&<p className="pending" role="status">Settings changed. The farm still shows the last run.</p>}
+        {changed&&<p className="pending" role="status">Settings changed. Compare to see the result.</p>}
         {shown&&changed&&<button className="text-button" onClick={()=>run({mode:'baseline'})} disabled={busy}>Start over with these settings</button>}
         {error&&<p className="error" role="alert">{error} <button className="text-button" onClick={()=>run({mode:shown?'compare':'baseline'})}>Retry simulation</button></p>}
-        <p className="settings-note">Irrigation is spread evenly over the season. Soils are generic textures, not a survey of your field. The year starts with the soil half full.</p>
+        <a className="settings-note" href="./docs/limitations.html">Model assumptions</a>
       </aside>
     </div>
 
-    <div ref={scoreRef} className="results-anchor">{current&&<ScorePanel analysis={shownAnalysis} year={year} scenarioText={describe(current.scenario)} applied={applied} priority={priority} onPriority={setPriority} onTry={tryOption} onUndo={undo} busy={busy}/>}</div>
+    <div ref={scoreRef} className="results-anchor">{current&&<ScorePanel analysis={shownAnalysis} year={year} applied={applied} priority={priority} onPriority={setPriority} onTry={tryOption} onUndo={undo} busy={busy}/>}</div>
 
     {compared&&graded&&<section className="compare" aria-labelledby="compare-title">
-      <h2 id="compare-title" className="section-title">Before and after</h2>
-      <p className="section-sub">{demoMode?`No irrigation → ${DEMO.illustrativeIrrigation} mm/week (illustrative)`:'Before → after'} · same {year} NASA weather, location, soil, crop and starting water.</p>
+      <h2 id="compare-title" className="section-title">Before &amp; After</h2>
+      <p className="section-sub">Same {year} NASA weather, soil and crop.</p>
       <div className="table-wrap"><table className="fs-table" data-testid="soil-comparison"><thead><tr><th scope="col">Measure</th><th scope="col">{demoMode?'No irrigation':'Before'}</th><th scope="col">{demoMode?'Illustrative':'After'}</th><th scope="col">Change</th></tr></thead>
         <tbody>{[
           ['Farm score','score',r=>r.score.total,0,''],
-          ['Crop water stress days','stress',r=>r.score.metrics?.stressDays,0,' days'],
+          ['Stress days','stress',r=>r.score.metrics?.stressDays,0,' days'],
           ['Crop demand met','met',r=>r.score.metrics?.demandMet==null?null:100*r.score.metrics.demandMet,0,'%'],
-          ['Average soil water in season','mean',r=>r.score.metrics?.meanAvailable,0,'%'],
           ['Irrigation applied','irr',r=>r.result.summary.irrigation,0,' mm'],
-          ['Modeled drainage below 0.6 m','drain',r=>r.result.summary.drainage,0,' mm'],
+          ['Drainage (model)','drain',r=>r.result.summary.drainage,0,' mm'],
           ['Rain on exposed soil','exposed',r=>r.score.metrics?.liquidExposed,0,' mm'],
         ].map(([label,key,get,d,unit])=>{const b=get(graded[0]),a=get(graded[1]);return <tr key={key} data-testid={`compare-${key}`}><th scope="row">{label}</th><td>{b==null?'Not scored':`${number(b,d)}${unit}`}</td><td>{a==null?'Not scored':`${number(a,d)}${unit}`}</td><td className="delta">{a!=null&&b!=null?`${signed(a-b,d)}${unit}`:''}</td></tr>;})}</tbody></table></div>
-      <p className="section-sub">{`${demoMode?'No irrigation':'Before'}: ${describe(shown.scenario)}. ${demoMode?'Illustrative':'After'}: ${describe(compared.scenario)}.`}</p>
-      {[shown,compared].some(r=>r.startup?.status==='ready'&&r.days.slice(0,r.startup.index??r.days.length).some(d=>d.active))&&<p className="note">Part of this difference reflects the assumed starting soil water, which still matters early in the crop season.</p>}
+      <dl className="scenario-list"><div><dt>{demoMode?'No irrigation':'Before'}</dt><dd>{describe(shown.scenario)}</dd></div><div><dt>{demoMode?'Illustrative':'After'}</dt><dd>{describe(compared.scenario)}</dd></div></dl>
+      {[shown,compared].some(r=>r.startup?.status==='ready'&&r.days.slice(0,r.startup.index??r.days.length).some(d=>d.active))&&<p className="caution">Partly reflects the assumed starting soil water.</p>}
     </section>}
   </section>;
 }

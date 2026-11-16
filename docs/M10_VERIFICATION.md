@@ -56,3 +56,10 @@ Overlaps found and fixed:
   team and agronomist review.
 - Rotation comparison needs sourced crop parameters, a winter model and local dates.
 - Local soil data is still unavailable.
+
+## M11 visual redesign: verification addendum
+
+The olive and cream redesign changes presentation only. The browser suite was updated for
+the shorter labels. `npm test` (137), Python (35), both data checks and all six browser
+suites pass. Screenshots were reviewed at 1440 and 390 px (default and demo views) with no
+horizontal overflow.

@@ -173,3 +173,13 @@ AI-assisted changes on `claude/farm-score`:
   `public/docs/*`, METHODS M10 and `M10_VERIFICATION`, plus the tests.
 - No NASA data, model equations, crop or soil coefficients, approvals, citations or
   dependencies changed. No rotation feature was built.
+
+## M11 visual redesign
+
+AI-assisted presentation changes:
+- Rewrote `src/sim.css` (olive and cream palette).
+- Simplified `ScorePanel.jsx`, `VisualSimulator.jsx` (header and labels) and the colours in
+  `FarmScene.jsx`.
+- Added a `problem.short` string and shorter cover-change wording in `grade.js`.
+- Updated `public/docs/docs.css` and `tests/visual-browser.cjs`.
+- No formulas, weights, thresholds or data changed.

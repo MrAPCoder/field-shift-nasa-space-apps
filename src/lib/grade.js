@@ -154,6 +154,7 @@ function describeProblem(id, m, s) {
   const season = `${MONTHS[s.planting - 1]}–${MONTHS[s.harvest - 1]}`;
   if (id === 'cropWater') return {
     id, title: 'Crop water shortage',
+    short: `The soil met ${pct(m.demandMet)} of crop water demand, with ${m.stressDays} stress days.`,
     text: `From ${season}, the weather called for ${fmt(m.demand)} mm of crop water, but the modeled soil supplied ${fmt(m.supplied)} mm (${pct(m.demandMet)}). The crop was under water stress on ${m.stressDays} of ${m.cropDays} days${m.longestStress >= 3 ? `, including a ${m.longestStress}-day stretch` : ''}.`,
     evidence: [`Crop water demand comes from FAO-56 reference evapotranspiration (${fmt(m.seasonET0)} mm this season), calculated from NASA temperature, humidity, sunlight, wind and pressure`,
       `Water in during the season: ${fmt(m.seasonRain)} mm NASA precipitation + ${fmt(m.irrigation)} mm irrigation`,
@@ -163,6 +164,7 @@ function describeProblem(id, m, s) {
     const draining = m.irrExtraDrainage >= m.irrLeftInSoil;
     return {
       id, title: draining ? 'Excessive irrigation' : 'Irrigation left in the soil',
+      short: draining ? `${pct(m.drainShare)} of irrigation drained below the 0.6 m model layer.` : `Only ${pct(m.cropUse)} of irrigation raised crop water use; the rest stayed in the soil or drained.`,
       text: draining
         ? `Compared with no irrigation, ${fmt(m.irrExtraDrainage)} of the ${fmt(m.irrigation)} mm irrigated (${pct(m.drainShare)}) ended up as extra drainage below the 0.6 m model layer. Much of it was added when the soil was already full.`
         : `Compared with no irrigation, only ${pct(m.cropUse)} of the ${fmt(m.irrigation)} mm irrigated shows up as added crop-season water use. ${fmt(m.irrLeftInSoil)} mm was still stored at harvest and ${fmt(m.irrExtraDrainage)} mm drained.`,
@@ -172,6 +174,7 @@ function describeProblem(id, m, s) {
   }
   return {
     id, title: 'Rain on exposed soil',
+    short: `${pct(m.exposure)} of the year’s rain fell on unprotected soil.`,
     text: `${fmt(m.liquidExposed)} of ${fmt(m.liquidRain)} mm of rain (${pct(m.exposure)}) fell on exposed soil, ${fmt(m.offSeasonLiquidExposed)} mm of it between crops with ${COVER_TEXT[m.cover]}.${m.heavyDays ? ` That includes ${m.heavyDays} heavier day${m.heavyDays > 1 ? 's' : ''} of 12.7 mm or more.` : ''}`,
     evidence: ['Exposure uses assumed cover fractions. It is an indicator, not measured erosion or soil health',
       `${fmt(m.freezingPrecip)} mm fell on freezing days and is left out, because snow is not modeled`],
@@ -211,7 +214,7 @@ function describeChange(from, to) {
     why.push(to.irrigation < from.irrigation ? 'less water drains away when rain has already filled the soil' : 'more water reaches the crop in dry spells');
   }
   if (to.cover !== from.cover) {
-    parts.push(`${parts.length ? 'switch' : 'Switch'} ground cover between crops to ${COVER_TEXT[to.cover]}`);
+    parts.push({ bare: 'leave the soil bare between crops', residue: 'keep crop residue on the soil', cover: 'grow a cover crop between seasons' }[to.cover]);
     why.push(to.cover === 'bare' ? 'bare ground uses less water between seasons' : to.cover === 'residue' ? 'residue shields the soil and cuts evaporation' : 'a cover crop shields the soil between seasons');
   }
   const text = parts.join(' and ');
